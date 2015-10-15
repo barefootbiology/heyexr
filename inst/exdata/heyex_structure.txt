@@ -1,0 +1,28 @@
+label	value	r_type	size
+Version	b	character	12
+SizeX	i	integer	
+NumBScans	i	integer	
+SizeZ	i	integer	
+ScaleX	d	double	
+Distance	d	double	
+ScaleZ	d	double	
+SizeXSlo	i	integer	
+SizeYSlo	i	integer	
+ScaleXSlo	d	double	
+ScaleYSlo	d	double	
+FieldSizeSlo	i	integer	
+ScanFocus	d	double	
+ScanPosition	b	character	4
+ExamTime	i	integer	2
+ScanPattern	i	integer	
+BScanHdrSize	i	integer	
+ID	b	character	16
+ReferenceID	b	character	16
+PID	i	integer	
+PatientID	b	character	21
+Padding	b	character	3
+DOB	d 	double	
+VID	i 	integer	
+VisitID	b	character	24
+VisitDate	d 	double	
+Spare	b	character	1840
