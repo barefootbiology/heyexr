@@ -14,18 +14,13 @@ read_heyex <- function(x) {
     # Read the SLO image
     slo_image <- read_heyex_slo(vol_file, header)
 
-#          $bScanHeaderInfo = Transpose[{
-#              {
-#                  "Version", "BScanHdrSize", "StartX", "StartY", "EndX", "EndY" ,
-#                  "NumSeg", "OffSeg", "Quality", "Spare"
-#              },
-#              {{b, 12}, i, d, d, d, d, i, i, f, {b, 196}}
-#          }];
-#          ];
-
-
-    # TASK: Read B-Scans
+    # TASK: Read B-Scans ------------------------
     # For each B-Scan, read header and data
+    bscan_header <- list()
+
+    # IMPLEMENT HEADER READING HERE.
+
+
 
 
     # Close the connection to the VOL file
