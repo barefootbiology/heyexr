@@ -1,10 +1,10 @@
 Package: heyexr
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Import Heidelberg Spectralis OCT VOL Files
 Version: 0.1
 Date: 2015-10-15
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Author: S. Scott Whitmore
+Maintainer: S. Scott Whitmore <steven-whitmore@uiowa.edu>
+Description: Functions to import Heidelberg Spectralis ocular coherence tomography (OCT) data in R.
+License: TBD
 LazyData: TRUE
