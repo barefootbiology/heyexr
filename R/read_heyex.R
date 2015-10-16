@@ -1,9 +1,13 @@
+library(bit64)
+
+# Read the header information from a Heidelberg Spectralis VOL file.
+# Assumes offset of 0 bytes.
 read_heyex_header <- function(con) {
     # Create a container for the header information
     header <- list()
 
     # Read each value from the VOL file
-    header$version      <- readBin(con, character(), size = 12, endian = "little")
+    header$version      <- readBin(con, character(), endian = "little")
     header$size_x       <- readBin(con, integer(), endian = "little")
     header$num_b_scans  <- readBin(con, integer(), endian = "little")
     header$size_z       <- readBin(con, integer(), endian = "little")
@@ -16,76 +20,66 @@ read_heyex_header <- function(con) {
     header$scale_y_slo  <- readBin(con, double(), endian = "little")
     header$field_size_slo   <- readBin(con, integer(), endian = "little")
     header$scan_focus       <- readBin(con, double(), endian = "little")
-    header$scan_position    <- readBin(con, character(), size = 4, endian = "little")
-    header$exam_time1        <- readBin(con, integer(), n = 2, endian = "little")
-    # header$exam_time2        <- readBin(con, integer(),  endian = "little")
+    header$scan_position    <- readBin(con, character(), size = 1, n = 2, endian = "little")[1]
+
+    # TASK: Convert to date/time
+    # Convert exam time following "Open_Heyex_Info.java"
+    header$exam_time        <- readBin(con, "raw", endian = "little",  n = 8,
+                                       signed = FALSE) %>%
+        readBin(integer64())
+
     header$scan_pattern     <- readBin(con, integer(), endian = "little")
     header$b_scan_hdr_size  <- readBin(con, integer(), endian = "little")
-    header$id               <- readBin(con, character(), size = 16, endian = "little")
-    header$reference_id     <- readBin(con, character(), size = 16, endian = "little")
+
+    header$id               <- readBin(con, "raw", endian = "little", size = 1, n = 16) %>%
+        rawToChar()
+    header$reference_id     <- readBin(con, "raw", endian = "little", size = 1, n = 16) %>%
+        rawToChar()
     header$pid              <- readBin(con, integer(), endian = "little")
-    header$patient_id       <- readBin(con, character(), size = 21, endian = "little")
-    header$padding          <- readBin(con, character(), size = 3, endian = "little")
-    header$dob              <- readBin(con, double(), endian = "little")
+    header$patient_id       <- readBin(con, "raw", endian = "little", size = 1, n = 21) %>%
+        rawToChar() # , size = 21
+    header$padding          <- readBin(con, "raw", endian = "little", n = 3)
+
+    # TASK: Convert to date/time
+    # Convert DOB following "Open_Heyex_Info.java"
+    header$dob              <- readBin(con, double(), endian = "little", size = 8)
+
     header$vid              <- readBin(con, integer(), endian = "little")
-    header$visit_id         <- readBin(con, character(), size = 24, endian = "little")
+    header$visit_id         <- readBin(con, "raw", endian = "little", size = 1, n = 24) %>%
+        rawToChar()
+
+    # TASK: Convert to date/time
+    # Convert DOB following "Open_Heyex_Info.java"
     header$visit_date       <- readBin(con, double(), endian = "little")
-    header$spare            <- readBin(con, character(), size = 1840, endian = "little")
 
-    # Return both the header information and the file connection
-    return(list(header = header, con = con))
+    header$spare            <- readBin(con, "raw", endian = "little", size = 1, n = 1840)
+
+    # Return the header. The file connection is automatically updated.
+    return(header = header)
 }
 
-read_slo_image <- function(con, header) {
-    #readSLOImage[str_InputStream, fileHdr : {(_String -> _) ..}] :=
-    #    Image[Partition[
-    #        BinaryReadList[str, "Byte" , "SizeXSlo" * "SizeYSlo" /. fileHdr],
-    #        "SizeXSlo" /. fileHdr], "Byte" ];
-    # Read in as a vector
-    slo_image <- readBin(con, character(), size = header$size_x_slo * header$size_y_slo, endian = "little")
+# Read the header information from a Heidelberg Spectralis VOL file.
+# Assumes offset of 2048 bytes.
+read_heyex_slo <- function(con, header) {
+    slo_image <- readBin(con, integer(), size = 1,
+            n = header$size_x_slo * header$size_y_slo,
+            endian = "little", signed = FALSE) %>%
+        (function(x) matrix(x, nrow = header$size_x_slo))
 
-    # TASK: Convert to a matrix
-
-    return(list(slo_image = slo_image, con = con))
+    return(slo_image)
 }
 
-
+# Read a Heidelberg Spectralis VOL file.
 read_heyex <- function(x) {
     # Create a connection to the VOL file
     vol_file = file(x, "rb")
 
     # Read the header
-    results <- read_heyex_header(vol_file)
-    header <- results$header
+    header <- read_heyex_header(vol_file)
 
     # Read the SLO image
+    slo_image <- read_heyex_slo(vol_file, header)
 
-    #results <- read_slo_image(results$con, header)
-    #slo_image <- results$slo_image
-    #vol_files <- results$con
-
-    slo_image <- matrix(readBin(results$con, character(),
-                         n = header$size_x_slo * header$size_y_slo,
-                         endian = "little"), nrow = header$size_x_slo)
-
-
-#     With[{i = "Integer32", f = "Real32", d = "Real64", b = "Byte"},
-#
-#          $fileHeaderInfo = Transpose[{
-#              {
-#                  "Version", "SizeX", "NumBScans", "SizeZ", "ScaleX", "Distance" ,
-#                  "ScaleZ", "SizeXSlo", "SizeYSlo", "ScaleXSlo", "ScaleYSlo" ,
-#                  "FieldSizeSlo", "ScanFocus", "ScanPosition", "ExamTime" ,
-#                  "ScanPattern", "BScanHdrSize", "ID", "ReferenceID", "PID" ,
-#                  "PatientID", "Padding", "DOB", "VID", "VisitID", "VisitDate" ,
-#                  "Spare"
-#              },
-#              {
-#                  {b, 12}, i, i, i, d, d, d, i, i, d, d, i, d, {b, 4}, {i, 2}, i, i,
-#                  {b, 16}, {b, 16}, i, {b, 21}, {b, 3}, d, i, {b, 24}, d, {b, 1840}
-#              }
-#          }];
-#
 #          $bScanHeaderInfo = Transpose[{
 #              {
 #                  "Version", "BScanHdrSize", "StartX", "StartY", "EndX", "EndY" ,
@@ -95,10 +89,9 @@ read_heyex <- function(x) {
 #          }];
 #          ];
 
-    # Read SLO Image
 
-
-    # Read B-Scans
+    # TASK: Read B-Scans
+    # For each B-Scan, read header and data
 
 
     # Close the connection to the VOL file
@@ -106,4 +99,5 @@ read_heyex <- function(x) {
 
     # Return the requested object
     return(list(header = header, slo_image = slo_image))
+    # return(header)
 }
