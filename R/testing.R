@@ -4,7 +4,7 @@ library(stringr)
 library(ggplot2)
 library(standardlibrary)
 library(bit64)
-library(heyexr)
+#library(heyexr)
 
 # Read in a test vol file
 test <- read_heyex("~/stonelab/experiments/oct/oct_atlas/data/laptop-only/2015-09-28/deidentification_test/TEST001.vol")
