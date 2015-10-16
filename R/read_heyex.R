@@ -1,4 +1,11 @@
 library(bit64)
+library(dplyr)
+
+# Code based on these two projects:
+#
+# https://github.com/halirutan/HeyexImport
+# http://rsb.info.nih.gov/ij/plugins/heyex/index.html
+
 
 # Read the header information from a Heidelberg Spectralis VOL file.
 # Assumes offset of 0 bytes.
