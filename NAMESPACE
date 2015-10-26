@@ -1,4 +1,6 @@
 export('read_heyex')
+export('read_heyex_header')
+export('read_heyex_slo')
 
 import('dplyr')
 import('bit64')
