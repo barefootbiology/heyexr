@@ -12,7 +12,7 @@ read_heyex_header <- function(con) {
     # Read each value from the VOL file
     header$version      <- readBin(con, character(), endian = "little")
     header$size_x       <- readBin(con, integer(), endian = "little")
-    header$num_b_scans  <- readBin(con, integer(), endian = "little")
+    header$num_bscans  <- readBin(con, integer(), endian = "little")
     header$size_z       <- readBin(con, integer(), endian = "little")
     header$scale_x      <- readBin(con, double(), endian = "little")
     header$distance     <- readBin(con, double(), endian = "little")
@@ -32,7 +32,7 @@ read_heyex_header <- function(con) {
         readBin(integer64())
 
     header$scan_pattern     <- readBin(con, integer(), endian = "little")
-    header$b_scan_hdr_size  <- readBin(con, integer(), endian = "little")
+    header$bscan_hdr_size  <- readBin(con, integer(), endian = "little")
 
     header$id               <- readBin(con, "raw", endian = "little", size = 1, n = 16) %>%
         rawToChar()
