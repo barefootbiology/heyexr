@@ -1,3 +1,26 @@
+readFloat <- function(con) {
+    readBin(con = con, what = "raw",
+            size = 1, n = 4,
+            endian = "little") %>%
+        readBin(what = "numeric",
+                size = 4,
+                endian = "little") %>%
+        return()
+}
+
+readFloatArray <- function(con, n = 1) {
+    raw_floats <- readBin(con = con, what = "raw",
+            size = 1, n = 4*n,
+            endian = "little")
+
+    by(raw_floats, rep(1:n, each=4), (function(x) readBin(x, what = "numeric",
+                                                          size = 4,
+                                                          endian = "little")),
+       simplify = TRUE) %>%
+        as.numeric() %>%
+        return()
+}
+
 # Read a Heidelberg Spectralis VOL file.
 read_heyex <- function(x) {
     # Code based on these two projects:
@@ -35,10 +58,10 @@ read_heyex <- function(x) {
 
     close(vol_file)
 
-
+    # Create empty containers
     bscan_header_all <- list()
-
     seg_array = list()
+    bscan_image <- list()
 
     vol_file = file(x, "rb")
 
@@ -49,7 +72,7 @@ read_heyex <- function(x) {
                  slo_image_size +
                  (bscan*bscan_block_size), origin = "start");
 
-        cat("Before ", bscan+1, "bscan header:\t", seek(vol_file, where = NA), "\n")
+        cat("******\n******\nBefore ", bscan+1, "bscan header:\t", seek(vol_file, where = NA), "\n")
 
         bscan_header_all[[bscan + 1]] <- read_bscan_header(vol_file, header)
 
@@ -64,10 +87,7 @@ read_heyex <- function(x) {
                     seg_layer*header$size_x +
                     bscan*bscan_header_1$num_seg*header$size_x
 
-                y_value <- readBin(vol_file, what = "raw",
-                                   size = 1, n = 4,
-                                   endian = "little") %>%
-                    readBin(what = "numeric", size = 4, endian = "little")
+                y_value <- readFloat(vol_file)
                 if ((y_value < 3.4028235E37) & !is.na(y_value)) {
                     seg_array[index] <- y_value
                 } else {
@@ -75,9 +95,24 @@ read_heyex <- function(x) {
                 }
             }
         }
+
+        cat("******\nBefore ", bscan+1, "bscan image:\t", seek(vol_file, where = NA), "\n")
+
+        bscan_image[[length(bscan_image) + 1]] <- readFloatArray(vol_file, n = header$size_x * header$size_z)
+
+        cat("After ", bscan+1, "bscan image:\t", seek(vol_file, where = NA), "\n")
+
+#         # TASK: Read in bscan image
+#         for(x in 1:header$size_x) {
+#             for(y in 1:header$size_z) {
+#                 bscan_image[[length(bscan_image) + 1]] <- readBin(vol_file, what = "raw",
+#                                                                   size = 1, n = 4,
+#                                                                   endian = "little") %>%
+#                     readBin(what = "numeric", size = 4, endian = "little")
+#             }
+#         }
     }
 
-    # Read in the OCT file
 
 
 
@@ -89,5 +124,6 @@ read_heyex <- function(x) {
                 slo_image = slo_image,
                 bscan_header=bscan_header_1,
                 bscan_header_all = bscan_header_all,
-                seg_array=seg_array))
+                seg_array=seg_array,
+                bscan_images=bscan_image))
 }
