@@ -24,7 +24,6 @@ test <- read_heyex(file_path)
 
 # Works but has trouble on the edges
 for (b_n in 1:test$header$num_bscans) {
-#for (b_n in 1:4) {
     test_bscan_1 <- matrix(data=unlist(test$bscan_images[[b_n]]), nrow=test$header$size_z, byrow=TRUE) %>%
         as.data.frame() %>%
         cbind_rownames("z") %>%

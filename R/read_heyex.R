@@ -53,25 +53,25 @@ read_heyex <- function(x) {
 
     # Read the first bscan_header
     cat("Before reading initial bscan_header:\t", seek(vol_file, where = NA), "\n")
-    bscan_header_1 <- read_bscan_header(vol_file, header)
+#    bscan_header_1 <- read_bscan_header(vol_file, header)
     cat("After reading initial bscan_header:\t", seek(vol_file, where = NA), "\n")
 
-    close(vol_file)
+#    close(vol_file)
 
     # Create empty containers
     bscan_header_all <- list()
     seg_array = list()
     bscan_image <- list()
 
-    vol_file = file(x, "rb")
+#    vol_file = file(x, "rb")
 
     # Read in the segmentation arrays
     for (bscan in c(0:(header$num_bscans-1))) {
 #    for (bscan in 0:3) {
 
-        seek(vol_file, where = file_header_size +
-                 slo_image_size +
-                 (bscan*bscan_block_size), origin = "start");
+#         seek(vol_file, where = file_header_size +
+#                  slo_image_size +
+#                  (bscan*bscan_block_size), origin = "start");
 
         cat("******\n******\nBefore ", bscan+1, "bscan header:\t", seek(vol_file, where = NA), "\n")
 
@@ -80,13 +80,13 @@ read_heyex <- function(x) {
         cat("After ", bscan+1, "bscan header:\t", seek(vol_file, where = NA), "\n")
 
         # Read in the Heidelberg segmentation information
-        for (seg_layer in c(0:(bscan_header_1$num_seg-1))) {
+        for (seg_layer in c(0:(bscan_header_all[[bscan+1]]$num_seg-1))) {
             for (a_scan in c(0:(header$size_x-1))) {
                 # R vectors and lists are indexed at 1
                 index = 1 +
                     a_scan +
                     seg_layer*header$size_x +
-                    bscan*bscan_header_1$num_seg*header$size_x
+                    bscan*bscan_header_all[[bscan+1]]$num_seg*header$size_x
 
                 y_value <- readFloat(vol_file)
                 if ((y_value < 3.4028235E37) & !is.na(y_value)) {
@@ -101,7 +101,7 @@ read_heyex <- function(x) {
 
         # TASK: Update the offset to start at the end of the filler
         #seek(vol_file, where = 256, origin = "current")
-        temp <- readBin(vol_file, "raw", n = (header$bscan_hdr_size - 256 - (bscan_header_1$num_seg*header$size_x*4)))
+        temp <- readBin(vol_file, "raw", n = (header$bscan_hdr_size - 256 - (bscan_header_all[[bscan+1]]$num_seg*header$size_x*4)))
 #         seek(vol_file, where = file_header_size +
 #                  slo_image_size +
 #                  (bscan*(header$bscan_hdr_size)) - 256, origin = "start");
@@ -133,7 +133,7 @@ read_heyex <- function(x) {
     # Return the requested object
     return(list(header = header,
                 slo_image = slo_image,
-                bscan_header=bscan_header_1,
+                #bscan_header=bscan_header_1,
                 bscan_header_all = bscan_header_all,
                 seg_array=seg_array,
                 bscan_images=bscan_image))
