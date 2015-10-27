@@ -6,7 +6,7 @@ library(standardlibrary)
 library(bit64)
 
 
-file_path <- "~/stonelab/experiments/oct/oct_atlas/data/laptop-only/2015-09-28/deidentification_test/TEST002.vol"
+file_path <- "~/stonelab/experiments/oct/oct_atlas/data/laptop-only/2015-09-28/deidentification_test/TEST001.vol"
 
 source("R/read_heyex.R")
 test <- read_heyex(file_path)
@@ -22,9 +22,15 @@ test <- read_heyex(file_path)
 #     geom_line(aes(group=as.factor(seg_layer), color=as.factor(seg_layer))) +
 #     facet_grid(b_scan~.)
 
+test_seg_array <- data.frame(b_scan = rep(1:test$header$num_bscans, each = test$header$size_x*test$bscan_header_all[[b_n]]$num_seg),
+                             seg_layer = rep(1:test$bscan_header_all[[b_n]]$num_seg, each = test$header$size_x),
+                             x = rep(1:test$header$size_x, test$bscan_header_all[[b_n]]$num_seg),
+                             y = unlist(test$seg_array)) %>%
+    tbl_df
+
 # Works but has trouble on the edges
 for (b_n in 1:test$header$num_bscans) {
-    test_bscan_1 <- matrix(data=unlist(test$bscan_images[[b_n]]), nrow=test$header$size_z, byrow=TRUE) %>%
+    test_bscan_1 <- matrix(data=test$bscan_images[[b_n]], nrow=test$header$size_z, byrow=TRUE) %>%
         as.data.frame() %>%
         cbind_rownames("z") %>%
         mutate(z = as.numeric(as.character(z))) %>%
@@ -39,18 +45,18 @@ for (b_n in 1:test$header$num_bscans) {
         ggplot(aes(x = x, y = z)) +
         geom_tile(aes(fill=intensity)) +
         scale_fill_continuous(low = "black", high = "white") +
-        theme_bw()
+        theme_bw() +
+        geom_point(data = test_seg_array %>% filter(b_scan == b_n),
+                  mapping=aes(x = x, y = y, color = as.factor(seg_layer)),
+                  alpha = 0.3, shape = 15, size = 1) +
+        scale_color_brewer(palette = "Set1") +
+        scale_y_reverse()
 
     ggsave(filename=paste("~/Desktop/test_bscan", b_n, ".png", sep=""), plot = p_1, width = 12, height = 8)
 }
 
 
-
-
-
-
 # TASK: Plot retinal thickness as heatmap
-
 
 # # Convert the SLO data to a data.frame compatible with ggplot2
 # test_slo <- test$slo_image %>%
