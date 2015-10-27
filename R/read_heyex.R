@@ -67,6 +67,7 @@ read_heyex <- function(x) {
 
     # Read in the segmentation arrays
     for (bscan in c(0:(header$num_bscans-1))) {
+#    for (bscan in 0:3) {
 
         seek(vol_file, where = file_header_size +
                  slo_image_size +
@@ -98,19 +99,29 @@ read_heyex <- function(x) {
 
         cat("******\nBefore ", bscan+1, "bscan image:\t", seek(vol_file, where = NA), "\n")
 
+        # TASK: Update the offset to start at the end of the filler
+        #seek(vol_file, where = 256, origin = "current")
+        temp <- readBin(vol_file, "raw", n = (header$bscan_hdr_size - 256 - (bscan_header_1$num_seg*header$size_x*4)))
+#         seek(vol_file, where = file_header_size +
+#                  slo_image_size +
+#                  (bscan*(header$bscan_hdr_size)) - 256, origin = "start");
+
         bscan_image[[length(bscan_image) + 1]] <- readFloatArray(vol_file, n = header$size_x * header$size_z)
 
         cat("After ", bscan+1, "bscan image:\t", seek(vol_file, where = NA), "\n")
 
+#         bscan_temp <- list()
+#
 #         # TASK: Read in bscan image
 #         for(x in 1:header$size_x) {
 #             for(y in 1:header$size_z) {
-#                 bscan_image[[length(bscan_image) + 1]] <- readBin(vol_file, what = "raw",
+#                 bscan_temp[[length(bscan_temp) + 1]] <- readBin(vol_file, what = "raw",
 #                                                                   size = 1, n = 4,
 #                                                                   endian = "little") %>%
 #                     readBin(what = "numeric", size = 4, endian = "little")
 #             }
 #         }
+#         bscan_image[[length(bscan_image) + 1]] <- bscan_temp
     }
 
 
