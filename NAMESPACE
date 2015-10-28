@@ -1,7 +1,12 @@
+export('readFloat')
+export('readFloatArray')
 export('read_heyex')
 export('read_heyex_header')
 export('read_heyex_slo')
 export('read_bscan_header')
-
+export('get_segmentation')
+export('get_bscan')
+export('get_slo')
+export('read_segmentation_xml')
 import('dplyr')
 import('bit64')
