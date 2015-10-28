@@ -1,26 +1,3 @@
-readFloat <- function(con) {
-    readBin(con = con, what = "raw",
-            size = 1, n = 4,
-            endian = "little") %>%
-        readBin(what = "numeric",
-                size = 4,
-                endian = "little") %>%
-        return()
-}
-
-readFloatArray <- function(con, n = 1) {
-    raw_floats <- readBin(con = con, what = "raw",
-            size = 1, n = 4*n,
-            endian = "little")
-
-    by(raw_floats, rep(1:n, each=4), (function(x) readBin(x, what = "numeric",
-                                                          size = 4,
-                                                          endian = "little")),
-       simplify = TRUE) %>%
-        as.numeric() %>%
-        return()
-}
-
 # Read a Heidelberg Spectralis VOL file.
 read_heyex <- function(x) {
     # Code based on these two projects:
@@ -56,9 +33,13 @@ read_heyex <- function(x) {
     seg_array = list()
     bscan_image <- list()
 
-
+    # TASK: Move this to an external function.
     # Read in the segmentation arrays
+
+    pb <- txtProgressBar(min = 0, max = header$num_bscans, style = 3)
+
     for (bscan in c(0:(header$num_bscans-1))) {
+        setTxtProgressBar(pb, bscan+1, title = "Reading B-Scans")
 
         bscan_header_all[[bscan + 1]] <- read_bscan_header(vol_file, header)
 
@@ -92,7 +73,7 @@ read_heyex <- function(x) {
     # Return the requested object
     return(list(header = header,
                 slo_image = slo_image,
-                bscan_header_all = bscan_header_all,
+                bscan_headers = bscan_header_all,
                 seg_array=seg_array,
                 bscan_images=bscan_image))
 }
