@@ -62,7 +62,7 @@ render_oct_summary <- function(input_path, return_results=TRUE,
     # Construct the SLO plot
     p_slo <- get_slo(oct) %>%
         ggplot(aes(x=x, y=y)) +
-        geom_tile(aes(fill = z)) +
+        geom_raster(aes(fill = z)) +
         scale_fill_continuous(low = "black", high = "white") +
         theme_bw() +
         theme(axis.ticks.x = element_blank(),
@@ -145,7 +145,7 @@ render_oct_summary <- function(input_path, return_results=TRUE,
         # Construct the b-scan plot
         p_1 <- oct_bscan_1  %>%
             ggplot(aes(x = x, y = z)) +
-            geom_tile(aes(fill=intensity)) +
+            geom_raster(aes(fill=intensity)) +
             scale_fill_continuous(low = "black", high = "white") +
             theme_bw() +
             # geom_point(data = oct_seg_array %>% filter(b_scan == b_n),
@@ -162,8 +162,8 @@ render_oct_summary <- function(input_path, return_results=TRUE,
                          mapping = aes(x=x, xend=xend, y=y, yend=yend),
                          color = "white", size = 0.5) +
             annotate("text",
-                     x = bscan_x_0+2,
-                     y = bscan_y_0-1,
+                     x = bscan_x_0+4,
+                     y = bscan_y_0-2,
                      label = paste(bscan_scale_length, "µm"),
                      color = "white",
                      hjust = 0,
