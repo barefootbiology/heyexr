@@ -36,7 +36,10 @@ read_heyex <- function(x) {
     # TASK: Move this to an external function.
     # Read in the segmentation arrays
 
-    pb <- txtProgressBar(min = 0, max = header$num_bscans, style = 3)
+    pb <- txtProgressBar(min = 0,
+                         max = header$num_bscans,
+                         style = 3,
+                         file = stderr())
 
     for (bscan in c(0:(header$num_bscans-1))) {
         setTxtProgressBar(pb, bscan+1, title = "Reading B-Scans")
