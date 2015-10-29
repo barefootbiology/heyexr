@@ -70,6 +70,31 @@ read_heyex <- function(x) {
 
     }
 
+    # TASK: Convert bscan_headers to a data.frame.
+    #       We can get rid of the "spare" column.
+    bscan_header_all <- lapply(bscan_header_all, function(x) x[1:9] %>%
+                                     unlist %>%
+                                     matrix(nrow = 1, byrow = FALSE) %>%
+                                     data.frame(stringsAsFactors = FALSE)) %>%
+        bind_rows %>%
+        setNames(c("version", "bscan_header_size",
+                   "start_x", "start_y",
+                   "end_x", "end_y", "num_seg",
+                   "off_seg", "quality")) %>%
+        mutate(bscan_header_size = as.numeric(bscan_header_size),
+               start_x = as.numeric(start_x),
+               start_y = as.numeric(start_y),
+               end_x= as.numeric(end_x),
+               end_y= as.numeric(end_y),
+               num_seg = as.numeric(num_seg),
+               off_seg = as.numeric(off_seg),
+               quality = as.numeric(quality)) %>%
+        mutate(start_x_pixels = start_x / header$scale_x_slo,
+               start_y_pixels = start_y / header$scale_y_slo,
+               end_x_pixels = end_x / header$scale_x_slo,
+               end_y_pixels = end_y / header$scale_y_slo) %>%
+        mutate(bscan = 1:n())
+
     # Close the connection to the VOL file
     close(vol_file)
 
