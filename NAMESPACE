@@ -8,5 +8,14 @@ export('get_segmentation')
 export('get_bscan')
 export('get_slo')
 export('read_segmentation_xml')
+export('render_oct_summary')
+
 import('dplyr')
-import('bit64')
+import('tidyr')
+import('stringr')
+import('bit64') # For 64-bit integers. NOTE: NOT FULLY IMPLEMENTED YET.
+import('XML')
+import('ggplot2')
+import('gridExtra')
+import('grid')
+import('standardlibrary') # CHECK TO SEE IF THIS IS NECESSARY
