@@ -156,7 +156,11 @@ render_oct_summary <- function(input_path, return_results=TRUE,
                             expand = c(0,0)) +
             scale_x_continuous(expand = c(0,0)) +
             theme(panel.grid=element_blank(),
-                  panel.background=element_rect(fill = "black")) +
+                  panel.background=element_rect(fill = "black"),
+                  axis.ticks.x = element_blank(),
+                  axis.ticks.y = element_blank(),
+                  axis.text.x = element_blank(),
+                  axis.text.y = element_blank()) +
             labs(x="x", y="z") +
             geom_segment(data = bscan_scale_bars,
                          mapping = aes(x=x, xend=xend, y=y, yend=yend),
