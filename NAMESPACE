@@ -9,6 +9,7 @@ export('get_bscan')
 export('get_slo')
 export('read_segmentation_xml')
 export('render_oct_summary')
+export('render_slo')
 
 import('dplyr')
 import('tidyr')
