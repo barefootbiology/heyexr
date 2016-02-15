@@ -10,6 +10,7 @@ export('get_slo')
 export('read_segmentation_xml')
 export('render_oct_summary')
 export('render_slo')
+export('construct_slo')
 
 import('dplyr')
 import('tidyr')
@@ -20,3 +21,5 @@ import('ggplot2')
 import('gridExtra')
 import('grid')
 import('standardlibrary') # CHECK TO SEE IF THIS IS NECESSARY
+import('magrittr')
+importFrom(magrittr,"%>%")

@@ -11,7 +11,7 @@ read_heyex <- function(x, header_slo_only = FALSE) {
     # Read the header
     header <- read_heyex_header(vol_file)
 
-    cat("Offset to slo:",seek(vol_file, where = NA), "\n")
+    # cat("Offset to slo:",seek(vol_file, where = NA), "\n")
     # Read the SLO image
     slo_image <- read_heyex_slo(vol_file, header)
 
@@ -39,7 +39,7 @@ read_heyex <- function(x, header_slo_only = FALSE) {
 
         pb <- txtProgressBar(min = 0,
                              max = header$num_bscans,
-                             style = 3,
+                             style = 1,
                              file = stderr())
 
         for (bscan in c(0:(header$num_bscans-1))) {

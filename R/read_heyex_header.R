@@ -12,7 +12,7 @@ read_heyex_header <- function(con) {
     # Read each value from the VOL file
     header$version      <- readBin(con, character(), endian = "little")
     header$size_x       <- readBin(con, integer(), endian = "little")
-    header$num_bscans  <- readBin(con, integer(), endian = "little")
+    header$num_bscans   <- readBin(con, integer(), endian = "little")
     header$size_z       <- readBin(con, integer(), endian = "little")
     header$scale_x      <- readBin(con, double(), endian = "little")
     header$distance     <- readBin(con, double(), endian = "little")
@@ -28,8 +28,11 @@ read_heyex_header <- function(con) {
     # TASK: Convert to date/time
     # Convert exam time following "Open_Heyex_Info.java"
     header$exam_time        <- readBin(con, "raw", endian = "little",  n = 8,
-                                       signed = FALSE) %>%
-        readBin(integer64())
+                                       signed = FALSE)
+    # From: https://stat.ethz.ch/R-manual/R-devel/library/base/html/DateTimeClasses.html
+    # "Class "POSIXct" represents the (signed) number of seconds
+    # since the beginning of 1970 (in the UTC time zone) as a numeric vector."
+    # That means that R's reference is the same as Java's.
 
     header$scan_pattern     <- readBin(con, integer(), endian = "little")
     header$bscan_hdr_size  <- readBin(con, integer(), endian = "little")

@@ -5,7 +5,7 @@ get_segmentation <- function(object) {
                             each = object$header$size_x*num_seg),
                seg_layer = rep(1:num_seg, each = object$header$size_x),
                x = rep(1:object$header$size_x, num_seg),
-               y = unlist(object$seg_array)) %>%
+               z = unlist(object$seg_array)) %>%
         tbl_df %>%
         return()
 }
