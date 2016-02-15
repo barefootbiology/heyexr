@@ -12,6 +12,7 @@
 #'
 #' @export
 #' @importFrom magrittr %>%
+#' @importFrom dplyr filter collect distinct select
 #' @importFrom ggplot2 scale_color_brewer element_text theme ggsave scale_color_manual geom_line geom_segment aes ggplot
 #' @importFrom gridExtra arrangeGrob
 render_oct_summary <- function(vol_file,
@@ -116,16 +117,23 @@ render_oct_summary <- function(vol_file,
             p_1_l <- p_1
         }
 
-
         # Overlay Heidelberg segmentation (just for kicks)
+        n_segments <- oct_seg_array %>%
+            dplyr::filter(b_scan == b_n) %>%
+            select(seg_layer) %>%
+            distinct() %>%
+            collect %>%
+            .[["seg_layer"]]
+
+        segmentation_layer_value <- c("1"="red","2"="blue","3"="green")[as.character(n_segments)]
+
         p_1_l2 <- p_1 +
             geom_line(data = oct_seg_array %>% dplyr::filter(b_scan == b_n),
                       mapping = aes(group=as.factor(seg_layer),
                                     color=as.factor(seg_layer)),
                       alpha = 0.5) +
             scale_color_manual(guide = 'none',
-                                values = c("1"="blue",
-                                           "2"="green"))
+                                values = segmentation_layer_value)
 
         # Overlay the position of the b-scans on the SL
         p_slo_1 <- p_slo +
