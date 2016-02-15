@@ -1,3 +1,25 @@
+#' Construct a ggplot2 object containing the data for a given b-scan
+#'
+#' Constructs a ggplot2 object containing the data for a given b-scan
+#'
+#' @param oct a list containing the OCT data
+#' @param bn the number of the b-scan of interest
+#' @param layer_z_min vertical minimum constraint on the b-scan axis
+#' @param layer_z_max vertical maximum constraint on the b-scan axix
+#' @param low_color color for lowest values
+#' @param high_color color for highest values
+#' @param gamma value for gamma correction of b-scan values
+#' @param scale_bars Should scale bars be drawn?
+#' @param scale_length length of scale bars in microns
+#' @param scale_color color of scale bar
+#' @param inset_percentage percentage of image to inset the scale bar
+#'
+#' @return a ggplot2 object
+#'
+#' @export
+#' @importFrom magrittr %>%
+#' @importFrom dplyr mutate
+#' @importFrom ggplot2 ggplot geom_raster aes theme_bw element_blank scale_y_reverse scale_x_continuous theme labs element_rect geom_path annotate
 construct_bscan <- function(oct,
                             bn,
                             layer_z_max = NULL,

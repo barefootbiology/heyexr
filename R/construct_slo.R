@@ -1,10 +1,29 @@
+#' Construct a ggplot2 object containing the data for an SLO
+#'
+#' Construct a ggplot2 object containing the data for an SLO
+#'
+#' @param oct a list containing the OCT data
+#' @param low_color color for lowest values
+#' @param high_color color for highest values
+#' @param scale_bars Should scale bars be drawn?
+#' @param scale_length length of scale bars in microns
+#' @param scale_color color of scale bar
+#' @param inset_percentage percentage of image to inset the scale bar
+#'
+#' @return a ggplot2 object
+#'
+#' @export
+#' @importFrom magrittr %>%
+#' @importFrom grid unit
+#' @importFrom dplyr mutate
+#' @importFrom ggplot2 ggplot geom_raster element_blank theme_bw theme scale_fill_continuous coord_fixed scale_x_continuous scale_y_continuous labs geom_path annotate
 construct_slo <- function(oct,
                           low_color = "black",
                           high_color = "white",
                           scale_bar = TRUE,
                           scale_length = 500,
-                          inset_percentage = 0.05,
-                          scale_color = "white") {
+                          scale_color = "white",
+                          inset_percentage = 0.05) {
 
     # Determine placement of scale angle on the SLO:
     # Calculate the (x,y) for the bottom left corner

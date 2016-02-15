@@ -1,4 +1,15 @@
-# TASK: Read B-Scans ------------------------
+#' Read b-scan header information from a connection to a VOL file
+#'
+#' Reads the b-scan header information from a connection to a VOL file. Function
+#' based on Open_Heyex_Raw.java from the HEYEX plugin for ImageJ.
+#'
+#' @param vol_file the connection to a VOL file
+#' @param header previously imported VOL file header data
+#'
+#' @return a list of the b-scan specfific header information
+#'
+#' @export
+#' @importFrom magrittr %>%
 read_bscan_header <- function(vol_file, header) {
     # For each B-Scan, read header and data
     bscan_header_list <- list()

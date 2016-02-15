@@ -5,7 +5,18 @@ Version: 0.1
 Date: 2015-10-15
 Author: S. Scott Whitmore
 Maintainer: S. Scott Whitmore <steven-whitmore@uiowa.edu>
-Description: Functions to import Heidelberg Spectralis ocular coherence tomography (OCT) data in R.
+Description: Functions to import Heidelberg Spectralis ocular coherence
+    tomography (OCT) data in R.
 License: TBD
 LazyData: TRUE
-Imports: XML, dplyr, tidyr, stringr, bit64, ggplot2, gridExtra, grid, standardlibrary
+Imports:
+    XML,
+    dplyr,
+    tidyr,
+    stringr,
+    bit64,
+    ggplot2,
+    gridExtra,
+    grid,
+    standardlibrary
+RoxygenNote: 5.0.1

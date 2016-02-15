@@ -1,4 +1,19 @@
-# Plot data and segmentation --------------------------
+#' Render summary plots of SLO and b-scans for an OCT VOL file
+#'
+#' Generates plots from a VOL file. Segmentation from the Iowa Reference
+#' Algorithms can be included as an optional overlay on the b-scans.
+#'
+#' @param vol_path path to VOL file
+#' @param xml_path path to XML file containing Iowa Reference Algorithms segmentation
+#' @param return_results Return the data read as a list?
+#' @param recycle NOT IMPLEMENTED
+#'
+#' @return a list containing the OCT and segmentation data (if requested)
+#'
+#' @export
+#' @importFrom magrittr %>%
+#' @importFrom ggplot2 scale_color_brewer element_text theme ggsave scale_color_manual geom_line geom_segment aes ggplot
+#' @importFrom gridExtra arrangeGrob
 render_oct_summary <- function(vol_path,
                                xml_path = NA,
                                return_results=FALSE,
@@ -110,7 +125,7 @@ render_oct_summary <- function(vol_path,
             geom_line(data = oct_seg_array %>% dplyr::filter(b_scan == b_n),
                       mapping = aes(group=as.factor(seg_layer),
                                     color=as.factor(seg_layer))) +
-            scale_colour_manual(guide = 'none',
+            scale_color_manual(guide = 'none',
                                 values = c("1"="blue",
                                            "2"="green"))
 

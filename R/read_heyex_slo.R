@@ -1,5 +1,15 @@
-# Read the header information from a Heidelberg Spectralis VOL file.
-# Assumes offset of 2048 bytes.
+#' Read the VOL SLO image
+#'
+#' Read the header information from a Heidelberg Spectralis VOL file.
+#' Function assumes the header begins at byte 2048.
+#'
+#' @param con connection to a VOL file
+#' @param header previously read header information
+#'
+#' @return a matrix containing the SLO image
+#'
+#' @export
+#' @importFrom magrittr %>%
 read_heyex_slo <- function(con, header) {
     # Code based on these two projects:
     #

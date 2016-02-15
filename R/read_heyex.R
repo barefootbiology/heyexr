@@ -1,4 +1,14 @@
-# Read a Heidelberg Spectralis VOL file.
+#' Read a Heidelberg Spectralis VOL file
+#'
+#' Creates a list containing data from a Heidelberg Spectralis VOL file.
+#'
+#' @param x path to VOL file
+#' @param header_slo_only Import only the header information and SLO image?
+#'
+#' @return a list containing the data from the VOL file
+#'
+#' @export
+#' @importFrom magrittr %>%
 read_heyex <- function(x, header_slo_only = FALSE) {
     # Code based on these two projects:
     #

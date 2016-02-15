@@ -1,5 +1,15 @@
-# Read the header information from a Heidelberg Spectralis VOL file.
-# Assumes offset of 0 bytes.
+#' Read the VOL header
+#'
+#' Read the header information from a Heidelberg Spectralis VOL file.
+#' Function assumes the header begins at byte 0. Due to limitation in R,
+#' this function does not currently parse date and time information correctly.
+#'
+#' @param con a connection to the VOL file
+#'
+#' @return a list containing the header from the VOL file
+#'
+#' @export
+#' @importFrom magrittr %>%
 read_heyex_header <- function(con) {
     # Code based on these two projects:
     #
