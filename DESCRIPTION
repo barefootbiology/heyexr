@@ -9,4 +9,12 @@ Description: Functions to import Heidelberg Spectralis ocular coherence
     tomography (OCT) data in R.
 License: TBD
 LazyData: TRUE
+Imports:
+    XML,
+    dplyr,
+    tidyr,
+    magrittr,
+    stringr,
+    ggplot2,
+    gridExtra
 RoxygenNote: 5.0.1
