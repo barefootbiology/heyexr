@@ -10,7 +10,6 @@
 #' @export
 #' @importFrom dplyr tbl_df mutate
 #' @importFrom tidyr gather
-#' @importFrom standardlibrary cbind_rownames
 #' @importFrom magrittr %>%
 get_bscan <- function(oct, n=1) {
     matrix(data=oct$bscan_images[[n]], nrow=oct$header$size_z, byrow=TRUE) %>%
