@@ -3,8 +3,8 @@
 #' Generates plots from a VOL file. Segmentation from the Iowa Reference
 #' Algorithms can be included as an optional overlay on the b-scans.
 #'
-#' @param vol_path path to VOL file
-#' @param xml_path path to XML file containing Iowa Reference Algorithms segmentation
+#' @param vol_file path to VOL file
+#' @param xml_file path to XML file containing Iowa Reference Algorithms segmentation
 #' @param return_results Return the data read as a list?
 #' @param recycle NOT IMPLEMENTED
 #'
@@ -14,8 +14,8 @@
 #' @importFrom magrittr %>%
 #' @importFrom ggplot2 scale_color_brewer element_text theme ggsave scale_color_manual geom_line geom_segment aes ggplot
 #' @importFrom gridExtra arrangeGrob
-render_oct_summary <- function(vol_path,
-                               xml_path = NA,
+render_oct_summary <- function(vol_file,
+                               xml_file = NA,
                                return_results=FALSE,
                                recycle=NULL) {
 
@@ -27,9 +27,9 @@ render_oct_summary <- function(vol_path,
     #       using the Heidelberg segmentation.
 
     # From the results directory, construct the other file paths
-    base_name <- basename(vol_path) %>%
+    base_name <- basename(vol_file) %>%
         gsub(pattern=".VOL", replacement="", ignore.case = TRUE)
-    output_path <- file.path(dirname(vol_path), "rendered_bscans")
+    output_path <- file.path(dirname(vol_file), "rendered_bscans")
 
     if(!dir.exists(output_path)) {
         dir.create(output_path)
@@ -41,21 +41,21 @@ render_oct_summary <- function(vol_path,
 
     if(is.null(recycle)) {
         # Load raw data from VOL or RData file
-        if(!file.exists(paste(vol_path, ".RData", sep=""))) {
+        if(!file.exists(paste(vol_file, ".RData", sep=""))) {
             # Load the VOL data
-            oct <- read_heyex(vol_path)
-            save(oct, file = paste(vol_path, ".RData", sep=""))
+            oct <- read_heyex(vol_file)
+            save(oct, file = paste(vol_file, ".RData", sep=""))
         } else {
-            load(paste(vol_path, ".RData", sep=""))
+            load(paste(vol_file, ".RData", sep=""))
         }
 
         # Load segmentation from XML or RData file
-        if(!file.exists(paste(xml_path, ".RData", sep=""))) {
+        if(!file.exists(paste(xml_file, ".RData", sep=""))) {
             # Load the segmentation from OCT Explorer
-            oct_segmentation <- read_segmentation_xml(xml_path)
-            save(oct_segmentation, file = paste(xml_path, ".RData", sep=""))
+            oct_segmentation <- read_segmentation_xml(xml_file)
+            save(oct_segmentation, file = paste(xml_file, ".RData", sep=""))
         } else {
-            load(paste(xml_path, ".RData", sep=""))
+            load(paste(xml_file, ".RData", sep=""))
         }
 
 

@@ -2,7 +2,7 @@
 #'
 #' Reads the layer segmentation as output by the Iowa Reference Algorithms (XML format).
 #'
-#' @param file path to the segmentation XML file
+#' @param xml_file path to the segmentation XML file
 #'
 #' @return a list containing the header information and the layer segmentation
 #'
@@ -10,12 +10,12 @@
 #' @importFrom dplyr tbl_df filter rename mutate mutate group_by ungroup select distinct inner_join
 #' @importFrom XML xmlParse xmlRoot xmlValue xmlTreeParse xmlToDataFrame
 #' @importFrom magrittr %>%
-read_segmentation_xml <- function(file) {
-    oct_file_parsed_tab = gsub(file, pattern="\\.xml$",
+read_segmentation_xml <- function(xml_file) {
+    oct_file_parsed_tab = gsub(xml_file, pattern="\\.xml$",
                                replacement=".txt", perl = TRUE)
 
     # Loading the XML version
-    oct_surfaces_xml = xmlParse(file)
+    oct_surfaces_xml = xmlParse(xml_file)
 
     # TASK: Update the code to parse through the file sequentially as that may
     #       save time.

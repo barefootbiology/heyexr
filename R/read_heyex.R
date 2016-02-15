@@ -2,28 +2,28 @@
 #'
 #' Creates a list containing data from a Heidelberg Spectralis VOL file.
 #'
-#' @param x path to VOL file
+#' @param vol_file path to VOL file
 #' @param header_slo_only Import only the header information and SLO image?
 #'
 #' @return a list containing the data from the VOL file
 #'
 #' @export
 #' @importFrom magrittr %>%
-read_heyex <- function(x, header_slo_only = FALSE) {
+read_heyex <- function(vol_file, header_slo_only = FALSE) {
     # Code based on these two projects:
     #
     # https://github.com/halirutan/HeyexImport
     # http://rsb.info.nih.gov/ij/plugins/heyex/index.html
 
     # Create a connection to the VOL file
-    vol_file = file(x, "rb")
+    vol_con = file(x, "rb")
 
     # Read the header
-    header <- read_heyex_header(vol_file)
+    header <- read_heyex_header(vol_con)
 
-    # cat("Offset to slo:",seek(vol_file, where = NA), "\n")
+    # cat("Offset to slo:",seek(vol_con, where = NA), "\n")
     # Read the SLO image
-    slo_image <- read_heyex_slo(vol_file, header)
+    slo_image <- read_heyex_slo(vol_con, header)
 
     if(!header_slo_only) {
         # Calculated offests
@@ -55,7 +55,7 @@ read_heyex <- function(x, header_slo_only = FALSE) {
         for (bscan in c(0:(header$num_bscans-1))) {
             setTxtProgressBar(pb, bscan+1, title = "Reading B-Scans")
 
-            bscan_header_all[[bscan + 1]] <- read_bscan_header(vol_file, header)
+            bscan_header_all[[bscan + 1]] <- read_bscan_header(vol_con, header)
 
             # Read in the Heidelberg segmentation information
             for (seg_layer in c(0:(bscan_header_all[[bscan+1]]$num_seg-1))) {
@@ -66,7 +66,7 @@ read_heyex <- function(x, header_slo_only = FALSE) {
                         seg_layer*header$size_x +
                         bscan*bscan_header_all[[bscan+1]]$num_seg*header$size_x
 
-                    y_value <- readFloat(vol_file)
+                    y_value <- readFloat(vol_con)
                     if ((y_value < 3.4028235E37) & !is.na(y_value)) {
                         seg_array[index] <- y_value
                     } else {
@@ -75,9 +75,9 @@ read_heyex <- function(x, header_slo_only = FALSE) {
                 }
             }
 
-            temp <- readBin(vol_file, "raw", n = (header$bscan_hdr_size - 256 - (bscan_header_all[[bscan+1]]$num_seg*header$size_x*4)))
+            temp <- readBin(vol_con, "raw", n = (header$bscan_hdr_size - 256 - (bscan_header_all[[bscan+1]]$num_seg*header$size_x*4)))
 
-            bscan_image[[length(bscan_image) + 1]] <- readFloatArray(vol_file, n = header$size_x * header$size_z)
+            bscan_image[[length(bscan_image) + 1]] <- readFloatArray(vol_con, n = header$size_x * header$size_z)
 
         }
 
@@ -119,7 +119,7 @@ read_heyex <- function(x, header_slo_only = FALSE) {
     }
 
     # Close the connection to the VOL file
-    close(vol_file)
+    close(vol_con)
 
     # Return the requested object
     return(output)

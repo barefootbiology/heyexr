@@ -2,7 +2,7 @@
 #'
 #' Parse the b-scan data from an OCT list object
 #'
-#' @param object the OCT list object
+#' @param oct the OCT list object
 #' @param n the ID of the requested b-scan
 #'
 #' @return a tbl_df containing the b-scan
@@ -12,8 +12,8 @@
 #' @importFrom tidyr gather
 #' @importFrom standardlibrary cbind_rownames
 #' @importFrom magrittr %>%
-get_bscan <- function(object, n=1) {
-    matrix(data=object$bscan_images[[n]], nrow=object$header$size_z, byrow=TRUE) %>%
+get_bscan <- function(oct, n=1) {
+    matrix(data=oct$bscan_images[[n]], nrow=oct$header$size_z, byrow=TRUE) %>%
         as.data.frame() %>%
         cbind_rownames("z") %>%
         mutate(z = as.numeric(as.character(z))) %>%

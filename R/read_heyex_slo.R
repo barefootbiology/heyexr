@@ -10,13 +10,13 @@
 #'
 #' @export
 #' @importFrom magrittr %>%
-read_heyex_slo <- function(con, header) {
+read_heyex_slo <- function(vol_con, header) {
     # Code based on these two projects:
     #
     # https://github.com/halirutan/HeyexImport
     # http://rsb.info.nih.gov/ij/plugins/heyex/index.html
 
-    slo_image <- readBin(con, integer(), size = 1,
+    slo_image <- readBin(vol_con, integer(), size = 1,
                          n = header$size_x_slo * header$size_y_slo,
                          endian = "little", signed = FALSE) %>%
         (function(x) matrix(x, nrow = header$size_x_slo))

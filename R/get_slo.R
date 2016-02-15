@@ -2,7 +2,7 @@
 #'
 #' Retrieves the SLO data from an OCT object
 #'
-#' @param object an OCT list object
+#' @param oct an OCT list oct
 #'
 #' @return a tbl_df of the SLO data
 #'
@@ -11,8 +11,8 @@
 #' @importFrom dplyr mutate
 #' @importFrom tidyr gather
 #' @importFrom stringr str_replace
-get_slo <- function(object) {
-    object$slo_image %>%
+get_slo <- function(oct) {
+    oct$slo_image %>%
         as.data.frame %>%
         cbind_rownames("x") %>%
         tbl_df %>%
