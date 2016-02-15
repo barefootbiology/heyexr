@@ -9,6 +9,7 @@
 #'
 #' @export
 #' @importFrom magrittr %>%
+#' @importFrom dplyr bind_rows mutate
 read_heyex <- function(vol_file, header_slo_only = FALSE) {
     # Code based on these two projects:
     #
