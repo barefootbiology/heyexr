@@ -16,7 +16,7 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
     # http://rsb.info.nih.gov/ij/plugins/heyex/index.html
 
     # Create a connection to the VOL file
-    vol_con = file(x, "rb")
+    vol_con = file(vol_file, "rb")
 
     # Read the header
     header <- read_heyex_header(vol_con)

@@ -5,8 +5,8 @@
 #'
 #' @param vol_file path to VOL file
 #' @param xml_file path to XML file containing Iowa Reference Algorithms segmentation
+#' @param out_dir name of directory to save rendered results
 #' @param return_results Return the data read as a list?
-#' @param recycle NOT IMPLEMENTED
 #'
 #' @return a list containing the OCT and segmentation data (if requested)
 #'
@@ -15,21 +15,18 @@
 #' @importFrom ggplot2 scale_color_brewer element_text theme ggsave scale_color_manual geom_line geom_segment aes ggplot
 #' @importFrom gridExtra arrangeGrob
 render_oct_summary <- function(vol_file,
-                               xml_file = NA,
-                               return_results=FALSE,
-                               recycle=NULL) {
+                               xml_file = NULL,
+                               out_dir = "rendered_bscans",
+                               return_results=FALSE) {
 
     # TASK: Ensure that the render function will work with or without
     #       segmentation from OCT explorer.
 
-    # TASK: Do not crop the image of the bscan along the z-axis using the
-    #       XML segmentation results. IF you implement this function, crop
-    #       using the Heidelberg segmentation.
-
-    # From the results directory, construct the other file paths
     base_name <- basename(vol_file) %>%
         gsub(pattern=".VOL", replacement="", ignore.case = TRUE)
-    output_path <- file.path(dirname(vol_file), "rendered_bscans")
+
+    # From the results directory, construct the other file paths
+    output_path <- file.path(out_dir)
 
     if(!dir.exists(output_path)) {
         dir.create(output_path)
@@ -39,17 +36,19 @@ render_oct_summary <- function(vol_file,
     oct <- NULL
     oct_segmentation <- NULL
 
-    if(is.null(recycle)) {
-        # Load raw data from VOL or RData file
-        if(!file.exists(paste(vol_file, ".RData", sep=""))) {
-            # Load the VOL data
-            oct <- read_heyex(vol_file)
-            save(oct, file = paste(vol_file, ".RData", sep=""))
-        } else {
-            load(paste(vol_file, ".RData", sep=""))
-        }
+    # TASK: Decided if the intermediate files should be saved
+    # Load raw data from VOL or RData file
+    if(!file.exists(paste(vol_file, ".RData", sep=""))) {
+        # Load the VOL data
+        oct <- read_heyex(vol_file)
+        save(oct, file = paste(vol_file, ".RData", sep=""))
+    } else {
+        load(paste(vol_file, ".RData", sep=""))
+    }
 
-        # Load segmentation from XML or RData file
+    # If an XML file is provided,
+    # load segmentation from XML or RData file.
+    if(!is.null(xml_file)) {
         if(!file.exists(paste(xml_file, ".RData", sep=""))) {
             # Load the segmentation from OCT Explorer
             oct_segmentation <- read_segmentation_xml(xml_file)
@@ -57,16 +56,11 @@ render_oct_summary <- function(vol_file,
         } else {
             load(paste(xml_file, ".RData", sep=""))
         }
-
-
-    } else {
-        oct <- recycle$oct
-        oct_segmentation <- recycle$segmentation
     }
 
-    p_slo <- construct_slo(oct)
 
-    # TASK: Overlay this segmentation
+    p_slo <- construct_slo(oct, draw_margins = TRUE)
+
     # Get the Heidelberg segmentation
     oct_seg_array <- get_segmentation(oct)
 
@@ -80,15 +74,11 @@ render_oct_summary <- function(vol_file,
     tt <- theme(legend.position="none",
                 plot.title = element_text(hjust=-0.1, face="bold"))
 
-    # OCT Segmentation minimum and maximum
-#     layer_z_min <- max(0, min(oct_segmentation$layers[["value"]])-10)
-#     layer_z_max <- min(max(oct_segmentation$layers[["value"]])+75,
-#                        oct$header$size_z)
+    # OCT Segmentation minimum and maximum (from Heidelberg segmenation)
     layer_z_min <- max(0, min(oct_seg_array[["z"]], na.rm = TRUE) - 10)
     layer_z_max <- min(max(oct_seg_array[["z"]], na.rm = TRUE) + 75,
                        oct$header$size_z)
 
-    # Plot each b-scan --------------------------
     # Initialize the progress bar
     pb <- txtProgressBar(min = 0,
                          max = oct$header$num_bscans,
@@ -96,8 +86,10 @@ render_oct_summary <- function(vol_file,
                          title="Drawing b-scans...",
                          file=stderr())
 
-    plot_list <- list()
+#     # Create a list to store each rendered plot
+#     plot_list <- list()
 
+    # Plot each b-scan --------------------------
     for (b_n in 1:oct$header$num_bscans) {
 
         # Construct the b-scan plot:
@@ -108,23 +100,29 @@ render_oct_summary <- function(vol_file,
         p_1 <- construct_bscan(oct, b_n, layer_z_max = layer_z_max,
                                        layer_z_min = layer_z_min)
 
-        # Overlay Iowa Reference Algorithms segmentation
-        # TASK: Make this code contingent on the XML map
-        p_1_l <- p_1 +
-            geom_line(data=oct_segmentation$layers %>%
-                          filter(bscan_id == b_n_seg[as.character(b_n)]),
-                      mapping = aes(x=ascan_id,
-                                    y=value,
-                                    group=as.factor(layer_z_order),
-                                    color=as.factor(layer_z_order)),
-                      size=0.25, alpha=0.6) +
-            scale_color_brewer(name="boundary", palette = "Spectral")
+        # If an XML file was provided,
+        # overlay Iowa Reference Algorithms segmentation on the top b-scan.
+        if(!is.null(xml_file)) {
+            p_1_l <- p_1 +
+                geom_line(data=oct_segmentation$layers %>%
+                              filter(bscan_id == b_n_seg[as.character(b_n)]),
+                          mapping = aes(x=ascan_id,
+                                        y=value,
+                                        group=as.factor(layer_z_order),
+                                        color=as.factor(layer_z_order)),
+                          size=0.25, alpha=0.6) +
+                scale_color_brewer(name="boundary", palette = "Spectral")
+        } else {
+            p_1_l <- p_1
+        }
+
 
         # Overlay Heidelberg segmentation (just for kicks)
         p_1_l2 <- p_1 +
             geom_line(data = oct_seg_array %>% dplyr::filter(b_scan == b_n),
                       mapping = aes(group=as.factor(seg_layer),
-                                    color=as.factor(seg_layer))) +
+                                    color=as.factor(seg_layer)),
+                      alpha = 0.5) +
             scale_color_manual(guide = 'none',
                                 values = c("1"="blue",
                                            "2"="green"))

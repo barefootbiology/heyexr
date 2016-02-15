@@ -9,6 +9,7 @@
 #' @param scale_length length of scale bars in microns
 #' @param scale_color color of scale bar
 #' @param inset_percentage percentage of image to inset the scale bar
+#' @param draw_margins Should the plot include margins and axis labels?
 #'
 #' @return a ggplot2 object
 #'
@@ -23,7 +24,8 @@ construct_slo <- function(oct,
                           scale_bar = TRUE,
                           scale_length = 500,
                           scale_color = "white",
-                          inset_percentage = 0.05) {
+                          inset_percentage = 0.05,
+                          draw_margins = TRUE) {
 
     # Determine placement of scale angle on the SLO:
     # Calculate the (x,y) for the bottom left corner
@@ -42,22 +44,27 @@ construct_slo <- function(oct,
         geom_raster(aes(fill = z)) +
         scale_fill_continuous(low = low_color, high = high_color) +
         theme_bw() +
-        theme(axis.ticks = element_blank(),
-              axis.ticks.length = unit(0, "null"),
-              panel.grid = element_blank(),
-              axis.text.x = element_blank(),
-              axis.text.y = element_blank(),
-              axis.title.x = element_blank(),
-              axis.title.y = element_blank(),
-              panel.background = element_blank(),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank(),
-              legend.position = "none",
-              plot.margin = unit(c(0,0,0,0), "cm")) +
         coord_fixed() +
         scale_x_continuous(expand = c(0, 0)) +
         scale_y_continuous(expand = c(0, 0), trans = "reverse") +
-        labs(x=NULL, y=NULL)
+        theme(axis.ticks = element_blank(),
+              axis.ticks.length = unit(0, "null"),
+              axis.text.x = element_blank(),
+              axis.text.y = element_blank(),
+              panel.grid = element_blank(),
+              panel.background = element_blank(),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank())
+
+    # Remove margins if requested
+    if (!draw_margins) {
+        p_slo <- p_slo +
+            theme(axis.title.x = element_blank(),
+                  axis.title.y = element_blank(),
+                  legend.position = "none",
+                  plot.margin = unit(c(0,0,0,0), "cm")) +
+            labs(x=NULL, y=NULL)
+    }
 
     # Add a scale bar if requested
     if (scale_bar) {
