@@ -1,5 +1,4 @@
 #!/usr/bin/env Rscript
-#!/Shared/IVR/whitmores/bin/Rscript
 
 # Parallelization based on:
 # http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/
