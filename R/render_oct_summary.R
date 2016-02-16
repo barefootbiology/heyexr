@@ -15,7 +15,7 @@
 #' @importFrom dplyr filter collect distinct select
 #' @importFrom ggplot2 scale_color_brewer element_text theme ggsave scale_color_manual geom_line geom_segment aes ggplot
 #' @importFrom gridExtra arrangeGrob
-#' @importFrom parallel parLapply makeCluster clusterCall
+#' @importFrom parallel parLapply makeCluster clusterCall stopCluster
 render_oct_summary <- function(vol_file,
                                xml_file = NULL,
                                out_dir = "rendered_bscans",
