@@ -42,6 +42,6 @@ argv %>% (function(x) data.frame(argument = names(argv), value = unlist(argv)))
 
 render_oct_summary(vol_file = argv$vol,
                    out_dir = argv$outdir,
-                   n_cores = argv$np)
+                   n_cores = as.numeric(argv$np))
 
 cat("Done\n")
