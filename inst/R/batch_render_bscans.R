@@ -6,6 +6,7 @@
 # library(parallel)
 library(heyexr)
 library(argparser)
+library(dplyr)
 
 p <- arg_parser("Render OCT summaries in parallel")
 
