@@ -98,6 +98,9 @@ render_oct_summary <- function(vol_file,
     n_cores <- as.numeric(argv$np)
     cl <- makeCluster(n_cores, type = "FORK")
     clusterEvalQ(cl, library(heyexr))
+    clusterEvalQ(cl, library(dplyr))
+    clusterEvalQ(cl, library(ggplot2))
+    clusterEvalQ(cl, library(gridExtra))
 
     # Plot each b-scan in parallel --------------------------
     plot_list <- parLapply(1:oct$header$num_bscans,
