@@ -109,7 +109,7 @@ render_oct_summary <- function(vol_file,
 #     clusterEvalQ(cl, library(gridExtra))
 
     # Plot each b-scan in parallel --------------------------
-    plot_list <- parLapply(1:oct$header$num_bscans,
+    plot_list <- parLapply(cl, 1:oct$header$num_bscans,
                            function(b_n) {
     #for (b_n in 1:oct$header$num_bscans) {
 
