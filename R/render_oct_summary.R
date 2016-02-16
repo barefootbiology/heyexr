@@ -15,7 +15,7 @@
 #' @importFrom dplyr filter collect distinct select
 #' @importFrom ggplot2 scale_color_brewer element_text theme ggsave scale_color_manual geom_line geom_segment aes ggplot
 #' @importFrom gridExtra arrangeGrob
-#' @importFrom parallel parLapply makeCluster clusterEvalQ
+#' @importFrom parallel parLapply makeCluster clusterCall
 render_oct_summary <- function(vol_file,
                                xml_file = NULL,
                                out_dir = "rendered_bscans",
@@ -95,7 +95,6 @@ render_oct_summary <- function(vol_file,
 #     plot_list <- list()
 
     #n_cores <- detectCores() - 1
-    n_cores <- as.numeric(argv$np)
     cl <- makeCluster(n_cores, type = "FORK")
 
     clusterCall(cl, function() {
