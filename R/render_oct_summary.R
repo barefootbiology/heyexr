@@ -15,10 +15,12 @@
 #' @importFrom dplyr filter collect distinct select
 #' @importFrom ggplot2 scale_color_brewer element_text theme ggsave scale_color_manual geom_line geom_segment aes ggplot
 #' @importFrom gridExtra arrangeGrob
+#' @importFrom parallel parLapply makeCluster clusterEvalQ
 render_oct_summary <- function(vol_file,
                                xml_file = NULL,
                                out_dir = "rendered_bscans",
-                               return_results=FALSE) {
+                               return_results=FALSE,
+                               n_cores = 1) {
 
     # TASK: Ensure that the render function will work with or without
     #       segmentation from OCT explorer.
@@ -75,23 +77,32 @@ render_oct_summary <- function(vol_file,
     tt <- theme(legend.position="none",
                 plot.title = element_text(hjust=-0.1, face="bold"))
 
+    # TASK: Modify this code. I think it might be unreliable to depend on the
+    #       automated segmentation. Inspect the results and decide.
     # OCT Segmentation minimum and maximum (from Heidelberg segmenation)
     layer_z_min <- max(0, min(oct_seg_array[["z"]], na.rm = TRUE) - 10)
     layer_z_max <- min(max(oct_seg_array[["z"]], na.rm = TRUE) + 75,
                        oct$header$size_z)
 
     # Initialize the progress bar
-    pb <- txtProgressBar(min = 0,
-                         max = oct$header$num_bscans,
-                         style = 1,
-                         title="Drawing b-scans...",
-                         file=stderr())
+#     pb <- txtProgressBar(min = 0,
+#                          max = oct$header$num_bscans,
+#                          style = 1,
+#                          title="Drawing b-scans...",
+#                          file=stderr())
 
 #     # Create a list to store each rendered plot
 #     plot_list <- list()
 
-    # Plot each b-scan --------------------------
-    for (b_n in 1:oct$header$num_bscans) {
+    #n_cores <- detectCores() - 1
+    n_cores <- as.numeric(argv$np)
+    cl <- makeCluster(n_cores, type = "FORK")
+    clusterEvalQ(cl, library(heyexr))
+
+    # Plot each b-scan in parallel --------------------------
+    plot_list <- parLapply(1:oct$header$num_bscans,
+                           function(b_n) {
+    #for (b_n in 1:oct$header$num_bscans) {
 
         # Construct the b-scan plot:
         # Perform gamma correction to lighten dark values.
@@ -165,9 +176,12 @@ render_oct_summary <- function(vol_file,
                units = "in", width = 12, height = 8, dpi = 300)
 
         # Update the progress bar
-        setTxtProgressBar(pb, b_n)
+        # setTxtProgressBar(pb, b_n)
 
-    }
+    })
+
+    stopCluster(cl)
+
 
 #     # Save a single PDF of all the scans
 #     ggsave(filename = paste(output_path, "/", base_name, "_", "compiled", ".pdf", sep=""),
