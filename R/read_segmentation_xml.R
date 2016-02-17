@@ -60,7 +60,7 @@ read_segmentation_xml <- function(xml_file) {
 
         oct_list <- list()
         # TASK: Update this code to work with any number of surface results
-        surface_index <- (xmlTreeParse(file))$doc$children$surfaces %>%
+        surface_index <- xmlTreeParse(xml_file)$doc$children$surfaces %>%
             names %>%
             grepl(pattern = "^surface$", perl = TRUE) %>%
             which
