@@ -173,7 +173,7 @@ render_oct_summary <- function(vol_file,
 
         # Layout the plots
         p_layout <- arrangeGrob(arrangeGrob(p_1_l + tt, p_1_l2 + tt, nrow=2),
-                                 arrangeGrob(p_slo_1 + tt, nrow=2),
+                                 arrangeGrob(p_slo_1 + tt, p_slo + tt, nrow=2),
                                  ncol=2, widths = c(3,2))
 
         # Save the plot in a list
