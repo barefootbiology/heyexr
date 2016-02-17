@@ -16,5 +16,6 @@ Imports:
     magrittr,
     stringr,
     ggplot2,
-    gridExtra
+    gridExtra,
+    readr
 RoxygenNote: 5.0.1
