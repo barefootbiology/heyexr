@@ -7,7 +7,7 @@
 #' @return a list containing the header information and the layer segmentation
 #'
 #' @export
-#' @importFrom dplyr tbl_df filter rename mutate mutate group_by ungroup select distinct inner_join
+#' @importFrom dplyr tbl_df filter rename mutate mutate group_by ungroup select distinct inner_join bind_rows
 #' @importFrom XML xmlParse xmlRoot xmlValue xmlTreeParse xmlToDataFrame
 #' @importFrom magrittr %>%
 read_segmentation_xml <- function(xml_file) {
@@ -82,11 +82,11 @@ read_segmentation_xml <- function(xml_file) {
                     tbl_df %>%
                     mutate(label=surface_label, name=surface_name, bscan_id=j-2)
             }
-            oct_list[[i]] <- rbind_all(surface_temp_list)
+            oct_list[[i]] <- bind_rows(surface_temp_list)
         }
 
         # Combine all the surfaces into one file
-        oct_data_frame <- rbind_all(oct_list) %>%
+        oct_data_frame <- bind_rows(oct_list) %>%
             rename(value=text) %>%
             mutate(value=as.numeric(value),
                    bscan_id=as.numeric(bscan_id),
@@ -119,7 +119,7 @@ read_segmentation_xml <- function(xml_file) {
     }
 
     # Return a list of all the variables
-    list(info = list(file = file,
+    list(info = list(file = xml_file,
                      file_tab = oct_file_parsed_tab,
                      size_units=size_units,
                      size_x=size_x,
