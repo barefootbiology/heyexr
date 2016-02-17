@@ -13,6 +13,10 @@ p <- arg_parser("Render OCT summaries in parallel")
 p <- add_argument(p, "--vol",
                   help = "Heidelberg VOL file to parse")
 
+p <- add_argument(p, "--xml",
+                  help = "XML segmentation from OCT Explorer",
+                  default = NA)
+
 p <- add_argument(p, "--np",
                   help="Number of cores to use",
                   default = 3)
@@ -41,6 +45,7 @@ argv %>% (function(x) data.frame(argument = names(argv), value = unlist(argv)))
 #           render_slo, out_dir = "~/Desktop/oct_controls_slo", draw_margins = FALSE)
 
 render_oct_summary(vol_file = argv$vol,
+                   xml_file = argv$xml,
                    out_dir = argv$outdir,
                    n_cores = as.numeric(argv$np))
 
