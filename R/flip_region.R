@@ -14,6 +14,8 @@ flip_region <- function(x, flip_to="OD") {
     # flip_to must either by "OD" or "OS".
     # Make sure to ignore the case
 
+    invisible(grid_regions)
+
     result <- x %>%
         inner_join(filter(grid_regions,
                           flipped_laterality == toupper(flip_to)))
