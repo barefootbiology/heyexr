@@ -13,14 +13,17 @@
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom dplyr filter collect distinct select
-#' @importFrom ggplot2 scale_color_brewer element_text theme ggsave scale_color_manual geom_line geom_segment aes ggplot
+#' @importFrom ggplot2 scale_color_brewer element_text theme ggsave scale_color_manual geom_line geom_segment geom_tile geom_vline aes ggplot annotate
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom parallel parLapply makeCluster clusterCall stopCluster
 render_oct_summary <- function(vol_file,
                                xml_file = NULL,
+                               center_file = NULL,
                                out_dir = "rendered_bscans",
                                return_results=FALSE,
-                               n_cores = 1) {
+                               n_cores = 1,
+                               overlay_heidelberg_segmentation = TRUE,
+                               crop_to_heidelberg_segmentation = c(10, 75)) {
 
     # TASK: Ensure that the render function will work with or without
     #       segmentation from OCT explorer.
@@ -38,6 +41,7 @@ render_oct_summary <- function(vol_file,
     # Load data ------------------------------------------
     oct <- NULL
     oct_segmentation <- NULL
+    oct_center <- NULL
 
     # TASK: Decided if the intermediate files should be saved
     # Load raw data from VOL or RData file
@@ -61,7 +65,20 @@ render_oct_summary <- function(vol_file,
         }
     }
 
+    # TASK: Load the "grid center" XML file
+    if(!is.null(center_file)) {
+        oct_center <- read_center_xml(center_file)
+    }
 
+    # TASK: Once the data has been returned to the user, I should probably
+    #       check to see if the data in meta data from the VOL file, the
+    #       segmentation file, and the grid center file all match. If not,
+    #       the function should at least return a warning.
+
+
+
+
+    # Build report elements ------------------------------------------
     p_slo <- construct_slo(oct, draw_margins = TRUE)
 
     # Get the Heidelberg segmentation
@@ -80,9 +97,26 @@ render_oct_summary <- function(vol_file,
     # TASK: Modify this code. I think it might be unreliable to depend on the
     #       automated segmentation. Inspect the results and decide.
     # OCT Segmentation minimum and maximum (from Heidelberg segmenation)
-    layer_z_min <- max(0, min(oct_seg_array[["z"]], na.rm = TRUE) - 10)
-    layer_z_max <- min(max(oct_seg_array[["z"]], na.rm = TRUE) + 75,
+    layer_z_min <- max(0, min(oct_seg_array[["z"]], na.rm = TRUE) - crop_to_heidelberg_segmentation[1])
+    layer_z_max <- min(max(oct_seg_array[["z"]], na.rm = TRUE) + crop_to_heidelberg_segmentation[2],
                        oct$header$size_z)
+
+    # Calculate grid center stuff
+    center_x_voxel <- oct_center[["center"]][["x"]]
+    center_y_voxel <- oct_center[["center"]][["y"]]
+
+    center_bscan <- oct$bscan_headers %>%
+        filter(bscan == center_y_voxel)
+
+    start_x_pixel <- center_bscan[["start_x_pixels"]]
+    end_x_pixel <- center_bscan[["end_x_pixels"]]
+
+    # NOTE: This will only work for horizontal scans.
+    center_x <- start_x_pixel + (end_x_pixel - start_x_pixel) * (center_x_voxel / oct$header$size_x)
+    center_y <- center_bscan[["start_y_pixels"]]
+
+    # Label the output files in the reverse order as the bscan IDs
+    reverse_order <- oct$header$num_bscans:1
 
     # Initialize the progress bar
 #     pb <- txtProgressBar(min = 0,
@@ -95,22 +129,23 @@ render_oct_summary <- function(vol_file,
 #     plot_list <- list()
 
     #n_cores <- detectCores() - 1
-    cl <- makeCluster(n_cores, type = "FORK")
-
-    clusterCall(cl, function() {
-        library(magrittr);
-        library(heyexr);
-        library(dplyr);
-        library(ggplot2);
-        library(gridExtra); })
+#     cl <- makeCluster(n_cores, type = "FORK")
+#
+#     clusterCall(cl, function() {
+#         library(magrittr);
+#         library(heyexr);
+#         library(dplyr);
+#         library(ggplot2);
+#         library(gridExtra); })
 #     clusterEvalQ(cl, library(heyexr))
 #     clusterEvalQ(cl, library(dplyr))
 #     clusterEvalQ(cl, library(ggplot2))
 #     clusterEvalQ(cl, library(gridExtra))
 
     # Plot each b-scan in parallel --------------------------
-    plot_list <- parLapply(cl, 1:oct$header$num_bscans,
-                           function(b_n) {
+#     plot_list <- parLapply(cl, 1:oct$header$num_bscans,
+#                            function(b_n) {
+    lapply(1:oct$header$num_bscans, function(b_n) {
     #for (b_n in 1:oct$header$num_bscans) {
 
         # Construct the b-scan plot:
@@ -131,31 +166,45 @@ render_oct_summary <- function(vol_file,
                                         y=value,
                                         group=as.factor(layer_z_order),
                                         color=as.factor(layer_z_order)),
-                          size=0.25, alpha=0.6) +
+                          alpha=0.6) +
                 scale_color_brewer(name="boundary", palette = "Spectral")
         } else {
             p_1_l <- p_1
         }
 
-        # Overlay Heidelberg segmentation (just for kicks)
-        n_segments <- oct_seg_array %>%
-            dplyr::filter(b_scan == b_n) %>%
-            select(seg_layer) %>%
-            distinct() %>%
-            collect %>%
-            .[["seg_layer"]]
+        if(!is.null(center_file)) {
+            if(b_n == center_y_voxel) {
+                p_1_l <- p_1_l +
+                    geom_vline(xintercept = center_x_voxel,
+                               color = "green",
+                               alpha = 0.5,
+                               linetype = "dotted")
+            }
+        }
 
-        segmentation_layer_value <- c("1"="red","2"="blue","3"="green")[as.character(n_segments)]
+        # Overlay Heidelberg segmentation on the lower b-scan plot
+        if(overlay_heidelberg_segmentation) {
+            n_segments <- oct_seg_array %>%
+                dplyr::filter(b_scan == b_n) %>%
+                select(seg_layer) %>%
+                distinct() %>%
+                collect %>%
+                .[["seg_layer"]]
 
-        p_1_l2 <- p_1 +
-            geom_line(data = oct_seg_array %>% dplyr::filter(b_scan == b_n),
-                      mapping = aes(group=as.factor(seg_layer),
-                                    color=as.factor(seg_layer)),
-                      alpha = 0.5) +
-            scale_color_manual(guide = 'none',
-                                values = segmentation_layer_value)
+            segmentation_layer_value <- c("1"="red","2"="blue","3"="green")[as.character(n_segments)]
 
-        # Overlay the position of the b-scans on the SL
+            p_1_l2 <- p_1 +
+                geom_line(data = oct_seg_array %>% dplyr::filter(b_scan == b_n),
+                          mapping = aes(group=as.factor(seg_layer),
+                                        color=as.factor(seg_layer)),
+                          alpha = 0.5) +
+                scale_color_manual(guide = 'none',
+                                    values = segmentation_layer_value)
+        } else {
+            p_1_l2 <- p_1
+        }
+
+        # Overlay the position of the b-scans on the top SLO
         p_slo_1 <- p_slo +
             geom_segment(data = oct$bscan_headers %>%
                              mutate(is_current = ifelse(bscan == b_n,
@@ -171,6 +220,16 @@ render_oct_summary <- function(vol_file,
                                           "other"="darkgreen"),
                                guide = 'none')
 
+        # Add in the grid center information if available
+        if(!is.null(center_file)) {
+            p_slo_1 <- p_slo_1 +
+                annotate("point",
+                         x = center_x,
+                         y = center_y,
+                         color = "green",
+                         alpha = 0.5)
+        }
+
         # Layout the plots
         p_layout <- arrangeGrob(arrangeGrob(p_1_l + tt, p_1_l2 + tt, nrow=2),
                                  arrangeGrob(p_slo_1 + tt, p_slo + tt, nrow=2),
@@ -180,7 +239,7 @@ render_oct_summary <- function(vol_file,
         # plot_list[[b_n]] <- p_layout
 
         # Save the plot as a layout
-        file_out <- paste(output_path, "/", base_name, "_", sprintf("%03d", b_n), ".pdf", sep="")
+        file_out <- paste(output_path, "/", base_name, "_", sprintf("%03d", reverse_order[b_n]), ".pdf", sep="")
         ggsave(filename = file_out, plot = p_layout,
                units = "in", width = 12, height = 8, dpi = 300)
 
@@ -189,7 +248,7 @@ render_oct_summary <- function(vol_file,
 
     })
 
-    stopCluster(cl)
+    #stopCluster(cl)
 
 
 #     # Save a single PDF of all the scans

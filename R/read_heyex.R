@@ -42,7 +42,7 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
 
         # Create empty containers
         bscan_header_all <- list()
-        seg_array = list()
+        seg_array <- list()
         bscan_image <- list()
 
         # TASK: Move this to an external function.
@@ -96,8 +96,8 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
             mutate(bscan_header_size = as.numeric(bscan_header_size),
                    start_x = as.numeric(start_x),
                    start_y = as.numeric(start_y),
-                   end_x= as.numeric(end_x),
-                   end_y= as.numeric(end_y),
+                   end_x = as.numeric(end_x),
+                   end_y = as.numeric(end_y),
                    num_seg = as.numeric(num_seg),
                    off_seg = as.numeric(off_seg),
                    quality = as.numeric(quality)) %>%
@@ -110,8 +110,8 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
         output <- list(header = header,
                        slo_image = slo_image,
                        bscan_headers = bscan_header_all,
-                       seg_array=seg_array,
-                       bscan_images=bscan_image)
+                       seg_array = seg_array,
+                       bscan_images = bscan_image)
 
     } else {
         # Return only the header and SLO image

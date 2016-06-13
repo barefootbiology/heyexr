@@ -15,11 +15,15 @@ p <- add_argument(p, "--vol",
 
 p <- add_argument(p, "--xml",
                   help = "XML segmentation from OCT Explorer",
-                  default = NA)
+                  default = NULL)
+
+p <- add_argument(p, "--center",
+                  help="XML file specifying the grid center",
+                  default = NULL)
 
 p <- add_argument(p, "--np",
                   help="Number of cores to use",
-                  default = 3)
+                  default = 1)
 
 # p <- add_argument(p, "--indir",
 #                   help="Directory containing VOL files",
@@ -28,6 +32,8 @@ p <- add_argument(p, "--np",
 p <- add_argument(p, "--outdir",
                   help="Directory to write results",
                   default = ".")
+
+
 
 argv <- parse_args(p)
 
@@ -46,6 +52,7 @@ argv %>% (function(x) data.frame(argument = names(argv), value = unlist(argv)))
 
 render_oct_summary(vol_file = argv$vol,
                    xml_file = argv$xml,
+                   center_file = argv$center,
                    out_dir = argv$outdir,
                    n_cores = as.numeric(argv$np))
 
