@@ -11,11 +11,11 @@
 #' @importFrom XML xmlParse xmlRoot xmlValue xmlTreeParse xmlToDataFrame
 #' @importFrom magrittr %>%
 read_segmentation_xml <- function(xml_file) {
-    oct_file_parsed_tab = gsub(xml_file, pattern="\\.xml$",
+    oct_file_parsed_tab <- gsub(xml_file, pattern="\\.xml$",
                                replacement=".txt", perl = TRUE)
 
     # Loading the XML version
-    oct_surfaces_xml = xmlParse(xml_file)
+    oct_surfaces_xml <- xmlParse(xml_file)
 
     # TASK: Update the code to parse through the file sequentially as that may
     #       save time.
@@ -47,7 +47,9 @@ read_segmentation_xml <- function(xml_file) {
         xmlValue %>%
         as.numeric
 
-    surface_num <- xmlRoot(oct_surfaces_xml)[["surface_num"]]
+    surface_num <- xmlRoot(oct_surfaces_xml)[["surface_num"]] %>%
+        xmlValue %>%
+        as.numeric
 
     # Parse the XML file if that has not been performed previously.
     # Otherwise, load a tab-delimited version of the parsed XML.
@@ -76,11 +78,11 @@ read_segmentation_xml <- function(xml_file) {
             # CODE HERE
 
             surface_temp_list <- list()
-            for (j in 1:size_y+2) {
-                surface_temp_list[[j]] = xmlRoot(oct_surfaces_xml)[[i]][[j]] %>%
+            for (j in 1:size_y+3) {
+                surface_temp_list[[j]] <- xmlRoot(oct_surfaces_xml)[[i]][[j]] %>%
                     xmlToDataFrame %>%
                     tbl_df %>%
-                    mutate(label=surface_label, name=surface_name, bscan_id=j-2)
+                    mutate(label=surface_label, name=surface_name, bscan_id=j-3)
             }
             oct_list[[i]] <- bind_rows(surface_temp_list)
         }
