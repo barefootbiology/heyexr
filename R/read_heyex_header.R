@@ -64,9 +64,14 @@ read_heyex_header <- function(vol_con) {
     header$visit_id         <- readBin(vol_con, "raw", endian = "little", size = 1, n = 24) %>%
         rawToChar()
 
+
     # TASK: Convert to date/time
     # Convert DOB following "Open_Heyex_Info.java"
-    header$visit_date       <- readBin(vol_con, double(), endian = "little")
+    visit_date              <- readBin(vol_con, double(), endian = "little")
+
+    # NOTE: I think this works. It makes sense at least.
+    header$visit_date       <- ((visit_date - 25569)) %>%
+        as.Date(origin = as.POSIXct("1970-01-01", tz="UTC"))
 
     header$spare            <- readBin(vol_con, "raw", endian = "little", size = 1, n = 1840)
 
