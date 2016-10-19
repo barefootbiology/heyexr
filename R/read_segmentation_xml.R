@@ -72,13 +72,18 @@ read_segmentation_xml <- function(xml_file) {
                 as.numeric
             surface_name <- xmlRoot(oct_surfaces_xml)[[i]][[2]] %>%
                 xmlValue()
+            # NOTE: The "instance" value is something new with the 4.0.0
+            #       version of the Iowa Reference Algorithms. I'm not sure
+            #       to what it refers.
+            instance_value <- xmlRoot(oct_surfaces_xml)[[i]][[3]] %>%
+                xmlValue()
 
             # There are 61 "bscan" subelements.
             # Combine these as a long format table, using 1-61 as the covariate (bscan_id)
             # CODE HERE
 
             surface_temp_list <- list()
-            for (j in 1:size_y+3) {
+            for (j in (1:size_z)+3) {
                 surface_temp_list[[j]] <- xmlRoot(oct_surfaces_xml)[[i]][[j]] %>%
                     xmlToDataFrame %>%
                     tbl_df %>%
@@ -95,19 +100,21 @@ read_segmentation_xml <- function(xml_file) {
                    label=as.numeric(label)) %>%
             mutate(label_2=as.numeric(factor(as.character(label)))) %>%
             group_by(label) %>%
-            mutate(ascan_id = rep(1:size_x, size_y)) %>%
+            mutate(ascan_id = rep(1:size_x, size_z)) %>%
             ungroup
 
+        # NOTE: Since 4.0.0, y is now z. So I think this should
+        #       probably be come layer_y_order, but I need to check!
         # Get the depth rank for each layer
-        layer_z_order <- oct_data_frame %>%
+        layer_y_order <- oct_data_frame %>%
             select(name, label) %>%
             distinct %>%
-            mutate(layer_z_order = rank(as.numeric(label))) %>%
+            mutate(layer_y_order = rank(as.numeric(label))) %>%
             select(-label)
 
         # Add that value to the data
         oct_data_frame <- oct_data_frame %>%
-            inner_join(layer_z_order)
+            inner_join(layer_y_order)
 
         # EXPORT
         # Save to file for quicker loading

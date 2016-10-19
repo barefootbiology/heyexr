@@ -20,8 +20,8 @@ read_center_xml <- function(center_file) {
     parsed_center[["center"]][["x"]] <-
         xmlRoot(oct_center_xml)[["center"]][["x"]] %>%
         xmlValue %>% as.numeric()
-    parsed_center[["center"]][["y"]] <-
-        xmlRoot(oct_center_xml)[["center"]][["y"]] %>%
+    parsed_center[["center"]][["z"]] <-
+        xmlRoot(oct_center_xml)[["center"]][["z"]] %>%
         xmlValue %>% as.numeric()
 
     # TASK: Parse the rest of the values in the XML file

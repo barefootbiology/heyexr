@@ -4,8 +4,8 @@
 #'
 #' @param oct a list containing the OCT data
 #' @param bn the number of the b-scan of interest
-#' @param layer_z_min vertical minimum constraint on the b-scan axis
-#' @param layer_z_max vertical maximum constraint on the b-scan axix
+#' @param layer_y_min vertical minimum constraint on the b-scan axis
+#' @param layer_y_max vertical maximum constraint on the b-scan axix
 #' @param low_color color for lowest values
 #' @param high_color color for highest values
 #' @param gamma value for gamma correction of b-scan values
@@ -22,8 +22,8 @@
 #' @importFrom ggplot2 ggplot geom_raster aes theme_bw element_blank scale_y_reverse scale_x_continuous theme labs element_rect geom_path annotate
 construct_bscan <- function(oct,
                             bn,
-                            layer_z_max = NULL,
-                            layer_z_min = NULL,
+                            layer_y_max = NULL,
+                            layer_y_min = NULL,
                             low_color = "black",
                             high_color = "white",
                             gamma = 0.33,
@@ -35,7 +35,7 @@ construct_bscan <- function(oct,
     # Build the scale bars:
     # Calculate the (x,y) for the bottom left corner
     bscan_x_0 <- oct$header$size_x * inset_percentage
-    bscan_y_0 <- layer_z_max - ((layer_z_max - layer_z_min) * inset_percentage)
+    bscan_y_0 <- layer_y_max - ((layer_y_max - layer_y_min) * inset_percentage)
 
     bscan_x_length <- scale_length / (oct$header$scale_x * 1000)
     bscan_y_length <- scale_length / (oct$header$scale_z * 1000)
@@ -51,7 +51,7 @@ construct_bscan <- function(oct,
         geom_raster(aes(fill=intensity)) +
         scale_fill_continuous(low = low_color, high = high_color) +
         theme_bw() +
-        scale_y_reverse(limits = c(layer_z_max, layer_z_min),
+        scale_y_reverse(limits = c(layer_y_max, layer_y_min),
                         expand = c(0,0)) +
         scale_x_continuous(expand = c(0,0)) +
         theme(panel.grid=element_blank(),

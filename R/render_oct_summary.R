@@ -35,7 +35,7 @@ render_oct_summary <- function(vol_file,
     output_path <- file.path(out_dir)
 
     if(!dir.exists(output_path)) {
-        dir.create(output_path)
+        dir.create(output_path, recursive = TRUE)
     }
 
     # Load data ------------------------------------------
@@ -97,16 +97,16 @@ render_oct_summary <- function(vol_file,
     # TASK: Modify this code. I think it might be unreliable to depend on the
     #       automated segmentation. Inspect the results and decide.
     # OCT Segmentation minimum and maximum (from Heidelberg segmenation)
-    layer_z_min <- max(0, min(oct_seg_array[["z"]], na.rm = TRUE) - crop_to_heidelberg_segmentation[1])
-    layer_z_max <- min(max(oct_seg_array[["z"]], na.rm = TRUE) + crop_to_heidelberg_segmentation[2],
+    layer_y_min <- max(0, min(oct_seg_array[["z"]], na.rm = TRUE) - crop_to_heidelberg_segmentation[1])
+    layer_y_max <- min(max(oct_seg_array[["z"]], na.rm = TRUE) + crop_to_heidelberg_segmentation[2],
                        oct$header$size_z)
 
     # Calculate grid center stuff
     center_x_voxel <- oct_center[["center"]][["x"]]
-    center_y_voxel <- oct_center[["center"]][["y"]]
+    center_z_voxel <- oct_center[["center"]][["z"]]
 
     center_bscan <- oct$bscan_headers %>%
-        filter(bscan == center_y_voxel)
+        filter(bscan == center_z_voxel)
 
     start_x_pixel <- center_bscan[["start_x_pixels"]]
     end_x_pixel <- center_bscan[["end_x_pixels"]]
@@ -153,8 +153,8 @@ render_oct_summary <- function(vol_file,
         # Value of gamma recommended by author of Open Heyex plugin for
         # ImageJ.
 
-        p_1 <- construct_bscan(oct, b_n, layer_z_max = layer_z_max,
-                                       layer_z_min = layer_z_min)
+        p_1 <- construct_bscan(oct, b_n, layer_y_max = layer_y_max,
+                                       layer_y_min = layer_y_min)
 
         # If an XML file was provided,
         # overlay Iowa Reference Algorithms segmentation on the top b-scan.
@@ -164,16 +164,16 @@ render_oct_summary <- function(vol_file,
                               filter(bscan_id == b_n_seg[as.character(b_n)]),
                           mapping = aes(x=ascan_id,
                                         y=value,
-                                        group=as.factor(layer_z_order),
-                                        color=as.factor(layer_z_order)),
+                                        group=as.factor(layer_y_order),
+                                        color=as.factor(layer_y_order)),
                           alpha=0.6) +
-                scale_color_brewer(name="boundary", palette = "Spectral")
+                scale_color_brewer(name="boundary", palette = "Paired")
         } else {
             p_1_l <- p_1
         }
 
         if(!is.null(center_file)) {
-            if(b_n == center_y_voxel) {
+            if(b_n == center_z_voxel) {
                 p_1_l <- p_1_l +
                     geom_vline(xintercept = center_x_voxel,
                                color = "green",
