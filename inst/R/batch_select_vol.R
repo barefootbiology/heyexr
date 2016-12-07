@@ -62,10 +62,13 @@ all_headers %>%
     write_tsv(path = argv$results)
 
 # Copy specific vol files to a location
-all_headers %>%
-    filter(as.character(scan_pattern) == argv$filter) %>%
-    split(.$file) %>%
-    walk(~file.copy(from = .$file, to = argv$outdir))
+if(!is.null(argv$filter)) {
+    all_headers %>%
+        filter(as.character(scan_pattern) == argv$filter) %>%
+        split(.$file) %>%
+        walk(~file.copy(from = .$file, to = argv$outdir))
+}
+
 
 
 
