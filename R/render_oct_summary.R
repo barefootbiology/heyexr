@@ -102,8 +102,9 @@ render_oct_summary <- function(vol_file,
                        oct$header$size_z)
 
     # Calculate grid center stuff
-    center_x_voxel <- oct_center[["center"]][["x"]]
-    center_z_voxel <- oct_center[["center"]][["z"]]
+    # Adjust the coordinates for my 1-based system
+    center_x_voxel <- oct_center[["center"]][["x"]] + 1
+    center_z_voxel <- oct_center[["center"]][["z"]] + 1
 
     center_bscan <- oct$bscan_headers %>%
         filter(bscan == center_z_voxel)
@@ -163,7 +164,7 @@ render_oct_summary <- function(vol_file,
                 geom_line(data=oct_segmentation$layers %>%
                               filter(bscan_id == b_n_seg[as.character(b_n)]),
                           mapping = aes(x=ascan_id,
-                                        y=value,
+                                        y=value + 1, # TESTING!!!!
                                         group=as.factor(layer_y_order),
                                         color=as.factor(layer_y_order)),
                           alpha=0.6) +

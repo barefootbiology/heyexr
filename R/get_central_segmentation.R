@@ -58,7 +58,7 @@ get_central_segmentation <- function(vol_file = NULL,
         ungroup() %>%
         mutate(sample_id = sample_id) # %>%
         # NOTE: The following lines are commented as the
-        #       VOL files are now always available, for
+        #       VOL files are not always available, for
         #       example, when an MDH file is segmented
         #       instead of a VOL file.
         # mutate(scan_position = header$scan_position)
