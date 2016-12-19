@@ -82,7 +82,11 @@ render_oct_summary <- function(vol_file,
     p_slo <- construct_slo(oct, draw_margins = TRUE)
 
     # Get the Heidelberg segmentation
-    oct_seg_array <- get_segmentation(oct)
+    oct_seg_array <- try(get_segmentation(oct))
+
+    # Function from http://adv-r.had.co.nz/Exceptions-Debugging.html
+    is.error <- function(x) inherits(x, "try-error")
+
 
     # The order of b-scans and segmentation results are opposite within the
     # VOL and XML files. Thus, we build this handy mapping structure to
@@ -97,9 +101,16 @@ render_oct_summary <- function(vol_file,
     # TASK: Modify this code. I think it might be unreliable to depend on the
     #       automated segmentation. Inspect the results and decide.
     # OCT Segmentation minimum and maximum (from Heidelberg segmenation)
-    layer_y_min <- max(0, min(oct_seg_array[["z"]], na.rm = TRUE) - crop_to_heidelberg_segmentation[1])
-    layer_y_max <- min(max(oct_seg_array[["z"]], na.rm = TRUE) + crop_to_heidelberg_segmentation[2],
-                       oct$header$size_z)
+    if(!is.error(oct_seg_array)) {
+        layer_y_min <- max(0, min(oct_seg_array[["z"]], na.rm = TRUE) - crop_to_heidelberg_segmentation[1])
+        layer_y_max <- min(max(oct_seg_array[["z"]], na.rm = TRUE) + crop_to_heidelberg_segmentation[2],
+                           oct$header$size_z)
+    } else {
+        layer_y_min <- 0
+        layer_y_max <- oct$header$size_z
+    }
+
+
 
     # Calculate grid center stuff
     # Adjust the coordinates for my 1-based system
@@ -184,7 +195,7 @@ render_oct_summary <- function(vol_file,
         }
 
         # Overlay Heidelberg segmentation on the lower b-scan plot
-        if(overlay_heidelberg_segmentation) {
+        if(overlay_heidelberg_segmentation & !is.error(oct_seg_array)) {
             n_segments <- oct_seg_array %>%
                 dplyr::filter(b_scan == b_n) %>%
                 select(seg_layer) %>%

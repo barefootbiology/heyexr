@@ -33,15 +33,17 @@ vol_file_list <- data.frame(file = unlist(list.files(path = argv$dir,
                             full.names = TRUE))) %>%
     mutate(file = as.character(file))
 
-vol_file_list
+cat("Found", nrow(vol_file_list), "VOL files in", argv$dir, "\n")
 
 # Wrapper for reading the VOL header information
 read_heyex_header_only <- function(vol_file) {
+    cat(vol_file, "... ")
     file_con <- file(vol_file, "rb")
 
     vol_header <- read_heyex_header(vol_con = file_con)
 
     close(file_con)
+    cat("DONE\n")
 
     # We don't need the "spare" data at the end of the header
     return(vol_header[c(1:14, 16:21,23:26)])
