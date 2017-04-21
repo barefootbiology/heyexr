@@ -23,7 +23,8 @@ render_oct_summary <- function(vol_file,
                                return_results=FALSE,
                                n_cores = 1,
                                overlay_heidelberg_segmentation = TRUE,
-                               crop_to_heidelberg_segmentation = c(10, 75)) {
+                               crop_to_heidelberg_segmentation = c(10, 75),
+                               file_type = "pdf") {
 
     # TASK: Ensure that the render function will work with or without
     #       segmentation from OCT explorer.
@@ -115,7 +116,7 @@ render_oct_summary <- function(vol_file,
     # Calculate grid center stuff
     # Adjust the coordinates for my 1-based system
     center_x_voxel <- oct_center[["center"]][["x"]] + 1
-    center_z_voxel <- oct_center[["center"]][["z"]] + 1
+    center_z_voxel <- b_n_seg[[as.character(oct_center[["center"]][["z"]] + 1)]]
 
     center_bscan <- oct$bscan_headers %>%
         filter(bscan == center_z_voxel)
@@ -251,7 +252,7 @@ render_oct_summary <- function(vol_file,
         # plot_list[[b_n]] <- p_layout
 
         # Save the plot as a layout
-        file_out <- paste(output_path, "/", base_name, "_", sprintf("%03d", reverse_order[b_n]), ".pdf", sep="")
+        file_out <- paste(output_path, "/", base_name, "_", sprintf("%03d", reverse_order[b_n]), ".", file_type, sep="")
         ggsave(filename = file_out, plot = p_layout,
                units = "in", width = 12, height = 8, dpi = 300)
 

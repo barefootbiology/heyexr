@@ -30,7 +30,8 @@ argv <- parse_args(p)
 vol_file_list <- data.frame(file = unlist(list.files(path = argv$dir,
                             pattern = "vol$",
                             ignore.case = TRUE,
-                            full.names = TRUE))) %>%
+                            full.names = TRUE,
+                            recursive = TRUE))) %>%
     mutate(file = as.character(file))
 
 cat("Found", nrow(vol_file_list), "VOL files in", argv$dir, "\n")
