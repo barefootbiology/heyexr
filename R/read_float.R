@@ -8,7 +8,7 @@
 #'
 #' @export
 #' @importFrom magrittr %>%
-readFloat <- function(con) {
+read_float <- function(con) {
     readBin(con = con, what = "raw",
             size = 1, n = 4,
             endian = "little") %>%

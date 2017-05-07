@@ -9,7 +9,7 @@
 #'
 #' @export
 #' @importFrom magrittr %>%
-readFloatArray <- function(con, n = 1) {
+read_float_vector <- function(con, n = 1) {
     raw_floats <- readBin(con = con, what = "raw",
                           size = 1, n = 4*n,
                           endian = "little")

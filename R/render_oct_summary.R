@@ -115,18 +115,23 @@ render_oct_summary <- function(vol_file,
 
     # Calculate grid center stuff
     # Adjust the coordinates for my 1-based system
-    center_x_voxel <- oct_center[["center"]][["x"]] + 1
-    center_z_voxel <- b_n_seg[[as.character(oct_center[["center"]][["z"]] + 1)]]
+    if(!is.null(oct_center)) {
+        center_x_voxel <- oct_center[["center"]][["x"]] + 1
+        center_z_voxel <- b_n_seg[[as.character(oct_center[["center"]][["z"]] + 1)]]
 
-    center_bscan <- oct$bscan_headers %>%
-        filter(bscan == center_z_voxel)
 
-    start_x_pixel <- center_bscan[["start_x_pixels"]]
-    end_x_pixel <- center_bscan[["end_x_pixels"]]
+        center_bscan <- oct$bscan_headers %>%
+            filter(bscan == center_z_voxel)
 
-    # NOTE: This will only work for horizontal scans.
-    center_x <- start_x_pixel + (end_x_pixel - start_x_pixel) * (center_x_voxel / oct$header$size_x)
-    center_y <- center_bscan[["start_y_pixels"]]
+        start_x_pixel <- center_bscan[["start_x_pixels"]]
+        end_x_pixel <- center_bscan[["end_x_pixels"]]
+
+        # NOTE: This will only work for horizontal scans.
+        center_x <- start_x_pixel + (end_x_pixel - start_x_pixel) * (center_x_voxel / oct$header$size_x)
+        center_y <- center_bscan[["start_y_pixels"]]
+    }
+
+
 
     # Label the output files in the reverse order as the bscan IDs
     reverse_order <- oct$header$num_bscans:1

@@ -67,7 +67,7 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
                         seg_layer*header$size_x +
                         bscan*bscan_header_all[[bscan+1]]$num_seg*header$size_x
 
-                    y_value <- readFloat(vol_con)
+                    y_value <- read_float(vol_con)
                     if ((y_value < 3.4028235E37) & !is.na(y_value)) {
                         seg_array[index] <- y_value
                     } else {
@@ -78,7 +78,7 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
 
             temp <- readBin(vol_con, "raw", n = (header$bscan_hdr_size - 256 - (bscan_header_all[[bscan+1]]$num_seg*header$size_x*4)))
 
-            bscan_image[[length(bscan_image) + 1]] <- readFloatArray(vol_con, n = header$size_x * header$size_z)
+            bscan_image[[length(bscan_image) + 1]] <- read_float_vector(vol_con, n = header$size_x * header$size_z)
 
         }
 
