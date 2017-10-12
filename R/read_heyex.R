@@ -63,10 +63,10 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
             for (seg_layer in c(0:(bscan_header_all[[bscan + 1]]$num_seg - 1))) {
                 for (a_scan in c(0:(header$size_x - 1))) {
                     # R vectors and lists are indexed at 1
-                    index = 1 +
+                    index <- 1 +
                         a_scan +
-                        seg_layer*header$size_x +
-                        bscan*bscan_header_all[[bscan+1]]$num_seg*header$size_x
+                        seg_layer * header$size_x +
+                        bscan * bscan_header_all[[bscan + 1]]$num_seg * header$size_x
 
                     y_value <- read_float(vol_con)
                     if ((y_value < 3.4028235E37) & !is.na(y_value)) {

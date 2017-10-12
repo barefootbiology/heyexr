@@ -26,16 +26,18 @@ construct_bscan <- function(oct,
                             layer_y_min = NULL,
                             low_color = "black",
                             high_color = "white",
-                            gamma = 0.33,
+                            # gamma = 0.33,
+                            contrast_correction = (function(x) x),
+                            na_intensity = 0,
                             scale_bars = TRUE,
                             scale_length = 200,
                             scale_color = "white",
-                            inset_percentage = 0.05) {
+                            inset_percentage = c(x = 0.025, y = 0.05)) {
 
     # Build the scale bars:
     # Calculate the (x,y) for the bottom left corner
-    bscan_x_0 <- oct$header$size_x * inset_percentage
-    bscan_y_0 <- layer_y_max - ((layer_y_max - layer_y_min) * inset_percentage)
+    bscan_x_0 <- oct$header$size_x * inset_percentage[[1]]
+    bscan_y_0 <- layer_y_max - ((layer_y_max - layer_y_min) * inset_percentage[[2]])
 
     bscan_x_length <- scale_length / (oct$header$scale_x * 1000)
     bscan_y_length <- scale_length / (oct$header$scale_z * 1000)
@@ -46,7 +48,12 @@ construct_bscan <- function(oct,
 
     # Construct the b-scan plot
     p_1 <- get_bscan(oct, bn) %>%
-        mutate(intensity = ifelse(is.na(intensity), NA, intensity^gamma)) %>%
+        # Replace any missing values
+        mutate(intensity = ifelse(is.na(intensity),
+                                  na_intensity,
+                                  intensity)) %>%
+        # # Apply contrast correction
+        mutate(intensity = contrast_correction(intensity)) %>%
         ggplot(aes(x = x, y = z)) +
         geom_raster(aes(fill=intensity)) +
         scale_fill_continuous(low = low_color, high = high_color) +

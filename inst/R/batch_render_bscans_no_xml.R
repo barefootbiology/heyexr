@@ -56,6 +56,7 @@ render_oct_summary(vol_file = argv$vol,
                    center_file = NULL,
                    out_dir = argv$outdir,
                    n_cores = as.numeric(argv$np),
-                   crop_to_heidelberg_segmentation = NULL)
+                   crop_to_heidelberg_segmentation = NULL,
+                   file_type = "png")
 
 cat("Done\n")

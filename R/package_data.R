@@ -11,3 +11,11 @@
 #'   \item{flipped_region}{flipped_region, transformed region in the grid used to measure thickness}
 #' }
 "grid_regions"
+
+
+#' A spline fit to the PNG exported from Heidelberg Explorer.
+#'
+#' A smooth.spline object.
+#'
+#' @format A smooth.spline object.
+"vol_fit_spline"

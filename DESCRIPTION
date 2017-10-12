@@ -16,5 +16,8 @@ Imports:
     stringr,
     ggplot2,
     gridExtra,
-    readr
-RoxygenNote: 5.0.1
+    readr,
+    Rcpp
+LinkingTo:
+    Rcpp
+RoxygenNote: 6.0.1

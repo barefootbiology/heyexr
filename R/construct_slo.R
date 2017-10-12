@@ -22,7 +22,7 @@ construct_slo <- function(oct,
                           low_color = "black",
                           high_color = "white",
                           scale_bar = TRUE,
-                          scale_length = 500,
+                          scale_length = 200,
                           scale_color = "white",
                           inset_percentage = 0.05,
                           draw_margins = TRUE) {

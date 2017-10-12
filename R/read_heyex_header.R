@@ -10,6 +10,7 @@
 #'
 #' @export
 #' @importFrom magrittr %>%
+#' @importFrom lubridate ymd
 read_heyex_header <- function(vol_con) {
     # Code based on these two projects:
     #
@@ -38,7 +39,8 @@ read_heyex_header <- function(vol_con) {
     # TASK: Convert to date/time
     # Convert exam time following "Open_Heyex_Info.java"
     header$exam_time        <- readBin(vol_con, "raw", endian = "little",  n = 8,
-                                       signed = FALSE)
+                                       signed = FALSE) %>%
+        raw_to_datetime()
     # From: https://stat.ethz.ch/R-manual/R-devel/library/base/html/DateTimeClasses.html
     # "Class "POSIXct" represents the (signed) number of seconds
     # since the beginning of 1970 (in the UTC time zone) as a numeric vector."
@@ -47,18 +49,31 @@ read_heyex_header <- function(vol_con) {
     header$scan_pattern     <- readBin(vol_con, integer(), endian = "little")
     header$bscan_hdr_size  <- readBin(vol_con, integer(), endian = "little")
 
-    header$id               <- readBin(vol_con, "raw", endian = "little", size = 1, n = 16) %>%
+    header$id               <- readBin(vol_con, "raw", endian = "little",
+                                       size = 1, n = 16) %>%
         rawToChar()
-    header$reference_id     <- readBin(vol_con, "raw", endian = "little", size = 1, n = 16) %>%
+
+    header$reference_id     <- readBin(vol_con, "raw", endian = "little",
+                                       size = 1, n = 16) %>%
         rawToChar()
+
     header$pid              <- readBin(vol_con, integer(), endian = "little")
-    header$patient_id       <- readBin(vol_con, "raw", endian = "little", size = 1, n = 21) %>%
+    header$patient_id       <- readBin(vol_con, "raw", endian = "little",
+                                       size = 1, n = 21) %>%
         rawToChar() # , size = 21
-    header$padding          <- readBin(vol_con, "raw", endian = "little", n = 3)
+
+    header$padding          <- readBin(vol_con, "raw", endian = "little",
+                                       n = 3)
 
     # TASK: Convert to date/time
     # Convert DOB following "Open_Heyex_Info.java"
-    header$dob              <- readBin(vol_con, double(), endian = "little", size = 8)
+    # day_offset <- difftime(ymd("1970-01-01"), ymd("1899-12-30"), units = "days") %>%
+    #     as.double()
+    day_offset       <- 25569
+    dob              <- readBin(vol_con, double(), endian = "little", size = 8)
+
+    header$dob              <- ((floor(dob) - day_offset)) %>%
+        as.Date(origin = as.POSIXct("1970-01-01", tz="UTC"))
 
     header$vid              <- readBin(vol_con, integer(), endian = "little")
     header$visit_id         <- readBin(vol_con, "raw", endian = "little", size = 1, n = 24) %>%
@@ -70,7 +85,7 @@ read_heyex_header <- function(vol_con) {
     visit_date              <- readBin(vol_con, double(), endian = "little")
 
     # NOTE: I think this works. It makes sense at least.
-    header$visit_date       <- ((visit_date - 25569)) %>%
+    header$visit_date       <- ((floor(visit_date) - day_offset)) %>%
         as.Date(origin = as.POSIXct("1970-01-01", tz="UTC"))
 
     header$spare            <- readBin(vol_con, "raw", endian = "little", size = 1, n = 1840)
