@@ -54,13 +54,14 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
                              file = stderr())
 
         for (bscan in c(0:(header$num_bscans-1))) {
-            setTxtProgressBar(pb, bscan+1, title = "Reading B-Scans")
-
+            setTxtProgressBar(pb, bscan + 1, title = "Reading B-Scans")
+            # cat("Reading b-scan header\n")
             bscan_header_all[[bscan + 1]] <- read_bscan_header(vol_con, header)
 
+            # cat("Entering seg_layer * a_scan nested loop:\n")
             # Read in the Heidelberg segmentation information
-            for (seg_layer in c(0:(bscan_header_all[[bscan+1]]$num_seg-1))) {
-                for (a_scan in c(0:(header$size_x-1))) {
+            for (seg_layer in c(0:(bscan_header_all[[bscan + 1]]$num_seg - 1))) {
+                for (a_scan in c(0:(header$size_x - 1))) {
                     # R vectors and lists are indexed at 1
                     index = 1 +
                         a_scan +
@@ -76,9 +77,20 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
                 }
             }
 
-            temp <- readBin(vol_con, "raw", n = (header$bscan_hdr_size - 256 - (bscan_header_all[[bscan+1]]$num_seg*header$size_x*4)))
+            # NOTE: I think this is simply to move the file buffer along. Not
+            #       sure if I should substitute "readBin" with "seek".
+            temp <- readBin(vol_con, "raw",
+                            n = (header$bscan_hdr_size - 256 - (bscan_header_all[[bscan+1]]$num_seg*header$size_x*4)))
 
-            bscan_image[[length(bscan_image) + 1]] <- read_float_vector(vol_con, n = header$size_x * header$size_z)
+            # bscan_image[[length(bscan_image) + 1]] <- read_float_vector(vol_con, n = header$size_x * header$size_z)
+            bscan_image[[bscan + 1]] <- readBin(vol_con,
+                                                "numeric",
+                                                n = header$size_x * header$size_z,
+                                                size = 4)
+
+            # cat("bscan: ", bscan, "\n")
+            # cat("n = ", header$size_x * header$size_z, "\n")
+            # cat("length of vector = ", length(bscan_image[[bscan + 1]]), "\n")
 
         }
 
