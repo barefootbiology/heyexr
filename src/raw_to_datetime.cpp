@@ -32,7 +32,7 @@ Datetime raw_to_datetime (RawVector src) {
         tmp[i] = (uint8_t) src[i];
     }
 
-    std::memcpy(&nsec, tmp, sizeof nsec);
+    std::memcpy(&nsec, &tmp, sizeof nsec);
 
     // Offset in 100 nanosecond intervals between 1970-01-01 and 1601-01-01
     uint64_t nsec_offset = ((uint64_t)134774) * 24 * 60 * 60 * 1000 * 1000 * 10;
