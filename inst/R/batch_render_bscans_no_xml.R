@@ -33,6 +33,9 @@ p <- add_argument(p, "--outdir",
                   help="Directory to write results",
                   default = ".")
 
+p <- add_argument(p, "--slo",
+                  help="Render just the SLO and ignore the b-scans?",
+                  default = 0)
 
 
 argv <- parse_args(p)
@@ -55,8 +58,8 @@ render_oct_summary(vol_file = argv$vol,
                    xml_file = NULL,
                    center_file = NULL,
                    out_dir = argv$outdir,
-                   n_cores = as.numeric(argv$np),
                    crop_to_heidelberg_segmentation = NULL,
-                   file_type = "png")
+                   file_type = "png",
+                   slo_only = ifelse(argv$slo == 0, FALSE, TRUE))
 
 cat("Done\n")
