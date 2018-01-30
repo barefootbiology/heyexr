@@ -8,21 +8,22 @@
 #' @return a list containing the x and y coordinates of the grid center
 #'
 #' @export
-#' @importFrom XML xmlParse xmlRoot xmlValue
 #' @importFrom magrittr %>%
+#' @importFrom xml2 read_xml as_list
 read_center_xml <- function(center_file) {
     # TASK: Add documentation above
 
-    oct_center_xml = xmlParse(center_file)
+    # oct_center_xml = xmlParse(center_file)
+    oct_center_xml <- read_xml(center_file)
 
-    parsed_center <- list()
+    parsed_center <- oct_center_xml %>% as_list()
 
-    parsed_center[["center"]][["x"]] <-
-        xmlRoot(oct_center_xml)[["center"]][["x"]] %>%
-        xmlValue %>% as.numeric()
-    parsed_center[["center"]][["z"]] <-
-        xmlRoot(oct_center_xml)[["center"]][["z"]] %>%
-        xmlValue %>% as.numeric()
+    # parsed_center[["center"]][["x"]] <-
+    #     xmlRoot(oct_center_xml)[["center"]][["x"]] %>%
+    #     xmlValue %>% as.numeric()
+    # parsed_center[["center"]][["z"]] <-
+    #     xmlRoot(oct_center_xml)[["center"]][["z"]] %>%
+    #     xmlValue %>% as.numeric()
 
     # TASK: Parse the rest of the values in the XML file
 

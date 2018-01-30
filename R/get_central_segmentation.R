@@ -38,8 +38,8 @@ get_central_segmentation <- function(vol_file = NULL,
     # 0-based, whereas (almost) everything in heyexr is 1-based, to fit in with
     # R. I should probably go through all the methods and some point and unify
     # them.
-    center_x_voxel <- oct_center[["center"]][["x"]] + 1
-    center_z_voxel <- oct_center[["center"]][["z"]] + 1
+    center_x_voxel <- oct_center[["center"]][["x"]][[1]] + 1
+    center_z_voxel <- oct_center[["center"]][["z"]][[1]] + 1
 
 #     center_bscan <- oct$bscan_headers %>%
 #         filter(bscan == center_y_voxel)

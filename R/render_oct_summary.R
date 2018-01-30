@@ -137,8 +137,8 @@ render_oct_summary <- function(vol_file,
         # Calculate grid center coordinates.
         # Adjust the coordinates for my 1-based system.
         if(!is.null(oct_center)) {
-            center_x_voxel <- oct_center[["center"]][["x"]] + 1
-            center_z_voxel <- b_n_seg[[as.character(oct_center[["center"]][["z"]] + 1)]]
+            center_x_voxel <- oct_center[["center"]][["x"]][[1]] + 1
+            center_z_voxel <- b_n_seg[[as.character(oct_center[["center"]][["z"]][[1]] + 1)]]
 
             # Function from http://adv-r.had.co.nz/Exceptions-Debugging.html
             is.error <- function(x) inherits(x, "try-error")
@@ -153,8 +153,8 @@ render_oct_summary <- function(vol_file,
             # Calculate grid center stuff
             # Adjust the coordinates for my 1-based system
             if(!is.null(oct_center)) {
-                center_x_voxel <- oct_center[["center"]][["x"]] + 1
-                center_z_voxel <- b_n_seg[[as.character(oct_center[["center"]][["z"]] + 1)]]
+                center_x_voxel <- oct_center[["center"]][["x"]][[1]] + 1
+                center_z_voxel <- b_n_seg[[as.character(oct_center[["center"]][["z"]][[1]] + 1)]]
 
 
                 center_bscan <- oct$bscan_headers %>%
