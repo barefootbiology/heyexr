@@ -13,7 +13,9 @@
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom dplyr filter collect distinct select
-#' @importFrom ggplot2 scale_color_brewer element_text theme ggsave scale_color_manual geom_line geom_segment geom_tile geom_vline aes ggplot annotate
+#' @importFrom ggplot2 scale_color_brewer element_text theme ggsave
+#' @importFrom ggplot2 scale_color_manual geom_line geom_segment geom_tile
+#' @importFrom ggplot2 geom_vline aes ggplot annotate
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom parallel parLapply makeCluster clusterCall stopCluster
 #' @importFrom purrr walk

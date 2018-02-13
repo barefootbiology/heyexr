@@ -10,6 +10,7 @@
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom xml2 read_xml as_list
+#' @importFrom purrr modify_depth
 read_center_xml <- function(center_file) {
     # TASK: Add documentation above
 
@@ -17,6 +18,16 @@ read_center_xml <- function(center_file) {
     oct_center_xml <- read_xml(center_file)
 
     parsed_center <- oct_center_xml %>% as_list()
+
+    # Convert from characters to appropriate data types
+    parsed_center$center <- parsed_center$center %>%
+        modify_depth(2, ~as.integer(.x))
+
+    parsed_center$scan_characteristics$voxel_size[c("x", "y", "z")] <- parsed_center$scan_characteristics$voxel_size[c("x", "y", "z")] %>%
+        modify_depth(2, ~as.numeric(.x))
+
+    parsed_center$scan_characteristics$size[c("x", "y", "z")] <- parsed_center$scan_characteristics$size[c("x", "y", "z")] %>%
+        modify_depth(2, ~as.numeric(.x))
 
     # parsed_center[["center"]][["x"]] <-
     #     xmlRoot(oct_center_xml)[["center"]][["x"]] %>%

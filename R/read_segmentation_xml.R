@@ -90,6 +90,18 @@ read_segmentation_xml <- function(xml_file) {
             tbl_df
     }
 
+    # TASK: Get all the undefined ascans
+    undefined_ascan_id <- xml_find_all(oct_surfaces_xml,
+                                   ".//undefined_region//ascan//x") %>%
+        xml_integer() + 1
+
+    undefined_bscan_id <- xml_find_all(oct_surfaces_xml,
+                                       ".//undefined_region//ascan//z") %>%
+        xml_integer() + 1
+
+
+    undefined_region <- tibble(ascan_id = undefined_ascan_id,
+                        bscan_id = undefined_bscan_id)
 
     # Return a list of all the variables
     list(info = list(file = xml_file,
@@ -102,6 +114,7 @@ read_segmentation_xml <- function(xml_file) {
                      voxel_size_x=voxel_size_x,
                      voxel_size_y=voxel_size_y,
                      voxel_size_z=voxel_size_z),
-         layers = oct_data_frame) %>%
+        layers = oct_data_frame,
+        undefined_region = undefined_region) %>%
         return()
 }
