@@ -88,7 +88,9 @@ read_heyex_header <- function(vol_con) {
     header$visit_date       <- ((floor(visit_date) - day_offset)) %>%
         as.Date(origin = as.POSIXct("1970-01-01", tz="UTC"))
 
-    header$spare            <- readBin(vol_con, "raw", endian = "little", size = 1, n = 1840)
+    # NOTE: We're discarding this data, as Heidelberg isn't storing anything of
+    #       interesting in this.
+    spare                   <- readBin(vol_con, "raw", endian = "little", size = 1, n = 1840)
 
     # Return the header. The file connection is automatically updated.
     return(header = header)

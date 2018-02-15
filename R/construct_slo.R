@@ -42,7 +42,12 @@ construct_slo <- function(oct,
     p_slo <- get_slo(oct) %>%
         ggplot(aes(x=x, y=y)) +
         geom_raster(aes(fill = z)) +
-        scale_fill_continuous(low = low_color, high = high_color) +
+        # TASK: Consider mapping the high and low value to the min and max
+        #       values on the underlying data, not just the values that might
+        #       be present in a given scan.
+        scale_fill_continuous(guide = "none",
+                              low = low_color,
+                              high = high_color) +
         theme_bw() +
         coord_fixed() +
         scale_x_continuous(expand = c(0, 0)) +

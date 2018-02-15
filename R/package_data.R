@@ -19,3 +19,11 @@
 #'
 #' @format A smooth.spline object.
 "vol_fit_spline"
+
+#' Value used to indicate missing data (NA).
+#'
+#' Maximum floating point value used by Heidelberg Engineering to represent
+#' missing data.
+#'
+#' @format A scalar double.
+"max_float"

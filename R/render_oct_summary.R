@@ -145,12 +145,20 @@ render_oct_summary <- function(vol_file,
             # Function from http://adv-r.had.co.nz/Exceptions-Debugging.html
             is.error <- function(x) inherits(x, "try-error")
 
+            # TASK: Check the code below, as I don't think I need to reorder
+            #       these values since I've adjusted some of the lower level
+            #       reading functions.
 
             # The order of b-scans and segmentation results are opposite within the
             # VOL and XML files. Thus, we build this handy mapping structure to
             # assign the correct segmentation results to the correct B-scans.
             b_n_seg <- 1:oct$header$num_bscans %>%
                 setNames(oct$header$num_bscans:1)
+
+
+            # TASK: Check to see that I'm already adjusting the center voxels
+            #       when reading the grid_center file.
+
 
             # Calculate grid center stuff
             # Adjust the coordinates for my 1-based system

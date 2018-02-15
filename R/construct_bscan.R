@@ -22,12 +22,12 @@
 #' @importFrom ggplot2 ggplot geom_raster aes theme_bw element_blank scale_y_reverse scale_x_continuous theme labs element_rect geom_path annotate
 construct_bscan <- function(oct,
                             bn,
-                            layer_y_max = NULL,
-                            layer_y_min = NULL,
+                            layer_y_max = oct$header$size_z,
+                            layer_y_min = 0,
                             low_color = "black",
                             high_color = "white",
                             # gamma = 0.33,
-                            contrast_correction = (function(x) x),
+                            contrast_correction = spline_correction,
                             na_intensity = 0,
                             scale_bars = TRUE,
                             scale_length = 200,
@@ -55,8 +55,10 @@ construct_bscan <- function(oct,
         # # Apply contrast correction
         mutate(intensity = contrast_correction(intensity)) %>%
         ggplot(aes(x = x, y = z)) +
-        geom_raster(aes(fill=intensity)) +
-        scale_fill_continuous(low = low_color, high = high_color) +
+        geom_raster(aes(fill = intensity)) +
+        scale_fill_continuous(guide = "none",
+                              low = low_color,
+                              high = high_color) +
         theme_bw() +
         scale_y_reverse(limits = c(layer_y_max, layer_y_min),
                         expand = c(0,0)) +
