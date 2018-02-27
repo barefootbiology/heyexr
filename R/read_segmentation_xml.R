@@ -64,7 +64,7 @@ read_segmentation_xml <- function(xml_file) {
     # Pull out the surface y values as a single vector
     all_surfaces_y <- xml_find_all(oct_surfaces_xml,
                                    ".//surface//bscan//y") %>%
-        xml_integer()
+        xml_integer() + 1
 
     oct_data_frame <- tibble(label = rep(surface_labels, each = size_z * size_x),
                              name = rep(surface_names, each = size_z * size_x),

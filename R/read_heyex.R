@@ -48,6 +48,10 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
         bscan_image <- array(rep(as.double(NA), header$size_x * header$num_bscans * header$size_z),
                              dim = c(header$size_x, header$num_bscans, header$size_z))
 
+        # TASK: Update this comment
+        # Up to 3 surfaces may be present. However, we won't know until we start
+        # to read the b-scan headers below. Later we'll decrement the 3rd
+        # dimension if there are only 2 segmentations present.
         seg_array <- array(rep(as.double(NA), header$num_bscans * 3 * header$size_x),
                            dim = c(header$size_x, header$num_bscans, 3))
 
@@ -64,15 +68,44 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
 
             bscan_header_all[[bscan]] <- read_bscan_header(vol_con, header)
 
-            seg_array[ , bscan, ] <- read_float_vector(vol_con,
-                                                       n = header$size_x * 3) %>%
-                matrix(nrow = 3, ncol = header$size_x, byrow = FALSE)
+            num_seg <- bscan_header_all[[bscan]]$num_seg
+            # if(bscan == 1) {
+            #     if(bscan_header_all[[bscan]]$num_seg != dim(seg_array)[3]) {
+            #         seg_array <- seg_array[ , , 1:bscan_header_all[[bscan]]$num_seg]
+            #     }
+            # }
 
+            # # TESTING:
+            # message("bscan:\t", bscan)
+            # message("header$bscan_hdr_size:\t", header$bscan_hdr_size)
+            # message("bscan_header_all[[bscan]]$end_y:\t", bscan_header_all[[bscan]]$end_y)
+            # message("bscan_header_all[[bscan]]$num_seg:\t", num_seg)
+            # message("header$size_x:\t",header$size_x)
+
+            seg_data <-
+                read_float_vector(vol_con,
+                                  n = header$size_x * num_seg) %>%
+                matrix(nrow = num_seg,
+                       ncol = header$size_x, byrow = FALSE)
+
+            # If less than 3 segmentation surfaces are present, pad out the seg
+            # data with NA's to be the correct size
+            if(num_seg < 3) {
+                seg_data <- c(seg_data, rep(as.numeric(NA),
+                                            header$size_x * (3 - num_seg)))
+            }
+
+            seg_array[ , bscan, ] <- seg_data
 
             # NOTE: I think this is simply to move the file buffer along. Not
             #       sure if I should substitute "readBin" with "seek".
+
+
+            n_bytes <- header$bscan_hdr_size - 256 - (num_seg * header$size_x * 4)
+            # message("n_bytes\t", n_bytes)
+
             temp <- readBin(vol_con, "raw",
-                            n = (header$bscan_hdr_size - 256 - (bscan_header_all[[bscan]]$num_seg*header$size_x*4)))
+                            n = n_bytes)
 
             bscan_image[, bscan, ] <- readBin(vol_con,
                                               "numeric",
