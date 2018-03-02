@@ -38,5 +38,9 @@ read_center_xml <- function(center_file) {
 
     # TASK: Parse the rest of the values in the XML file
 
+    parsed_center$center$x <-  parsed_center$center$x[[1]] + 1
+    parsed_center$center$z <-  parsed_center$center$z[[1]] + 1
+
+
     return(parsed_center)
 }
