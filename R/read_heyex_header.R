@@ -64,7 +64,7 @@ read_heyex_header <- function(vol_con) {
 
     header$padding          <- readBin(vol_con, "raw", endian = "little",
                                        n = 3) %>%
-        paste0(collapse = TRUE)
+        paste0(collapse = "")
 
     # TASK: Convert to date/time
     # Convert DOB following "Open_Heyex_Info.java"

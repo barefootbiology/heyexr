@@ -68,7 +68,7 @@ read_segmentation_xml <- function(xml_file) {
 
     oct_data_frame <- tibble(label = rep(surface_labels, each = size_z * size_x),
                              name = rep(surface_names, each = size_z * size_x),
-                             layer_y_order = factor(name, levels = surface_names) %>%
+                             surface_id = factor(name, levels = surface_names) %>%
                                  as.numeric(),
                              # Swap the b-scan order to make it align with
                              # the Heidelberg data.

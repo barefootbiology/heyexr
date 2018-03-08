@@ -48,8 +48,8 @@ layout_plot_2 <- function(b_n, oct, p_slo, layer_y_max, layer_y_min, xml_file,
                           filter(bscan_id == b_n_seg[as.character(b_n)]),
                       mapping = aes(x=ascan_id,
                                     y=value + 1, # TESTING!!!!
-                                    group=as.factor(layer_y_order),
-                                    color=as.factor(layer_y_order)),
+                                    group=as.factor(surface_id),
+                                    color=as.factor(surface_id)),
                       alpha=0.6) +
             scale_color_brewer(name="boundary", palette = "Paired")
     } else {

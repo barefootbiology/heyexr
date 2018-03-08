@@ -270,9 +270,9 @@ render_oct_summary <- function(vol_file,
                         geom_line(data=oct_segmentation$layers %>%
                                       filter(bscan_id == b_n_seg[as.character(b_n)]),
                                   mapping = aes(x=ascan_id,
-                                                y=value + 1, # TESTING!!!!
-                                                group=as.factor(layer_y_order),
-                                                color=as.factor(layer_y_order)),
+                                                y=value,
+                                                group=as.factor(surface_id),
+                                                color=as.factor(surface_id)),
                                   alpha=0.6) +
                         scale_color_brewer(name="boundary", palette = "Paired")
                 } else {
