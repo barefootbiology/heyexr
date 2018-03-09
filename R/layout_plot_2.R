@@ -13,8 +13,8 @@
 #' @importFrom parallel parLapply makeCluster clusterCall stopCluster
 #' @importFrom purrr walk
 #' @importFrom ggmap theme_nothing
-layout_plot_2 <- function(b_n, oct, p_slo, layer_y_max, layer_y_min, xml_file,
-                          oct_segmentation, b_n_seg, center_file,
+layout_plot_2 <- function(bscan_id, oct, p_slo, layer_y_max, layer_y_min, xml_file,
+                          oct_segmentation, bscan_id_seg, center_file,
                           center_z_voxel, center_x_voxel,
                           overlay_bscan_position,
                           overlay_heidelberg_segmentation, oct_seg_array,
@@ -33,7 +33,7 @@ layout_plot_2 <- function(b_n, oct, p_slo, layer_y_max, layer_y_min, xml_file,
     # ImageJ.
 
 
-    p_1 <- construct_bscan(oct, b_n, layer_y_max = layer_y_max,
+    p_1 <- construct_bscan(oct, bscan_id, layer_y_max = layer_y_max,
                            layer_y_min = layer_y_min,
                            contrast_correction = spline_correction) +
         labs(x = "", y = "") +
@@ -45,7 +45,7 @@ layout_plot_2 <- function(b_n, oct, p_slo, layer_y_max, layer_y_min, xml_file,
     if(!is.null(xml_file)) {
         p_1_l <- p_1 +
             geom_line(data=oct_segmentation$layers %>%
-                          filter(bscan_id == b_n_seg[as.character(b_n)]),
+                          filter(bscan_id == bscan_id_seg[as.character(bscan_id)]),
                       mapping = aes(x=ascan_id,
                                     y=value + 1, # TESTING!!!!
                                     group=as.factor(surface_id),
@@ -59,7 +59,7 @@ layout_plot_2 <- function(b_n, oct, p_slo, layer_y_max, layer_y_min, xml_file,
     # Add a vertical line to indicate the position of the
     # manually annotated center (e.g., fovea).
     if(!is.null(center_file)) {
-        if(b_n == center_z_voxel) {
+        if(bscan_id == center_z_voxel) {
             p_1_l <- p_1_l +
                 geom_vline(xintercept = center_x_voxel,
                            color = "green",
@@ -71,7 +71,7 @@ layout_plot_2 <- function(b_n, oct, p_slo, layer_y_max, layer_y_min, xml_file,
     # Overlay Heidelberg segmentation on the lower b-scan plot
     if(overlay_heidelberg_segmentation & !is.error(oct_seg_array)) {
         n_segments <- oct_seg_array %>%
-            dplyr::filter(b_scan == b_n) %>%
+            dplyr::filter(bscan_id == bscan_id) %>%
             select(seg_layer) %>%
             distinct() %>%
             collect %>%
@@ -80,7 +80,7 @@ layout_plot_2 <- function(b_n, oct, p_slo, layer_y_max, layer_y_min, xml_file,
         segmentation_layer_value <- c("1"="red","2"="blue","3"="green")[as.character(n_segments)]
 
         p_1_l2 <- p_1 +
-            geom_line(data = oct_seg_array %>% dplyr::filter(b_scan == b_n),
+            geom_line(data = oct_seg_array %>% dplyr::filter(bscan_id == bscan_id),
                       mapping = aes(group=as.factor(seg_layer),
                                     color=as.factor(seg_layer)),
                       alpha = 0.5) +
@@ -101,7 +101,7 @@ layout_plot_2 <- function(b_n, oct, p_slo, layer_y_max, layer_y_min, xml_file,
             p_slo_1 <- p_slo +
                 # Draw the other b-scans but not the current one
                 geom_segment(data = oct$bscan_headers %>%
-                                 filter(bscan != b_n),
+                                 filter(bscan_id != bscan_id),
                              mapping = aes(x = start_x_pixels,
                                            xend = end_x_pixels,
                                            y = start_y_pixels,
@@ -111,7 +111,7 @@ layout_plot_2 <- function(b_n, oct, p_slo, layer_y_max, layer_y_min, xml_file,
 
                 # Draw the current b-scan
                 geom_segment(data = oct$bscan_headers %>%
-                                 filter(bscan == b_n),
+                                 filter(bscan_id == bscan_id),
                              mapping = aes(x = start_x_pixels,
                                            xend = end_x_pixels,
                                            y = start_y_pixels,
@@ -163,7 +163,7 @@ layout_plot_2 <- function(b_n, oct, p_slo, layer_y_max, layer_y_min, xml_file,
 
     # Save the plot as a layout
     file_out <- paste(output_path, "/", base_name, "_",
-                      sprintf("%03d", reverse_order[b_n]), ".",
+                      sprintf("%03d", reverse_order[bscan_id]), ".",
                       file_type, sep="")
 
     ggsave(filename = file_out, plot = p_layout,

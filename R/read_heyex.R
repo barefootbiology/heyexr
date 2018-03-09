@@ -63,12 +63,12 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
                              style = 1,
                              file = stderr())
 
-        for (bscan in c(1:(header$num_bscans))) {
-            setTxtProgressBar(pb, bscan, title = "Reading B-Scans")
+        for (bscan_id in c(1:(header$num_bscans))) {
+            setTxtProgressBar(pb, bscan_id, title = "Reading B-Scans")
 
-            bscan_header_all[[bscan]] <- read_bscan_header(vol_con, header)
+            bscan_header_all[[bscan_id]] <- read_bscan_header(vol_con, header)
 
-            num_seg <- bscan_header_all[[bscan]]$num_seg
+            num_seg <- bscan_header_all[[bscan_id]]$num_seg
             # if(bscan == 1) {
             #     if(bscan_header_all[[bscan]]$num_seg != dim(seg_array)[3]) {
             #         seg_array <- seg_array[ , , 1:bscan_header_all[[bscan]]$num_seg]
@@ -95,7 +95,7 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
                                             header$size_x * (3 - num_seg)))
             }
 
-            seg_array[ , bscan, ] <- seg_data
+            seg_array[ , bscan_id, ] <- seg_data
 
             # NOTE: I think this is simply to move the file buffer along. Not
             #       sure if I should substitute "readBin" with "seek".
@@ -107,7 +107,7 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
             temp <- readBin(vol_con, "raw",
                             n = n_bytes)
 
-            bscan_image[, bscan, ] <- readBin(vol_con,
+            bscan_image[, bscan_id, ] <- readBin(vol_con,
                                               "numeric",
                                               n = header$size_x * header$size_z,
                                               size = 4) %>%
@@ -151,7 +151,7 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
                    start_y_pixels = start_y / header$scale_y_slo + 1,
                    end_x_pixels = end_x / header$scale_x_slo + 1,
                    end_y_pixels = end_y / header$scale_y_slo + 1) %>%
-            mutate(bscan = 1:n())
+            mutate(bscan_id = 1:n())
 
         output <- list(header = header,
                        slo_image = slo_image,

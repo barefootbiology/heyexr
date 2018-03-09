@@ -55,28 +55,30 @@ render_oct_summary <- function(vol_file,
     #       of the VOL file in R. Then I will need to delete all the RData
     #       files for each VOL.
 
-    # Load raw data from VOL or RData file
-    if(!file.exists(paste(vol_file, ".RData", sep=""))) {
-        # Load the VOL data
-        oct <- read_heyex(vol_file)
-        save(oct, file = paste(vol_file, ".RData", sep=""))
-    } else {
-        load(paste(vol_file, ".RData", sep=""))
-    }
+    # # Load raw data from VOL or RData file
+    # if(!file.exists(paste(vol_file, ".RData", sep=""))) {
+    #     # Load the VOL data
+    #     oct <- read_heyex(vol_file)
+    #     save(oct, file = paste(vol_file, ".RData", sep=""))
+    # } else {
+    #     load(paste(vol_file, ".RData", sep=""))
+    # }
 
-    # oct <- read_heyex(vol_file)
+    oct <- read_heyex(vol_file)
 
     # If an XML file is provided,
     # load segmentation from XML or RData file.
-    if(!is.null(xml_file)) {
-        if(!file.exists(paste(xml_file, ".RData", sep=""))) {
-            # Load the segmentation from OCT Explorer
-            oct_segmentation <- read_segmentation_xml(xml_file)
-            save(oct_segmentation, file = paste(xml_file, ".RData", sep=""))
-        } else {
-            load(paste(xml_file, ".RData", sep=""))
-        }
-    }
+    # if(!is.null(xml_file)) {
+    #     if(!file.exists(paste(xml_file, ".RData", sep=""))) {
+    #         # Load the segmentation from OCT Explorer
+    #         oct_segmentation <- read_segmentation_xml(xml_file)
+    #         save(oct_segmentation, file = paste(xml_file, ".RData", sep=""))
+    #     } else {
+    #         load(paste(xml_file, ".RData", sep=""))
+    #     }
+    # }
+
+    oct_segmentation <- read_segmentation_xml(xml_file)
 
     # Load the "grid center" XML file, if provided.
     if(!is.null(center_file)) {
@@ -140,7 +142,7 @@ render_oct_summary <- function(vol_file,
         # Adjust the coordinates for my 1-based system.
         if(!is.null(oct_center)) {
             center_x_voxel <- oct_center[["center"]][["x"]][[1]] + 1
-            center_z_voxel <- b_n_seg[[as.character(oct_center[["center"]][["z"]][[1]] + 1)]]
+            center_z_voxel <- bscan_id_seg[[as.character(oct_center[["center"]][["z"]][[1]] + 1)]]
 
             # Function from http://adv-r.had.co.nz/Exceptions-Debugging.html
             is.error <- function(x) inherits(x, "try-error")
@@ -152,7 +154,7 @@ render_oct_summary <- function(vol_file,
             # The order of b-scans and segmentation results are opposite within the
             # VOL and XML files. Thus, we build this handy mapping structure to
             # assign the correct segmentation results to the correct B-scans.
-            b_n_seg <- 1:oct$header$num_bscans %>%
+            bscan_id_seg <- 1:oct$header$num_bscans %>%
                 setNames(oct$header$num_bscans:1)
 
 
@@ -164,7 +166,7 @@ render_oct_summary <- function(vol_file,
             # Adjust the coordinates for my 1-based system
             if(!is.null(oct_center)) {
                 center_x_voxel <- oct_center[["center"]][["x"]][[1]] + 1
-                center_z_voxel <- b_n_seg[[as.character(oct_center[["center"]][["z"]][[1]] + 1)]]
+                center_z_voxel <- bscan_id_seg[[as.character(oct_center[["center"]][["z"]][[1]] + 1)]]
 
 
                 center_bscan <- oct$bscan_headers %>%
@@ -204,14 +206,14 @@ render_oct_summary <- function(vol_file,
             }
 
         1:oct$header$num_bscans %>%
-            walk(~layout_plot_2(b_n = .x,
+            walk(~layout_plot_2(bscan_id = .x,
                                 oct = oct,
                                 p_slo = p_slo,
                                 layer_y_max = layer_y_max,
                                 layer_y_min = layer_y_min,
                                 xml_file = xml_file,
                                 oct_segmentation = oct_segmentation,
-                                b_n_seg = b_n_seg,
+                                bscan_id_seg = bscan_id_seg,
                                 center_file = center_file,
                                 center_z_voxel = center_z_voxel,
                                 center_x_voxel = center_x_voxel,
@@ -253,14 +255,14 @@ render_oct_summary <- function(vol_file,
             # Label the output files in the reverse order as the bscan IDs
             reverse_order <- oct$header$num_bscans:1
 
-            lapply(1:oct$header$num_bscans, function(b_n) {
+            lapply(1:oct$header$num_bscans, function(bscan_id) {
 
                 # Construct the b-scan plot:
                 # Perform gamma correction to lighten dark values.
                 # Value of gamma recommended by author of Open Heyex plugin for
                 # ImageJ.
 
-                p_1 <- construct_bscan(oct, b_n, layer_y_max = layer_y_max,
+                p_1 <- construct_bscan(oct, bscan_id, layer_y_max = layer_y_max,
                                        layer_y_min = layer_y_min)
 
                 # If an XML file was provided,
@@ -268,7 +270,7 @@ render_oct_summary <- function(vol_file,
                 if(!is.null(xml_file)) {
                     p_1_l <- p_1 +
                         geom_line(data=oct_segmentation$layers %>%
-                                      filter(bscan_id == b_n_seg[as.character(b_n)]),
+                                      filter(bscan_id == bscan_id_seg[as.character(bscan_id)]),
                                   mapping = aes(x=ascan_id,
                                                 y=value,
                                                 group=as.factor(surface_id),
@@ -280,7 +282,7 @@ render_oct_summary <- function(vol_file,
                 }
 
                 if(!is.null(center_file)) {
-                    if(b_n == center_z_voxel) {
+                    if(bscan_id == center_z_voxel) {
                         p_1_l <- p_1_l +
                             geom_vline(xintercept = center_x_voxel,
                                        color = "green",
@@ -292,7 +294,7 @@ render_oct_summary <- function(vol_file,
                 # Overlay Heidelberg segmentation on the lower b-scan plot
                 if(overlay_heidelberg_segmentation & !is.error(oct_seg_array)) {
                     n_segments <- oct_seg_array %>%
-                        dplyr::filter(b_scan == b_n) %>%
+                        dplyr::filter(bscan_id == bscan_id) %>%
                         select(seg_layer) %>%
                         distinct() %>%
                         collect %>%
@@ -301,7 +303,7 @@ render_oct_summary <- function(vol_file,
                     segmentation_layer_value <- c("1"="red","2"="blue","3"="green")[as.character(n_segments)]
 
                     p_1_l2 <- p_1 +
-                        geom_line(data = oct_seg_array %>% dplyr::filter(b_scan == b_n),
+                        geom_line(data = oct_seg_array %>% dplyr::filter(bscan_id == bscan_id),
                                   mapping = aes(group=as.factor(seg_layer),
                                                 color=as.factor(seg_layer)),
                                   alpha = 0.5) +
@@ -314,7 +316,7 @@ render_oct_summary <- function(vol_file,
                 # Overlay the position of the b-scans on the top SLO
                 p_slo_1 <- p_slo +
                     geom_segment(data = oct$bscan_headers %>%
-                                     mutate(is_current = ifelse(bscan == b_n,
+                                     mutate(is_current = ifelse(bscan == bscan_id,
                                                                 "current",
                                                                 "other")),
                                  mapping = aes(x = start_x_pixels,
@@ -343,7 +345,7 @@ render_oct_summary <- function(vol_file,
                                         ncol=2, widths = c(3,2))
 
                 # Save the plot as a layout
-                file_out <- paste(output_path, "/", base_name, "_", sprintf("%03d", reverse_order[b_n]), ".", file_type, sep="")
+                file_out <- paste(output_path, "/", base_name, "_", sprintf("%03d", reverse_order[bscan_id]), ".", file_type, sep="")
                 ggsave(filename = file_out, plot = p_layout,
                        units = "in", width = 12, height = 8, dpi = 300)
 

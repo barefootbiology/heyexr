@@ -11,11 +11,12 @@
 #' @importFrom magrittr %>%
 get_segmentation <- function(oct) {
     oct$seg_array %>%
+        # TASK: Replace the following 3 lines with the "melt_array" function.
         reshape2::melt() %>%
         as_tibble() %>%
-        setNames(c("x", "b_scan", "seg_layer", "z")) %>%
-        inner_join(tibble(seg_layer = 1:3,
-                          surface = c("ILM", "RPE", "NFL")) %>%
-                       mutate(surface = factor(surface,
+        setNames(c("x", "bscan_id", "surface_id", "z")) %>%
+        inner_join(tibble(surface_id = 1:3,
+                          layer = c("ILM", "RPE", "NFL")) %>%
+                       mutate(layer = factor(layer,
                                                levels = c("ILM", "RPE", "NFL"))))
 }

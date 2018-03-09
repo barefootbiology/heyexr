@@ -3,7 +3,7 @@
 #' Constructs a ggplot2 object containing the data for a given b-scan
 #'
 #' @param oct a list containing the OCT data
-#' @param bn the number of the b-scan of interest
+#' @param bscan_id the number of the b-scan of interest
 #' @param layer_y_min vertical minimum constraint on the b-scan axis
 #' @param layer_y_max vertical maximum constraint on the b-scan axix
 #' @param low_color color for lowest values
@@ -21,7 +21,7 @@
 #' @importFrom dplyr mutate
 #' @importFrom ggplot2 ggplot geom_raster aes theme_bw element_blank scale_y_reverse scale_x_continuous theme labs element_rect geom_path annotate
 construct_bscan <- function(oct,
-                            bn,
+                            bscan_id,
                             layer_y_max = oct$header$size_z,
                             layer_y_min = 0,
                             low_color = "black",
@@ -47,7 +47,7 @@ construct_bscan <- function(oct,
                                    y = c(bscan_y_0 - bscan_y_length, bscan_y_0, bscan_y_0))
 
     # Construct the b-scan plot
-    p_1 <- get_bscan(oct, bn) %>%
+    p_1 <- get_bscan(oct, bscan_id) %>%
         # Replace any missing values
         mutate(intensity = ifelse(is.na(intensity),
                                   na_intensity,
