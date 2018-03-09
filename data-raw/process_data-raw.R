@@ -17,11 +17,11 @@ devtools::use_data(grid_regions, overwrite = TRUE)
 readxl::read_excel(path = "data-raw/layer_definitions.xlsx") %>%
     write_tsv("data-raw/layer_definitions_iowa_v3-8-0.tsv")
 
-layer_data <- read_tsv(file = "data-raw/layer_definitions_iowa_v3-8-0.tsv") %>%
+layer_info <- read_tsv(file = "data-raw/layer_definitions_iowa_v3-8-0.tsv") %>%
     mutate(layer = factor(layer, levels = layer)) %>%
     mutate(layer_description = factor(layer_description, levels = layer_description))
 
-devtools::use_data(layer_data, overwrite = TRUE)
+devtools::use_data(layer_info, overwrite = TRUE)
 
 # TASK: Construct this automatically from the original OCTExplorer definition.
 grid_sectors_etdrs <- read_tsv(file = "data-raw/grid_sectors_etdrs.tsv")
