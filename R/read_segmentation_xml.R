@@ -20,6 +20,14 @@ read_segmentation_xml <- function(xml_file) {
     oct_surfaces_xml <- read_xml(xml_file)
 
     # Pull out the general information
+    executable_name <- xml_find_first(oct_surfaces_xml,
+                                      ".//executable//name") %>%
+        xml_text()
+
+    executable_version <- xml_find_first(oct_surfaces_xml,
+                                      ".//executable//version") %>%
+        xml_text()
+
     size_units <- xml_find_first(oct_surfaces_xml,
                                  ".//scan_characteristics//size//unit") %>%
         xml_text()

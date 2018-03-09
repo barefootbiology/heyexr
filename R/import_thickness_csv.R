@@ -78,10 +78,8 @@ import_thickness_csv <- function(csv_file,
     result <- result %>%
         mutate(key = gsub(key, pattern="_um$", replacement="", perl = TRUE)) %>%
         separate(key, c("span","region"), sep="_Region", remove=TRUE) %>%
-        separate(span, c("inner_layer","outer_layer"), sep="~", remove=TRUE) %>%
+        rename(octexplorer_span = span) %>%
         mutate(region = as.character(region))
-#         inner_join(layer_map) %>%
-#         select(layer, etdrs_region, um, sample_id)
 
     return(result)
 }

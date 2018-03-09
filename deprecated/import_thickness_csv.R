@@ -19,7 +19,7 @@
 #' @importFrom tidyr gather separate spread
 #' @importFrom stringr str_replace_all
 #' @importFrom readr read_csv
-import_thickness_csv_new <- function(csv_file,
+import_thickness_csv <- function(csv_file,
                                  split="\\\\",
                                  n="last",
                                  pattern="_Surfaces_Iowa.xml") {
@@ -78,7 +78,7 @@ import_thickness_csv_new <- function(csv_file,
     result <- result %>%
         mutate(key = gsub(key, pattern="_um$", replacement="", perl = TRUE)) %>%
         separate(key, c("span","region"), sep="_Region", remove=TRUE) %>%
-        separate(span, c("inner_layer","outer_layer"), sep="_To_", remove=TRUE) %>%
+        separate(span, c("inner_layer","outer_layer"), sep="~", remove=TRUE) %>%
         mutate(region = as.character(region))
 #         inner_join(layer_map) %>%
 #         select(layer, etdrs_region, um, sample_id)
