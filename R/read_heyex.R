@@ -64,7 +64,7 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
                              file = stderr())
 
         for (bscan_id in c(1:(header$num_bscans))) {
-            setTxtProgressBar(pb, bscan_id, title = "Reading B-Scans")
+            setTxtProgressBar(pb, bscan_id, title = "Reading B-scans")
 
             bscan_header_all[[bscan_id]] <- read_bscan_header(vol_con, header)
 
