@@ -1,5 +1,5 @@
 surface_id	surface_description	layer	layer_description	label	executable_surface_name	octexplorer_span	executable_name	executable_version
-0	upper boundary of volume	VIT	vitreous	NA	NA	NA	NA	NA
+0	inner boundary of volume	VIT	vitreous	NA	NA	NA	NA	NA
 1	inner limiting membrane	NFL	nerve fiber layer	10	ILM (ILM)	10.ILM_To_20.RNFL-GCL	OCTLayerSeg	3.8.0
 2	NFL-GCL boundary	GCL	ganglion cell layer	20	RNFL-GCL (RNFL-GCL)	20.RNFL-GCL_To_30.GCL-IPL	OCTLayerSeg	3.8.0
 3	GCL-IPL boundary	IPL	inner plexiform layer	30	GCL-IPL (GCL-IPL)	30.GCL-IPL_To_40.IPL-INL	OCTLayerSeg	3.8.0
@@ -11,4 +11,4 @@ surface_id	surface_description	layer	layer_description	label	executable_surface_
 9	OZ-IZ of inner segment boundary	OZOS	outer zone of outer segment	120	Inner boundary of OPR (IB_OPR)	120.IB_OPR_To_140.IB_RPE	OCTLayerSeg	3.8.0
 10	inner boundary of RPE	RPE	retinal pigment epithelium	140	Inner boundary of RPE (IB_RPE)	140.IB_RPE_To_150.OB_RPE	OCTLayerSeg	3.8.0
 11	RPE-choroid boundary	CHR-SCL	choroid to sclera	150	Outer boundary of RPE (OB_RPE)	NA	OCTLayerSeg	3.8.0
-12	lower boundary of volume	NA	NA	NA	NA	NA	NA	NA
+12	outer boundary of volume	NA	NA	NA	NA	NA	NA	NA
