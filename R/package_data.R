@@ -27,3 +27,11 @@
 #'
 #' @format A scalar double.
 "max_float"
+
+#' Metadata on retinal layers identified by the Iowa Reference Algorithms
+#'
+#' Metadata on segmentation surfaces and layers identified by the Iowa
+#' Reference Algorithms (v 3.8.0).
+#'
+#' @format A tibble
+"layer_info"

@@ -61,7 +61,9 @@ read_segmentation_xml <- function(xml_file) {
     # Pull out the surface specific information
     surface_labels <- xml_find_all(oct_surfaces_xml,
                                    ".//surface//label") %>%
-        xml_text()
+        xml_text() %>%
+        as.integer()
+
     surface_names <- xml_find_all(oct_surfaces_xml,
                                   ".//surface//name") %>%
         xml_text()

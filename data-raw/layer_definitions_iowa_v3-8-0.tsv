@@ -1,12 +1,14 @@
-surface_id	layer	layer_description	executable_surface_name	octexplorer_span	executable_name	executable_version
-1	NFL	nerve fiber layer	ILM (ILM)	10.ILM_To_20.RNFL-GCL	OCTLayerSeg	3.8.0
-2	GCL	ganglion cell layer	RNFL-GCL (RNFL-GCL)	20.RNFL-GCL_To_30.GCL-IPL	OCTLayerSeg	3.8.0
-3	IPL	inner plexiform layer	GCL-IPL (GCL-IPL)	30.GCL-IPL_To_40.IPL-INL	OCTLayerSeg	3.8.0
-4	INL	inner nuclear layer	IPL-INL (IPL-INL)	40.IPL-INL_To_50.INL-OPL	OCTLayerSeg	3.8.0
-5	OPL	outer plexiform layer	INL-OPL (INL-OPL)	50.INL-OPL_To_60.OPL-HFL	OCTLayerSeg	3.8.0
-6	ONL-MZ	outer nuclear layer to myoid zone	OPL-Henles fiber layer (OPL-HFL)	60.OPL-HFL_To_100.BMEIS	OCTLayerSeg	3.8.0
-7	EZ	ellipsoid zone of inner segment	Boundary of myoid and ellipsoid of inner segments (BMEIS)	100.BMEIS_To_110.IS/OSJ	OCTLayerSeg	3.8.0
-8	IZOS	inner zone of outer segment	IS/OS junction (IS/OSJ)	110.IS/OSJ_To_120.IB_OPR	OCTLayerSeg	3.8.0
-9	OZOS	outer zone of outer segment	Inner boundary of OPR (IB_OPR)	120.IB_OPR_To_140.IB_RPE	OCTLayerSeg	3.8.0
-10	RPE	retinal pigment epithelium	Inner boundary of RPE (IB_RPE)	140.IB_RPE_To_150.OB_RPE	OCTLayerSeg	3.8.0
-11	outer RPE	outer boundary of RPE	Outer boundary of RPE (OB_RPE)	"NA"	OCTLayerSeg	3.8.0
+surface_id	surface_description	layer	layer_description	label	executable_surface_name	octexplorer_span	executable_name	executable_version
+0	upper boundary of volume	VIT	vitreous	NA	NA	NA	NA	NA
+1	inner limiting membrane	NFL	nerve fiber layer	10	ILM (ILM)	10.ILM_To_20.RNFL-GCL	OCTLayerSeg	3.8.0
+2	NFL-GCL boundary	GCL	ganglion cell layer	20	RNFL-GCL (RNFL-GCL)	20.RNFL-GCL_To_30.GCL-IPL	OCTLayerSeg	3.8.0
+3	GCL-IPL boundary	IPL	inner plexiform layer	30	GCL-IPL (GCL-IPL)	30.GCL-IPL_To_40.IPL-INL	OCTLayerSeg	3.8.0
+4	IPL-INL boundary	INL	inner nuclear layer	40	IPL-INL (IPL-INL)	40.IPL-INL_To_50.INL-OPL	OCTLayerSeg	3.8.0
+5	INL-OPL boundary	OPL	outer plexiform layer	50	INL-OPL (INL-OPL)	50.INL-OPL_To_60.OPL-HFL	OCTLayerSeg	3.8.0
+6	OPL-ONL boundary	ONL-MZ	outer nuclear layer to myoid zone	60	OPL-Henles fiber layer (OPL-HFL)	60.OPL-HFL_To_100.BMEIS	OCTLayerSeg	3.8.0
+7	myoid-ellipsoid boundary	EZ	ellipsoid zone of inner segment	100	Boundary of myoid and ellipsoid of inner segments (BMEIS)	100.BMEIS_To_110.IS/OSJ	OCTLayerSeg	3.8.0
+8	IS/OS junction	IZOS	inner zone of outer segment	110	IS/OS junction (IS/OSJ)	110.IS/OSJ_To_120.IB_OPR	OCTLayerSeg	3.8.0
+9	OZ-IZ of inner segment boundary	OZOS	outer zone of outer segment	120	Inner boundary of OPR (IB_OPR)	120.IB_OPR_To_140.IB_RPE	OCTLayerSeg	3.8.0
+10	inner boundary of RPE	RPE	retinal pigment epithelium	140	Inner boundary of RPE (IB_RPE)	140.IB_RPE_To_150.OB_RPE	OCTLayerSeg	3.8.0
+11	RPE-choroid boundary	CHOR-SCL	choroid to schlera	150	Outer boundary of RPE (OB_RPE)	NA	OCTLayerSeg	3.8.0
+12	lower boundary of volume	NA	NA	NA	NA	NA	NA	NA
