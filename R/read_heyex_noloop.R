@@ -53,19 +53,19 @@ read_heyex_noloop <- function(vol_file, header_slo_only = FALSE) {
                              style = 1,
                              file = stderr())
 
-        for (bscan in c(0:(header$num_bscans-1))) {
-            setTxtProgressBar(pb, bscan+1, title = "Reading B-Scans")
+        for (bscan_id in c(0:(header$num_bscans-1))) {
+            setTxtProgressBar(pb, bscan_id+1, title = "Reading B-Scans")
 
-            bscan_header_all[[bscan + 1]] <- read_bscan_header(vol_con, header)
+            bscan_header_all[[bscan_id + 1]] <- read_bscan_header(vol_con, header)
 
             # Read in the Heidelberg segmentation information
-            for (seg_layer in c(0:(bscan_header_all[[bscan+1]]$num_seg-1))) {
+            for (seg_layer in c(0:(bscan_header_all[[bscan_id+1]]$num_seg-1))) {
                 for (a_scan in c(0:(header$size_x-1))) {
                     # R vectors and lists are indexed at 1
                     index = 1 +
                         a_scan +
                         seg_layer*header$size_x +
-                        bscan*bscan_header_all[[bscan+1]]$num_seg*header$size_x
+                        bscan_id*bscan_header_all[[bscan_id+1]]$num_seg*header$size_x
 
                     y_value <- read_float(vol_con)
                     if ((y_value < 3.4028235E37) & !is.na(y_value)) {
@@ -105,7 +105,7 @@ read_heyex_noloop <- function(vol_file, header_slo_only = FALSE) {
                    start_y_pixels = start_y / header$scale_y_slo,
                    end_x_pixels = end_x / header$scale_x_slo,
                    end_y_pixels = end_y / header$scale_y_slo) %>%
-            mutate(bscan = 1:n())
+            mutate(bscan_id = 1:n())
 
         output <- list(header = header,
                        slo_image = slo_image,

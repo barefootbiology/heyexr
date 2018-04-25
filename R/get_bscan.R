@@ -11,15 +11,19 @@
 #' @importFrom dplyr tbl_df mutate
 #' @importFrom tidyr gather
 #' @importFrom magrittr %>%
+#' @importFrom reshape2 melt
+#' @importFrom tibble as_tibble
 get_bscan <- function(oct, n=1) {
-    matrix(data=oct$bscan_images[[n]], nrow=oct$header$size_z, byrow=TRUE) %>%
-        as.data.frame() %>%
-        cbind_rownames("z") %>%
-        mutate(z = as.numeric(as.character(z))) %>%
-        gather(x, intensity, -z) %>%
-        tbl_df %>%
-        mutate(x = as.numeric(gsub(as.character(x), pattern="V", replacement="")),
-               intensity = unlist(intensity),
-               intensity=ifelse(intensity >= 3.402823e+38, NA, intensity)) %>%
-        return
+    #matrix(data=oct$bscan_images[[n]], nrow=oct$header$size_z, byrow=TRUE) %>%
+    oct$bscan_images[ , n, ] %>%
+        melt() %>%
+        as_tibble() %>%
+        setNames(c("x", "z", "intensity")) # %>%
+        # as.data.frame() %>%
+        # cbind_rownames("z") %>%
+        # mutate(z = as.numeric(as.character(z))) %>%
+        # gather(x, intensity, -z) %>%
+        # tbl_df %>%
+        # mutate(x = as.numeric(gsub(as.character(x), pattern="V", replacement="")),
+        # mutate(intensity = ifelse(intensity == 3.402823e+38, NA, intensity))
 }

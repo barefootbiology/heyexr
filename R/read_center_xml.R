@@ -38,5 +38,15 @@ read_center_xml <- function(center_file) {
 
     # TASK: Parse the rest of the values in the XML file
 
+    parsed_center$center$x <-  parsed_center$center$x[[1]] + 1
+
+    # Rescale the center B-scan coordinate to align with Heidelberg coordinates.
+    # (Using the subtracting from size$x automatically adjusts for 1-based coordinates)
+    parsed_center$center$z <- parsed_center$scan_characteristics$size$z[[1]] - parsed_center$center$z[[1]]
+    #parsed_center$center$z <-  parsed_center$center$z[[1]] + 1
+
+
+
+
     return(parsed_center)
 }

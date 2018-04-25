@@ -42,8 +42,18 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
 
         # Create empty containers
         bscan_header_all <- list()
-        seg_array <- list()
-        bscan_image <- list()
+        # seg_array <- list()
+        # bscan_image <- list()
+
+        bscan_image <- array(rep(as.double(NA), header$size_x * header$num_bscans * header$size_z),
+                             dim = c(header$size_x, header$num_bscans, header$size_z))
+
+        # TASK: Update this comment
+        # Up to 3 surfaces may be present. However, we won't know until we start
+        # to read the b-scan headers below. Later we'll decrement the 3rd
+        # dimension if there are only 2 segmentations present.
+        seg_array <- array(rep(as.double(NA), header$num_bscans * 3 * header$size_x),
+                           dim = c(header$size_x, header$num_bscans, 3))
 
         # TASK: Move this to an external function.
         # Read in the segmentation arrays
@@ -53,46 +63,68 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
                              style = 1,
                              file = stderr())
 
-        for (bscan in c(0:(header$num_bscans-1))) {
-            setTxtProgressBar(pb, bscan + 1, title = "Reading B-Scans")
-            # cat("Reading b-scan header\n")
-            bscan_header_all[[bscan + 1]] <- read_bscan_header(vol_con, header)
+        for (bscan_id in c(1:(header$num_bscans))) {
+            setTxtProgressBar(pb, bscan_id, title = "Reading B-scans")
 
-            # cat("Entering seg_layer * a_scan nested loop:\n")
-            # Read in the Heidelberg segmentation information
-            for (seg_layer in c(0:(bscan_header_all[[bscan + 1]]$num_seg - 1))) {
-                for (a_scan in c(0:(header$size_x - 1))) {
-                    # R vectors and lists are indexed at 1
-                    index <- 1 +
-                        a_scan +
-                        seg_layer * header$size_x +
-                        bscan * bscan_header_all[[bscan + 1]]$num_seg * header$size_x
+            bscan_header_all[[bscan_id]] <- read_bscan_header(vol_con, header)
 
-                    y_value <- read_float(vol_con)
-                    if ((y_value < 3.4028235E37) & !is.na(y_value)) {
-                        seg_array[index] <- y_value
-                    } else {
-                        seg_array[index] <- NA
-                    }
-                }
+            num_seg <- bscan_header_all[[bscan_id]]$num_seg
+            # if(bscan == 1) {
+            #     if(bscan_header_all[[bscan]]$num_seg != dim(seg_array)[3]) {
+            #         seg_array <- seg_array[ , , 1:bscan_header_all[[bscan]]$num_seg]
+            #     }
+            # }
+
+            # # TESTING:
+            # message("bscan:\t", bscan)
+            # message("header$bscan_hdr_size:\t", header$bscan_hdr_size)
+            # message("bscan_header_all[[bscan]]$end_y:\t", bscan_header_all[[bscan]]$end_y)
+            # message("bscan_header_all[[bscan]]$num_seg:\t", num_seg)
+            # message("header$size_x:\t",header$size_x)
+
+            seg_data <-
+                read_float_vector(vol_con,
+                                  n = header$size_x * num_seg) %>%
+                matrix(nrow = num_seg,
+                       ncol = header$size_x, byrow = FALSE)
+
+            # If less than 3 segmentation surfaces are present, pad out the seg
+            # data with NA's to be the correct size
+            if(num_seg < 3) {
+                seg_data <- c(seg_data, rep(as.numeric(NA),
+                                            header$size_x * (3 - num_seg)))
             }
+
+            seg_array[ , bscan_id, ] <- seg_data
 
             # NOTE: I think this is simply to move the file buffer along. Not
             #       sure if I should substitute "readBin" with "seek".
+
+
+            n_bytes <- header$bscan_hdr_size - 256 - (num_seg * header$size_x * 4)
+            # message("n_bytes\t", n_bytes)
+
             temp <- readBin(vol_con, "raw",
-                            n = (header$bscan_hdr_size - 256 - (bscan_header_all[[bscan+1]]$num_seg*header$size_x*4)))
+                            n = n_bytes)
 
-            # bscan_image[[length(bscan_image) + 1]] <- read_float_vector(vol_con, n = header$size_x * header$size_z)
-            bscan_image[[bscan + 1]] <- readBin(vol_con,
-                                                "numeric",
-                                                n = header$size_x * header$size_z,
-                                                size = 4)
-
-            # cat("bscan: ", bscan, "\n")
-            # cat("n = ", header$size_x * header$size_z, "\n")
-            # cat("length of vector = ", length(bscan_image[[bscan + 1]]), "\n")
-
+            bscan_image[, bscan_id, ] <- readBin(vol_con,
+                                              "numeric",
+                                              n = header$size_x * header$size_z,
+                                              size = 4) %>%
+                matrix(nrow = header$size_z, ncol = header$size_x, byrow=FALSE)
         }
+
+        # The text progressbar doesn't print a newline when complete.
+        message("")
+
+        # Make sure that NA values are properly represented in the seg_array
+        bscan_image[bscan_image == max_float] <- NA
+
+        seg_array[seg_array == max_float] <- NA
+
+        # Add 1 to all distance value in seg_array to work with the 1-based
+        # R indexing
+        seg_array <- seg_array + 1
 
         # TASK: Convert bscan_headers to a data.frame.
         #       We can get rid of the "spare" column.
@@ -100,7 +132,7 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
                                          unlist %>%
                                          matrix(nrow = 1, byrow = FALSE) %>%
                                          data.frame(stringsAsFactors = FALSE)) %>%
-            bind_rows %>%
+            bind_rows() %>%
             setNames(c("version", "bscan_header_size",
                        "start_x", "start_y",
                        "end_x", "end_y", "num_seg",
@@ -113,11 +145,13 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
                    num_seg = as.numeric(num_seg),
                    off_seg = as.numeric(off_seg),
                    quality = as.numeric(quality)) %>%
-            mutate(start_x_pixels = start_x / header$scale_x_slo,
-                   start_y_pixels = start_y / header$scale_y_slo,
-                   end_x_pixels = end_x / header$scale_x_slo,
-                   end_y_pixels = end_y / header$scale_y_slo) %>%
-            mutate(bscan = 1:n())
+            # For convenience, compute the coordinates in the SLO pixel space.
+            # Adjust pixel values to match R's 1-based indexing system
+            mutate(start_x_pixels = start_x / header$scale_x_slo + 1,
+                   start_y_pixels = start_y / header$scale_y_slo + 1,
+                   end_x_pixels = end_x / header$scale_x_slo + 1,
+                   end_y_pixels = end_y / header$scale_y_slo + 1) %>%
+            mutate(bscan_id = 1:n())
 
         output <- list(header = header,
                        slo_image = slo_image,

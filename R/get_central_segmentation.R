@@ -49,7 +49,7 @@ get_central_segmentation <- function(vol_file = NULL,
     result <- oct_segmentation$layers %>%
         filter(bscan_id == center_z_voxel) %>%
         group_by(ascan_id) %>%
-        mutate(lowest_layer = layer_y_order == max(layer_y_order)) %>%
+        mutate(lowest_layer = surface_id == max(surface_id)) %>%
         mutate(base_value = max(value)) %>%
         mutate(value_adjusted = (-1 * (value - base_value)) *
                    oct_segmentation$info$'voxel_size_y') %>%
