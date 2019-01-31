@@ -95,7 +95,7 @@ inset_size <- 100
 slo_out <- paste0(output_path, "/", base_name, "_IR.", file_type)
 
 # Save the SLO with the scale bar
-ggsave(filename = slo_out, plot = p_slo_scale + octgridtools::theme_nude(),
+ggsave(filename = slo_out, plot = p_slo_scale + theme_nude(),
        width = 8, height = 8, units = "in")
 
 # #-------------------------------------------------------------------------------
@@ -146,7 +146,7 @@ for(b_n in 1:oct$header$num_bscans) {
                      alpha = 0.9,
                      arrow = arrow(angle = 15, length = unit(0.05, "inches"),
                                    type = "closed")) +
-        octgridtools::theme_nude()
+        theme_nude()
 
     # # Use the Heidelberg segmentation to find the
     # max_y <- max(get_segmentation(oct)$z, na.rm = TRUE)
@@ -159,7 +159,7 @@ for(b_n in 1:oct$header$num_bscans) {
                                layer_y_min = 1,
                                contrast_correction = spline_correction,
                                scale_bars = TRUE) +
-        octgridtools::theme_nude()
+        theme_nude()
 
     p_plot <- tibble(x = c(1, width_px), y = c(1, height_px)) %>%
         ggplot(aes(x = x, y = y)) +
@@ -171,7 +171,7 @@ for(b_n in 1:oct$header$num_bscans) {
         annotation_custom(ggplotGrob(p_slo),
                           xmin = width_px - inset_size + 1, xmax = width_px,
                           ymin = 1, ymax = inset_size) +
-        octgridtools::theme_nude() +
+        theme_nude() +
         theme(panel.spacing = unit(0, "mm"),
               plot.background = element_rect(fill = "black"),
               panel.background = element_rect(fill = "black")) +
