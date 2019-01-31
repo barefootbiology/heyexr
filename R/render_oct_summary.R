@@ -19,7 +19,6 @@
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom parallel parLapply makeCluster clusterCall stopCluster
 #' @importFrom purrr walk
-#' @importFrom ggmap theme_nothing
 render_oct_summary <- function(vol_file,
                                xml_file = NULL,
                                center_file = NULL,
@@ -179,7 +178,7 @@ render_oct_summary <- function(vol_file,
         # Save the SLO separately if required
         if(omit_slo) {
             # Save the SLO here
-            ggsave(p_slo + tt + theme_nothing(),
+            ggsave(p_slo + tt + theme_nude(),
                    file = paste0(output_path, "/", prefix,
                                  paste(oct$header$patient_id,
                                        oct$header$vid,

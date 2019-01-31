@@ -10,7 +10,6 @@ License: TBD
 LazyData: TRUE
 Imports:
     dplyr,
-    ggmap,
     ggplot2,
     gridExtra,
     lubridate,

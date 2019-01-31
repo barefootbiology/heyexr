@@ -12,7 +12,6 @@
 #' @importFrom grid textGrob arrow
 #' @importFrom parallel parLapply makeCluster clusterCall stopCluster
 #' @importFrom purrr walk
-#' @importFrom ggmap theme_nothing
 layout_plot_2 <- function(bscan_id, oct, p_slo, layer_y_max, layer_y_min, xml_file,
                           oct_segmentation, bscan_id_seg, center_file,
                           center_z_voxel, center_x_voxel,
@@ -38,7 +37,7 @@ layout_plot_2 <- function(bscan_id, oct, p_slo, layer_y_max, layer_y_min, xml_fi
                            contrast_correction = spline_correction) +
         labs(x = "", y = "") +
         tt +
-        theme_nothing()
+        theme_nude()
 
     # If an XML file was provided,
     # overlay Iowa Reference Algorithms segmentation on the top b-scan.
