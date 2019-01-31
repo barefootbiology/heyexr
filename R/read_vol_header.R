@@ -73,25 +73,25 @@ read_vol_header <- function(vol_con) {
     day_offset       <- 25569
     dob              <- readBin(vol_con, double(), endian = "little", size = 8)
 
-    header$dob              <- ((floor(dob) - day_offset)) %>%
+    header$dob      <- ((floor(dob) - day_offset)) %>%
         as.Date(origin = as.POSIXct("1970-01-01", tz="UTC"))
 
-    header$vid              <- readBin(vol_con, integer(), endian = "little")
-    header$visit_id         <- readBin(vol_con, "raw", endian = "little", size = 1, n = 24) %>%
+    header$vid      <- readBin(vol_con, integer(), endian = "little")
+    header$visit_id     <- readBin(vol_con, "raw", endian = "little", size = 1, n = 24) %>%
         rawToChar()
 
 
     # TASK: Convert to date/time
     # Convert DOB following "Open_Heyex_Info.java"
-    visit_date              <- readBin(vol_con, double(), endian = "little")
+    visit_date      <- readBin(vol_con, double(), endian = "little")
 
     # NOTE: I think this works. It makes sense at least.
-    header$visit_date       <- ((floor(visit_date) - day_offset)) %>%
+    header$visit_date <- ((floor(visit_date) - day_offset)) %>%
         as.Date(origin = as.POSIXct("1970-01-01", tz="UTC"))
 
     # NOTE: We're discarding this data, as Heidelberg isn't storing anything of
-    #       interesting in this.
-    spare                   <- readBin(vol_con, "raw", endian = "little", size = 1, n = 1840)
+    #       interest in this.
+    spare <- readBin(vol_con, "raw", endian = "little", size = 1, n = 1840)
 
     # Return the header. The file connection is automatically updated.
     return(header = header)
