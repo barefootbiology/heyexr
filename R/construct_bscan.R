@@ -1,19 +1,20 @@
-#' Construct a ggplot2 object containing the data for a given b-scan
+#' Construct a ggplot2 object containing the data for a given b-scan.
 #'
-#' Constructs a ggplot2 object containing the data for a given b-scan
+#' \code{construct_bscan} builds a ggplot2 object containing the data for a
+#' given b-scan.
 #'
-#' @param oct a list containing the OCT data
-#' @param bscan_id the number of the b-scan of interest
-#' @param layer_y_min vertical minimum constraint on the b-scan axis
-#' @param layer_y_max vertical maximum constraint on the b-scan axix
-#' @param low_color color for lowest values
-#' @param high_color color for highest values
-#' @param scale_bars Should scale bars be drawn?
-#' @param scale_length length of scale bars in microns
-#' @param scale_color color of scale bar
-#' @param inset_percentage percentage of image to inset the scale bar
+#' @param oct A list containing the OCT data.
+#' @param bscan_id The number of the b-scan of interest.
+#' @param layer_y_min Vertical minimum constraint on the b-scan axis.
+#' @param layer_y_max Vertical maximum constraint on the b-scan axix.
+#' @param low_color Color for lowest values.
+#' @param high_color Color for highest values.
+#' @param scale_bars Boolean indicating if scale bars be drawn.
+#' @param scale_length Length of scale bars in microns.
+#' @param scale_color Color of scale bar.
+#' @param inset_percentage Percentage of image to inset the scale bar.
 #'
-#' @return a ggplot2 object
+#' @return A ggplot2 object.
 #'
 #' @export
 #' @importFrom magrittr %>%
