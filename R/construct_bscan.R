@@ -8,7 +8,6 @@
 #' @param layer_y_max vertical maximum constraint on the b-scan axix
 #' @param low_color color for lowest values
 #' @param high_color color for highest values
-#' @param gamma value for gamma correction of b-scan values
 #' @param scale_bars Should scale bars be drawn?
 #' @param scale_length length of scale bars in microns
 #' @param scale_color color of scale bar
@@ -26,7 +25,6 @@ construct_bscan <- function(oct,
                             layer_y_min = 0,
                             low_color = "black",
                             high_color = "white",
-                            # gamma = 0.33,
                             contrast_correction = spline_correction,
                             na_intensity = 0,
                             scale_bars = TRUE,
