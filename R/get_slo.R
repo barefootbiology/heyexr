@@ -11,10 +11,12 @@
 #' @importFrom dplyr mutate
 #' @importFrom tidyr gather
 #' @importFrom stringr str_replace
+#' @importFrom tibble rownames_to_column
 get_slo <- function(oct) {
     oct$slo_image %>%
         as.data.frame %>%
-        cbind_rownames("x") %>%
+        # cbind_rownames("x") %>%
+        rownames_to_column("x") %>%
         tbl_df %>%
         gather(y, z, -x) %>%
         mutate(y = stringr::str_replace(y, pattern="V", replacement = "")) %>%
