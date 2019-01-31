@@ -10,7 +10,7 @@
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom dplyr bind_rows mutate
-read_heyex_header_only <- function(vol_file) {
+read_vol_header_only <- function(vol_file) {
     # Code based on these two projects:
     #
     # https://github.com/halirutan/HeyexImport
@@ -24,7 +24,7 @@ read_heyex_header_only <- function(vol_file) {
     vol_con <- readBin(vol_file, what = "raw", n = 2048) %>%
         rawConnection("rb")
 
-    header <- read_heyex_header(vol_con)
+    header <- read_vol_header(vol_con)
 
     # Close the connection to the VOL file
     close(vol_con)

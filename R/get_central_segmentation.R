@@ -23,7 +23,7 @@ get_central_segmentation <- function(vol_file = NULL,
     # TASK: Wrap these functions to catch errors
     # Read the header
 #     vol_con = file(vol_file, "rb")
-#     header <- read_heyex_header(vol_con)
+#     header <- read_vol_header(vol_con)
 #     close(vol_con)
 
     # Read in the segmentation file

@@ -37,11 +37,11 @@ vol_file_list <- data.frame(file = unlist(list.files(path = argv$dir,
 cat("Found", nrow(vol_file_list), "VOL files in", argv$dir, "\n")
 
 # Wrapper for reading the VOL header information
-read_heyex_header_only <- function(vol_file) {
+read_vol_header_only <- function(vol_file) {
     cat(vol_file, "... ")
     file_con <- file(vol_file, "rb")
 
-    vol_header <- read_heyex_header(vol_con = file_con)
+    vol_header <- read_vol_header(vol_con = file_con)
 
     close(file_con)
     cat("DONE\n")
@@ -53,7 +53,7 @@ read_heyex_header_only <- function(vol_file) {
 # Return a list of lists
 all_headers_list <- vol_file_list %>%
     split(.$file) %>%
-    map(~read_heyex_header_only(vol_file = .$file))
+    map(~read_vol_header_only(vol_file = .$file))
 
 # Merge as a single data.frame
 all_headers <- all_headers_list %>%

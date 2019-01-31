@@ -16,7 +16,7 @@
 render_slo <- function(vol_file, out_dir=".", draw_margins = FALSE, type="png",
                        size = 4, units ="in", ...) {
     # For a give VOL file, read the SLO information.
-    oct <- read_heyex(vol_file, header_slo_only=TRUE)
+    oct <- read_vol(vol_file, header_slo_only=TRUE)
 
     p_slo <- construct_slo(oct, draw_margins = draw_margins)
 

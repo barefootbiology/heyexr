@@ -10,7 +10,7 @@
 #'
 #' @export
 #' @importFrom magrittr %>%
-read_heyex_slo <- function(vol_con, header) {
+read_vol_slo <- function(vol_con, header) {
     # Code based on these two projects:
     #
     # https://github.com/halirutan/HeyexImport

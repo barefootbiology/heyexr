@@ -10,7 +10,7 @@
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom dplyr bind_rows mutate
-read_heyex <- function(vol_file, header_slo_only = FALSE) {
+read_vol <- function(vol_file, header_slo_only = FALSE) {
     # Code based on these two projects:
     #
     # https://github.com/halirutan/HeyexImport
@@ -20,11 +20,11 @@ read_heyex <- function(vol_file, header_slo_only = FALSE) {
     vol_con = file(vol_file, "rb")
 
     # Read the header
-    header <- read_heyex_header(vol_con)
+    header <- read_vol_header(vol_con)
 
     # cat("Offset to slo:",seek(vol_con, where = NA), "\n")
     # Read the SLO image
-    slo_image <- read_heyex_slo(vol_con, header)
+    slo_image <- read_vol_slo(vol_con, header)
 
     if(!header_slo_only) {
         # Calculated offests

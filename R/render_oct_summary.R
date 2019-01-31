@@ -58,13 +58,13 @@ render_oct_summary <- function(vol_file,
     # # Load raw data from VOL or RData file
     # if(!file.exists(paste(vol_file, ".RData", sep=""))) {
     #     # Load the VOL data
-    #     oct <- read_heyex(vol_file)
+    #     oct <- read_vol(vol_file)
     #     save(oct, file = paste(vol_file, ".RData", sep=""))
     # } else {
     #     load(paste(vol_file, ".RData", sep=""))
     # }
 
-    oct <- read_heyex(vol_file)
+    oct <- read_vol(vol_file)
 
     # If an XML file is provided,
     # load segmentation from XML or RData file.

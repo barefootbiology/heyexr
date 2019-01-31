@@ -11,7 +11,7 @@
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom lubridate ymd
-read_heyex_header <- function(vol_con) {
+read_vol_header <- function(vol_con) {
     # Code based on these two projects:
     #
     # https://github.com/halirutan/HeyexImport
