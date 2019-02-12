@@ -66,10 +66,6 @@ read_vol_header <- function(vol_con) {
                                        n = 3) %>%
         paste0(collapse = "")
 
-    # TASK: Convert to date/time
-    # Convert DOB following "Open_Heyex_Info.java"
-    # day_offset <- difftime(ymd("1970-01-01"), ymd("1899-12-30"), units = "days") %>%
-    #     as.double()
     day_offset       <- 25569
     dob              <- readBin(vol_con, double(), endian = "little", size = 8)
 
@@ -80,12 +76,8 @@ read_vol_header <- function(vol_con) {
     header$visit_id     <- readBin(vol_con, "raw", endian = "little", size = 1, n = 24) %>%
         rawToChar()
 
-
-    # TASK: Convert to date/time
-    # Convert DOB following "Open_Heyex_Info.java"
     visit_date      <- readBin(vol_con, double(), endian = "little")
 
-    # NOTE: I think this works. It makes sense at least.
     header$visit_date <- ((floor(visit_date) - day_offset)) %>%
         as.Date(origin = as.POSIXct("1970-01-01", tz="UTC"))
 
