@@ -1,8 +1,8 @@
 Package: heyexr
 Type: Package
 Title: Import Heidelberg Spectralis OCT VOL Files
-Version: 0.1
-Date: 2015-10-15
+Version: 0.0.0.9000
+Date: 2019-02-13
 Authors@R: person("S. Scott", "Whitmore", email = "steven-whitmore@uiowa.edu",
                   role = c("aut", "cre"))
 Description: Import and  Heidelberg Spectralis optical coherence tomography (OCT) data in R.
