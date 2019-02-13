@@ -185,7 +185,7 @@ for(b_n in 1:oct$header$num_bscans) {
     #         annotate("text",
     #                  x = bscan_x_0+4,
     #                  y = bscan_y_0-2,
-    #                  label = paste(scale_length, "µm"),
+    #                  label = expression(paste0(scale_length, " ", mu, "m")),
     #                  color = scale_color,
     #                  hjust = 0,
     #                  vjust = 0,
