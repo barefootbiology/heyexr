@@ -4,8 +4,8 @@
 \alias{render_slo}
 \title{Render SLO data}
 \usage{
-render_slo(vol_file, out_dir = ".", draw_margins = FALSE, type = "png",
-  size = 4, units = "in", ...)
+render_slo(vol_file, out_dir = ".", draw_margins = FALSE,
+  type = "png", size = 4, units = "in", ...)
 }
 \arguments{
 \item{out_dir}{directory to save image}
