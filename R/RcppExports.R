@@ -2,6 +2,26 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @title
+#' datetime_to_raw
+#' @description
+#' Covert a datetime value, encoded as an integer, to the binary representation
+#' of Windows filetime to POSIXct.
+#'
+#' @param x Integer representing the seconds from the epoch
+#'
+#' @return a raw vector of 8 bytes representing the number of 100 nanosecond
+#' units since 1601-01-01.
+#'
+#' @details
+#' \code{raw_to_datetime} takes an raw vector encoding a 64-bit unsigned integer
+#' This value is the number of 100 nanoseconds since 1601-01-01.
+#'
+#' @export
+datetime_to_raw <- function(sec_epoch) {
+    .Call(`_heyexr_datetime_to_raw`, sec_epoch)
+}
+
+#' @title
 #' raw_to_datetime
 #' @description
 #' Covert the binary representation of Windows filetime to POSIXct
