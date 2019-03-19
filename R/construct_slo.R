@@ -80,11 +80,12 @@ construct_slo <- function(oct,
             annotate("text",
                      x = x_0 + 10,
                      y = y_0 - 10,
-                     label = expression(paste0(scale_length, " ", mu, "m")),
+                     label = deparse(bquote(.(scale_length)~mu*"m")),
                      color = "white",
                      hjust = 0,
                      vjust = 0,
-                     size = 2)
+                     size = 2,
+                     parse = TRUE)
     }
 
     # Return the ggplot2 plot object

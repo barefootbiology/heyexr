@@ -78,11 +78,12 @@ construct_bscan <- function(oct,
             annotate("text",
                      x = bscan_x_0+4,
                      y = bscan_y_0-2,
-                     label = expression(paste0(scale_length, " ", mu, "m")),
+                     label = deparse(bquote(.(scale_length)~mu*"m")),
                      color = scale_color,
                      hjust = 0,
                      vjust = 0,
-                     size = 2)
+                     size = 2,
+                     parse = TRUE)
     }
 
     return(p_1)
