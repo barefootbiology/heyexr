@@ -17,7 +17,7 @@ read_center_xml <- function(center_file) {
     # oct_center_xml = xmlParse(center_file)
     oct_center_xml <- read_xml(center_file)
 
-    parsed_center <- oct_center_xml %>% as_list()
+    parsed_center <-  as_list(oct_center_xml)[[1L]]
 
     # Convert from characters to appropriate data types
     parsed_center$center <- parsed_center$center %>%
