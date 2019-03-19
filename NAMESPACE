@@ -3,6 +3,7 @@
 export(add_undefined)
 export(construct_bscan)
 export(construct_slo)
+export(datetime_to_raw)
 export(flip_region)
 export(get_bscan)
 export(get_central_segmentation)
