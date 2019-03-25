@@ -62,7 +62,7 @@ read_vol_raw <- function(vol_file, header_slo_only = FALSE) {
         for (bscan_id in c(0:(header$num_bscans-1))) {
             setTxtProgressBar(pb, bscan_id + 1, title = "Reading B-Scans")
             # cat("Reading b-scan header\n")
-            bscan_header_all[[bscan_id + 1]] <- read_bscan_header(vol_con, header)
+            bscan_header_all[[bscan_id + 1]] <- read_bscan_header(vol_con)
 
             # cat("Entering seg_layer * a_scan nested loop:\n")
             # Read in the Heidelberg segmentation information

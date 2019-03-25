@@ -56,7 +56,7 @@ read_vol_noloop <- function(vol_file, header_slo_only = FALSE) {
         for (bscan_id in c(0:(header$num_bscans-1))) {
             setTxtProgressBar(pb, bscan_id+1, title = "Reading B-Scans")
 
-            bscan_header_all[[bscan_id + 1]] <- read_bscan_header(vol_con, header)
+            bscan_header_all[[bscan_id + 1]] <- read_bscan_header(vol_con)
 
             # Read in the Heidelberg segmentation information
             for (seg_layer in c(0:(bscan_header_all[[bscan_id+1]]$num_seg-1))) {
