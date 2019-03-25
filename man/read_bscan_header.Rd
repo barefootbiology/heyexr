@@ -4,12 +4,10 @@
 \alias{read_bscan_header}
 \title{Read b-scan header information from a connection to a VOL file}
 \usage{
-read_bscan_header(vol_con, header)
+read_bscan_header(vol_con)
 }
 \arguments{
 \item{vol_con}{the connection to a VOL file}
-
-\item{header}{previously imported VOL file header data}
 }
 \value{
 a list of the b-scan specfific header information
