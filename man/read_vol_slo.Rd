@@ -15,6 +15,5 @@ read_vol_slo(vol_con, header)
 a matrix containing the SLO image
 }
 \description{
-Read the header information from a Heidelberg Spectralis VOL file.
-Function assumes the header begins at byte 2048.
+Read the SLO data from a Heidelberg Spectralis VOL file.
 }
