@@ -4,13 +4,12 @@
 #' based on Open_Heyex_Raw.java from the HEYEX plugin for ImageJ.
 #'
 #' @param vol_con the connection to a VOL file
-#' @param header previously imported VOL file header data
 #'
 #' @return a list of the b-scan specfific header information
 #'
 #' @export
 #' @importFrom magrittr %>%
-read_bscan_header <- function(vol_con, header) {
+read_bscan_header <- function(vol_con) {
     # For each B-Scan, read header and data
     bscan_header_list <- list()
 
