@@ -66,20 +66,16 @@ read_vol_header <- function(vol_con) {
                                        n = 3) %>%
         paste0(collapse = "")
 
-    day_offset       <- 25569
+    # day_offset       <- 25569
     dob              <- readBin(vol_con, double(), endian = "little", size = 8)
-
-    header$dob      <- ((floor(dob) - day_offset)) %>%
-        as.Date(origin = as.POSIXct("1970-01-01", tz="UTC"))
+    header$dob <- as.POSIXct(dob * (60 * 60 * 24), origin = "1899-12-30", tz = "UTC")
 
     header$vid      <- readBin(vol_con, integer(), endian = "little")
     header$visit_id     <- readBin(vol_con, "raw", endian = "little", size = 1, n = 24) %>%
         rawToChar()
 
     visit_date      <- readBin(vol_con, double(), endian = "little")
-
-    header$visit_date <- ((floor(visit_date) - day_offset)) %>%
-        as.Date(origin = as.POSIXct("1970-01-01", tz="UTC"))
+    header$visit_date <- as.POSIXct(visit_date * (60 * 60 * 24), origin = "1899-12-30", tz = "UTC")
 
     # NOTE: We're discarding this data, as Heidelberg isn't storing anything of
     #       interest in this.
