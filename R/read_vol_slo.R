@@ -9,17 +9,15 @@
 #' @return a matrix containing the SLO image
 #'
 #' @export
-#' @importFrom magrittr %>%
 read_vol_slo <- function(vol_con, header) {
     # Code based on these two projects:
     #
     # https://github.com/halirutan/HeyexImport
     # http://rsb.info.nih.gov/ij/plugins/heyex/index.html
 
-    slo_image <- readBin(vol_con, integer(), size = 1,
+    slo_data <- readBin(vol_con, integer(), size = 1,
                          n = header$size_x_slo * header$size_y_slo,
-                         endian = "little", signed = FALSE) %>%
-        (function(x) matrix(x, nrow = header$size_x_slo))
+                         endian = "little", signed = FALSE)
 
-    return(slo_image)
+    matrix(slo_data, nrow = header$size_x_slo)
 }
