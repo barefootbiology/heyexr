@@ -133,17 +133,17 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
                                          matrix(nrow = 1, byrow = FALSE) %>%
                                          data.frame(stringsAsFactors = FALSE)) %>%
             bind_rows() %>%
-            setNames(c("version", "bscan_header_size",
+            setNames(c("version", "bscan_hdr_size",
                        "start_x", "start_y",
                        "end_x", "end_y", "num_seg",
                        "off_seg", "quality")) %>%
-            mutate(bscan_header_size = as.numeric(bscan_header_size),
+            mutate(bscan_hdr_size = as.integer(bscan_hdr_size),
                    start_x = as.numeric(start_x),
                    start_y = as.numeric(start_y),
                    end_x = as.numeric(end_x),
                    end_y = as.numeric(end_y),
-                   num_seg = as.numeric(num_seg),
-                   off_seg = as.numeric(off_seg),
+                   num_seg = as.integer(num_seg),
+                   off_seg = as.integer(off_seg),
                    quality = as.numeric(quality)) %>%
             # For convenience, compute the coordinates in the SLO pixel space.
             # Adjust pixel values to match R's 1-based indexing system

@@ -107,11 +107,11 @@ read_vol_raw <- function(vol_file, header_slo_only = FALSE) {
                                          matrix(nrow = 1, byrow = FALSE) %>%
                                          data.frame(stringsAsFactors = FALSE)) %>%
             bind_rows %>%
-            setNames(c("version", "bscan_header_size",
+            setNames(c("version", "bscan_hdr_size",
                        "start_x", "start_y",
                        "end_x", "end_y", "num_seg",
                        "off_seg", "quality")) %>%
-            mutate(bscan_header_size = as.numeric(bscan_header_size),
+            mutate(bscan_hdr_size = as.numeric(bscan_hdr_size),
                    start_x = as.numeric(start_x),
                    start_y = as.numeric(start_y),
                    end_x = as.numeric(end_x),
