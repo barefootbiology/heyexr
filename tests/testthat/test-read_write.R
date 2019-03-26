@@ -1,7 +1,5 @@
 context("test-read_write")
 
-library(heyexr)
-
 original_file <- file.path(path.package("heyexr"), "inst/extdata/TEST_T_566581.vol")
 original_vol <- read_vol(original_file)
 
@@ -21,6 +19,7 @@ test_that("writing to VOL works", {
 
 test_that("file checking works", {
     expect_error(write_vol(original_vol, out_file, overwrite = FALSE))
+    expect_error(read_vol("missing.vol"))
 })
 
 file.remove(out_file)
