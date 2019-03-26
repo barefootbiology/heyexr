@@ -2,8 +2,10 @@
 #'
 #' Creates a list containing data from a Heidelberg Spectralis VOL file.
 #'
-#' @param vol_file path to VOL file
-#' @param header_slo_only Import only the header information and SLO image?
+#' @param vol_file Path to VOL file.
+#' @param read_what Character string indicating what parts of the file to read.
+#'     If "all", then all data is read. If "slo", then only the header and SLO
+#'     are read. Any other value will only return the header.
 #'
 #' @return a list containing the data from the VOL file
 #'
@@ -12,7 +14,7 @@
 #' @importFrom dplyr bind_rows mutate
 #' @importFrom purrr map_dfr
 #' @importFrom tibble as_tibble
-read_vol <- function(vol_file, header_slo_only = FALSE) {
+read_vol <- function(vol_file, read_what = "all") {
     # Code based on these two projects:
     #
     # https://github.com/halirutan/HeyexImport
@@ -24,11 +26,17 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
 
     vol_con <- file(vol_file, "rb")
 
+    output <- list()
+
     header <- read_vol_header(vol_con)
 
-    slo_image <- read_vol_slo(vol_con, header)
+    output$header <- header
 
-    if(!header_slo_only) {
+    if(read_what %in% c("all", "slo")) {
+        output$slo_image <- read_vol_slo(vol_con, header)
+    }
+
+    if(read_what == "all") {
         # Calculated offsets
         file_header_size = 2048; # integer, size in bytes of file header, equal to
                                  # offset to reach SLO image;
@@ -45,7 +53,7 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
         # Create empty containers
         bscan_header_all <- list()
 
-        bscan_image <- array(rep(as.double(NA), header$size_x * header$num_bscans * header$size_z),
+        bscan_images <- array(rep(as.double(NA), header$size_x * header$num_bscans * header$size_z),
                              dim = c(header$size_x, header$num_bscans, header$size_z))
 
         # TASK: Update this comment
@@ -95,7 +103,7 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
             temp <- readBin(vol_con, "raw",
                             n = n_bytes)
 
-            bscan_image[, bscan_id, ] <- readBin(vol_con,
+            bscan_images[, bscan_id, ] <- readBin(vol_con,
                                               "numeric",
                                               n = header$size_x * header$size_z,
                                               size = 4) %>%
@@ -106,7 +114,7 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
         message("")
 
         # Make sure that NA values are properly represented in the seg_array
-        bscan_image[bscan_image == max_float] <- NA
+        bscan_images[bscan_images == max_float] <- NA
 
         seg_array[seg_array == max_float] <- NA
 
@@ -129,19 +137,12 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
                    end_y_pixels = end_y / header$scale_y_slo + 1) %>%
             mutate(bscan_id = 1:n())
 
-        output <- list(header = header,
-                       slo_image = slo_image,
-                       bscan_headers = bscan_headers,
-                       seg_array = seg_array,
-                       bscan_images = bscan_image)
-
-    } else {
-        # Return only the header and SLO image
-        output <- list(header = header,
-                       slo_image = slo_image)
+        output$bscan_headers <- bscan_headers
+        output$seg_array <- seg_array
+        output$bscan_images <- bscan_images
     }
 
     close(vol_con)
 
-    return(output)
+    output
 }

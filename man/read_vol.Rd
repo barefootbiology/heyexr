@@ -4,12 +4,14 @@
 \alias{read_vol}
 \title{Read a Heidelberg Spectralis VOL file}
 \usage{
-read_vol(vol_file, header_slo_only = FALSE)
+read_vol(vol_file, read_what = "all")
 }
 \arguments{
-\item{vol_file}{path to VOL file}
+\item{vol_file}{Path to VOL file.}
 
-\item{header_slo_only}{Import only the header information and SLO image?}
+\item{read_what}{Character string indicating what parts of the file to read.
+If "all", then all data is read. If "slo", then only the header and SLO
+are read. Any other value will only return the header.}
 }
 \value{
 a list containing the data from the VOL file

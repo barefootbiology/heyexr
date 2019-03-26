@@ -22,4 +22,19 @@ test_that("file checking works", {
     expect_error(read_vol("missing.vol"))
 })
 
+test_that("partial file reading works", {
+    expect_identical(
+        names(read_vol(original_file, read_what = "header")),
+        c("header")
+        )
+    expect_identical(
+        names(read_vol(original_file, read_what = "slo")),
+        c("header", "slo_image")
+    )
+    expect_identical(
+        names(read_vol(original_file, read_what = "all")),
+        c("header", "slo_image", "bscan_headers", "seg_array", "bscan_images")
+    )
+})
+
 file.remove(out_file)
