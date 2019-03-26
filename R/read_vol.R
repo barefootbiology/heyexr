@@ -42,8 +42,6 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
 
         # Create empty containers
         bscan_header_all <- list()
-        # seg_array <- list()
-        # bscan_image <- list()
 
         bscan_image <- array(rep(as.double(NA), header$size_x * header$num_bscans * header$size_z),
                              dim = c(header$size_x, header$num_bscans, header$size_z))
@@ -69,18 +67,6 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
             bscan_header_all[[bscan_id]] <- read_bscan_header(vol_con)
 
             num_seg <- bscan_header_all[[bscan_id]]$num_seg
-            # if(bscan == 1) {
-            #     if(bscan_header_all[[bscan]]$num_seg != dim(seg_array)[3]) {
-            #         seg_array <- seg_array[ , , 1:bscan_header_all[[bscan]]$num_seg]
-            #     }
-            # }
-
-            # # TESTING:
-            # message("bscan:\t", bscan)
-            # message("header$bscan_hdr_size:\t", header$bscan_hdr_size)
-            # message("bscan_header_all[[bscan]]$end_y:\t", bscan_header_all[[bscan]]$end_y)
-            # message("bscan_header_all[[bscan]]$num_seg:\t", num_seg)
-            # message("header$size_x:\t",header$size_x)
 
             seg_data <-
                 read_float_vector(vol_con,
@@ -97,12 +83,7 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
 
             seg_array[ , bscan_id, ] <- seg_data
 
-            # NOTE: I think this is simply to move the file buffer along. Not
-            #       sure if I should substitute "readBin" with "seek".
-
-
             n_bytes <- header$bscan_hdr_size - 256 - (num_seg * header$size_x * 4)
-            # message("n_bytes\t", n_bytes)
 
             temp <- readBin(vol_con, "raw",
                             n = n_bytes)
@@ -123,7 +104,7 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
         seg_array[seg_array == max_float] <- NA
 
         # Add 1 to all distance value in seg_array to work with the 1-based
-        # R indexing
+        # R indexing.
         seg_array <- seg_array + 1
 
         # TASK: Convert bscan_headers to a data.frame.
