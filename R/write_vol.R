@@ -12,7 +12,7 @@
 #' @importFrom magrittr %>%
 write_vol <- function(volume, vol_file, overwrite = FALSE) {
     if(!overwrite & file.exists(vol_file)) {
-        stop("File ", vol_file, " exists!")
+        stop("File ", vol_file, " exists! To overwrite existing files, set 'overwrite = TRUE'.")
     }
 
     vol_con <- file(vol_file, "wb")
@@ -22,7 +22,6 @@ write_vol <- function(volume, vol_file, overwrite = FALSE) {
     write_vol_header(vol_con = vol_con, header = header)
     write_vol_slo(vol_con = vol_con, slo = volume$slo_image)
 
-    ## WRITE B-SCAN DATA
     for (bscan_id in c(1:(header$num_bscans))) {
 
         # Write bscan header (remembering to adjust for 0-based coordinates)
