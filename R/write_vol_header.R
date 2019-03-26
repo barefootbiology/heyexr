@@ -57,7 +57,6 @@ write_vol_header <- function(vol_con, header) {
 
     charToRaw(header$reference_id) %>%
         pad_raw(size = 1, n = 16) %>%
-        echo() %>%
         writeBin(vol_con, "raw", endian = "little")
 
     writeBin(header$pid, vol_con, integer(), endian = "little")
