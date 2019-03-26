@@ -22,14 +22,10 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
         stop("File ", vol_file, " does not exist!")
     }
 
-    # Create a connection to the VOL file
     vol_con <- file(vol_file, "rb")
 
-    # Read the header
     header <- read_vol_header(vol_con)
 
-    # cat("Offset to slo:",seek(vol_con, where = NA), "\n")
-    # Read the SLO image
     slo_image <- read_vol_slo(vol_con, header)
 
     if(!header_slo_only) {
