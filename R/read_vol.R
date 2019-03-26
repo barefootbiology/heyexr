@@ -16,8 +16,12 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
     # https://github.com/halirutan/HeyexImport
     # http://rsb.info.nih.gov/ij/plugins/heyex/index.html
 
+    if(!file.exists(vol_file)) {
+        stop("File ", vol_file, " does not exist!")
+    }
+
     # Create a connection to the VOL file
-    vol_con = file(vol_file, "rb")
+    vol_con <- file(vol_file, "rb")
 
     # Read the header
     header <- read_vol_header(vol_con)
@@ -27,9 +31,9 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
     slo_image <- read_vol_slo(vol_con, header)
 
     if(!header_slo_only) {
-        # Calculated offests
-        file_header_size = 2048; #integer, size in bytes of file header, equal to
-                                        # offset to reach SLO image;
+        # Calculated offsets
+        file_header_size = 2048; # integer, size in bytes of file header, equal to
+                                 # offset to reach SLO image;
         slo_image_size = header$size_x_slo * header$size_y_slo; # integer, size in
                                         # bytes of the SLO image data;
         oct_image_size = header$size_x * header$size_z * 4; # integer, size in
