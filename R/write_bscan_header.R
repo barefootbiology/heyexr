@@ -5,7 +5,6 @@
 #' @param vol_con the connection to a VOL file
 #' @param bscan_header_list previously imported b-scan header data
 #'
-#' @export
 #' @importFrom magrittr %>%
 write_bscan_header <- function(vol_con, bscan_header_list) {
     # For each B-Scan, read header and data

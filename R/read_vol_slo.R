@@ -7,7 +7,6 @@
 #'
 #' @return a matrix containing the SLO image
 #'
-#' @export
 read_vol_slo <- function(vol_con, header) {
     # Code based on these two projects:
     #

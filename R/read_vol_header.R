@@ -8,7 +8,6 @@
 #'
 #' @return a list containing the header from the VOL file
 #'
-#' @export
 #' @importFrom magrittr %>%
 #' @importFrom lubridate ymd
 read_vol_header <- function(vol_con) {

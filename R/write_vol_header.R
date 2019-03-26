@@ -5,7 +5,6 @@
 #' @param vol_con File connection object.
 #' @param header Header (list) from a VOL object.
 #'
-#' @export
 #' @importFrom magrittr %>%
 write_vol_header <- function(vol_con, header) {
 

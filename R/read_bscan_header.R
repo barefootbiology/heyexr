@@ -7,7 +7,6 @@
 #'
 #' @return a list of the b-scan specfific header information
 #'
-#' @export
 #' @importFrom magrittr %>%
 read_bscan_header <- function(vol_con) {
     # For each B-Scan, read header and data

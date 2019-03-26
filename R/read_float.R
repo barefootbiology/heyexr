@@ -6,7 +6,6 @@
 #'
 #' @return a numeric
 #'
-#' @export
 #' @importFrom magrittr %>%
 read_float <- function(con) {
     readBin(con = con, what = "raw",
