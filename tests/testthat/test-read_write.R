@@ -1,6 +1,12 @@
 context("test-read_write")
 
-original_file <- file.path(path.package("heyexr"), "inst/extdata/TEST_T_566581.vol")
+extdata_path <- "inst/extdata"
+
+if(!dir.exists(file.path(here::here(), extdata_path))) {
+    extdata_path <- "extdata"
+}
+
+original_file <- file.path(path.package("heyexr"), extdata_path, "TEST_T_566581.vol")
 original_vol <- read_vol(original_file)
 
 out_file <- tempfile(pattern = "volume")
