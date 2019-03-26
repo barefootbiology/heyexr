@@ -10,6 +10,8 @@
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom dplyr bind_rows mutate
+#' @importFrom purrr map_dfr
+#' @importFrom tibble as_tibble
 read_vol <- function(vol_file, header_slo_only = FALSE) {
     # Code based on these two projects:
     #
@@ -57,7 +59,6 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
         seg_array <- array(rep(as.double(NA), header$num_bscans * 3 * header$size_x),
                            dim = c(header$size_x, header$num_bscans, 3))
 
-        # TASK: Move this to an external function.
         # Read in the segmentation arrays
 
         pb <- txtProgressBar(min = 0,
@@ -87,8 +88,14 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
 
             seg_array[ , bscan_id, ] <- seg_data
 
-            n_bytes <- header$bscan_hdr_size - 256 - (num_seg * header$size_x * 4)
+            n_bytes <-
+                header$bscan_hdr_size - 256 -
+                (num_seg * header$size_x * 4)
 
+            # NOTE: Currently I'm not processing the extra data in these bytes,
+            #       as they are simply for future file expansion in version
+            #       HSF-OCT-101. However, I'm not sure if later versions do use
+            #       these bytes.
             temp <- readBin(vol_con, "raw",
                             n = n_bytes)
 
@@ -111,25 +118,13 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
         # R indexing.
         seg_array <- seg_array + 1
 
-        # TASK: Convert bscan_headers to a data.frame.
-        #       We can get rid of the "spare" column.
-        bscan_header_all <- lapply(bscan_header_all, function(x) x[1:9] %>%
-                                         unlist %>%
-                                         matrix(nrow = 1, byrow = FALSE) %>%
-                                         data.frame(stringsAsFactors = FALSE)) %>%
-            bind_rows() %>%
-            setNames(c("version", "bscan_hdr_size",
-                       "start_x", "start_y",
-                       "end_x", "end_y", "num_seg",
-                       "off_seg", "quality")) %>%
-            mutate(bscan_hdr_size = as.integer(bscan_hdr_size),
-                   start_x = as.numeric(start_x),
-                   start_y = as.numeric(start_y),
-                   end_x = as.numeric(end_x),
-                   end_y = as.numeric(end_y),
-                   num_seg = as.integer(num_seg),
-                   off_seg = as.integer(off_seg),
-                   quality = as.numeric(quality)) %>%
+        bscan_header_all <-
+            bscan_header_all %>%
+            map_dfr(as_tibble) %>%
+            # NOTE: Currently I'm throwing away the "spare" bytes, as these are
+            #       not used in HSF-OCT-101. However, I'm not sure if they are
+            #       used in later versions of the file format.
+            select(-spare) %>%
             # For convenience, compute the coordinates in the SLO pixel space.
             # Adjust pixel values to match R's 1-based indexing system
             mutate(start_x_pixels = start_x / header$scale_x_slo + 1,

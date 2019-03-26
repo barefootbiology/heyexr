@@ -27,7 +27,7 @@ read_bscan_header <- function(vol_con) {
     bscan_header_list$num_seg <- readBin(vol_con, integer())
     bscan_header_list$off_seg <- readBin(vol_con, integer())
     bscan_header_list$quality <- readBin(vol_con, what="numeric", size = 4)
-    bscan_header_list$spare <- readBin(vol_con, "raw", n = 196)
+    bscan_header_list$spare <- list(bytes = readBin(vol_con, "raw", n = 196))
 
     return(bscan_header_list)
 }
