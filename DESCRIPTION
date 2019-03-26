@@ -5,9 +5,12 @@ Version: 0.0.0.9000
 Date: 2019-02-13
 Authors@R: person("S. Scott", "Whitmore", email = "steven-whitmore@uiowa.edu",
                   role = c("aut", "cre"))
-Description: Import and  Heidelberg Spectralis optical coherence tomography (OCT) data in R.
+Description: Import and export Heidelberg Spectralis optical coherence tomography (OCT) data in R.
+Encoding: UTF-8
 License: TBD
 LazyData: TRUE
+Depends:
+    R (>= 3.5.0)
 Imports:
     dplyr (>= 0.7.8),
     ggplot2 (>= 3.1.0),
@@ -27,4 +30,4 @@ LinkingTo:
     Rcpp (>= 1.0.0)
 RoxygenNote: 6.1.1
 Suggests: 
-    testthat
+    testthat (>= 2.0.1)
