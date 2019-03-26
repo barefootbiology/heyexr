@@ -14,7 +14,6 @@ Depends:
 Imports:
     dplyr (>= 0.7.8),
     ggplot2 (>= 3.1.0),
-    gridExtra (>= 2.3),
     lubridate (>= 1.7.4),
     magrittr (>= 1.5),
     purrr (>= 0.3.0),
@@ -30,4 +29,5 @@ LinkingTo:
     Rcpp (>= 1.0.0)
 RoxygenNote: 6.1.1
 Suggests: 
-    testthat (>= 2.0.1)
+    testthat (>= 2.0.1),
+    here (>= 0.1)

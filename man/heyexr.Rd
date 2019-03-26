@@ -7,7 +7,7 @@
 \alias{heyexr-package}
 \title{heyexr: Import Heidelberg Spectralis OCT VOL Files}
 \description{
-Import and  Heidelberg Spectralis optical coherence tomography (OCT) data in R.
+Import and export Heidelberg Spectralis optical coherence tomography (OCT) data in R.
 }
 \author{
 S. Scott Whitmore <steven-whitmore@uiowa.edu>
