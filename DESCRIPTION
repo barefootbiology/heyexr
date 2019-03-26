@@ -26,3 +26,5 @@ Imports:
 LinkingTo:
     Rcpp (>= 1.0.0)
 RoxygenNote: 6.1.1
+Suggests: 
+    testthat

@@ -1,0 +1,26 @@
+context("test-read_write")
+
+library(heyexr)
+
+original_file <- file.path(path.package("heyexr"), "inst/extdata/TEST_T_566581.vol")
+original_vol <- read_vol(original_file)
+
+out_file <- tempfile(pattern = "volume")
+
+write_vol(original_vol, out_file, overwrite = TRUE)
+
+written_vol <- read_vol(out_file)
+
+test_that("writing to VOL works", {
+  expect_identical(original_vol$header, written_vol$header)
+  expect_identical(original_vol$slo, written_vol$slo)
+  expect_identical(original_vol$seg_array, written_vol$seg_array)
+  expect_identical(original_vol$bscan_headers, written_vol$bscan_headers)
+  expect_identical(original_vol$bscan_images, written_vol$bscan_images)
+})
+
+test_that("file checking works", {
+    expect_error(write_vol(original_vol, out_file, overwrite = FALSE))
+})
+
+file.remove(out_file)
