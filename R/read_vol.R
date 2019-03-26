@@ -145,9 +145,7 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
                        slo_image = slo_image)
     }
 
-    # Close the connection to the VOL file
     close(vol_con)
 
-    # Return the requested object
     return(output)
 }
