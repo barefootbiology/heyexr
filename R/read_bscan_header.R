@@ -16,7 +16,9 @@ read_bscan_header <- function(vol_con) {
     # IMPLEMENT HEADER READING HERE.
     # CODE DIRECTLY FROM Open_Heyex_Raw.java
     # Read the first header.
-    bscan_header_list$version <- readBin(vol_con, "raw", size = 1, n = 12) %>% rawToChar()
+    bscan_header_list$version <-
+        readBin(vol_con, "raw", size = 1, n = 12) %>%
+        rawToChar()
     bscan_header_list$bscan_hdr_size <- readBin(vol_con, integer())
     bscan_header_list$start_x <- readBin(vol_con, double())
     bscan_header_list$start_y <- readBin(vol_con, double())
