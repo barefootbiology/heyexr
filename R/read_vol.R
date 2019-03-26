@@ -118,7 +118,7 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
         # R indexing.
         seg_array <- seg_array + 1
 
-        bscan_header_all <-
+        bscan_headers <-
             bscan_header_all %>%
             map_dfr(as_tibble) %>%
             # NOTE: Currently I'm throwing away the "spare" bytes, as these are
@@ -135,7 +135,7 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
 
         output <- list(header = header,
                        slo_image = slo_image,
-                       bscan_headers = bscan_header_all,
+                       bscan_headers = bscan_headers,
                        seg_array = seg_array,
                        bscan_images = bscan_image)
 
@@ -145,9 +145,7 @@ read_vol <- function(vol_file, header_slo_only = FALSE) {
                        slo_image = slo_image)
     }
 
-    # Close the connection to the VOL file
     close(vol_con)
 
-    # Return the requested object
     return(output)
 }
