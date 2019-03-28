@@ -15,6 +15,9 @@ write_vol(original_vol, out_file, overwrite = TRUE)
 
 written_vol <- read_vol(out_file)
 
+empty_file <- tempfile(pattern = "empty_volume")
+file.create(empty_file)
+
 test_that("writing to VOL works", {
   expect_identical(original_vol$header, written_vol$header)
   expect_identical(original_vol$slo, written_vol$slo)
@@ -26,6 +29,7 @@ test_that("writing to VOL works", {
 test_that("file checking works", {
     expect_error(write_vol(original_vol, out_file, overwrite = FALSE))
     expect_error(read_vol("missing.vol"))
+    expect_error(read_vol(empty_file))
 })
 
 test_that("partial file reading works", {
@@ -44,3 +48,4 @@ test_that("partial file reading works", {
 })
 
 file.remove(out_file)
+file.remove(empty_file)

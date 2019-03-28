@@ -21,6 +21,11 @@ read_vol_header <- function(vol_con) {
 
     # Read each value from the VOL file
     header$version      <- readBin(vol_con, character(), endian = "little")
+
+    if(is.na(header$version) || (nchar(header$version) == 0)) {
+        stop("Version information in header is missing.")
+    }
+
     header$size_x       <- readBin(vol_con, integer(), endian = "little")
     header$num_bscans   <- readBin(vol_con, integer(), endian = "little")
     header$size_z       <- readBin(vol_con, integer(), endian = "little")
@@ -81,5 +86,5 @@ read_vol_header <- function(vol_con) {
     spare <- readBin(vol_con, "raw", endian = "little", size = 1, n = 1840)
 
     # Return the header. The file connection is automatically updated.
-    return(header = header)
+    header
 }
