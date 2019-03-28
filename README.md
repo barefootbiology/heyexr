@@ -8,5 +8,4 @@ Import, transform, and visualize ocular coherence tomography (OCT) data in R
 
 ## Known issues
 
-* Cannot currently parse date of birth from the VOL file. (DOB is encoded in the VOL file as a 64 bit integer, and R can't natively handle 64 bit numbers.
-* Import and visualization functions has only been tested on volume scans. Radial scan patterns have not been tested.
+* TALK ABOUT ISSUES WITH write_vol vs. original VOL file here, e.g., dropped nanosecond precision, B-scan header values.
