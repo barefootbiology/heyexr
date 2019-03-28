@@ -11,7 +11,7 @@
 #'
 #' @export
 #' @importFrom magrittr %>%
-#' @importFrom dplyr bind_rows mutate
+#' @importFrom dplyr bind_rows mutate n
 #' @importFrom purrr map_dfr
 #' @importFrom tibble as_tibble
 read_vol <- function(vol_file, read_what = "all") {
