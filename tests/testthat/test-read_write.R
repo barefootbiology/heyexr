@@ -62,16 +62,41 @@ test_that("partial file reading works", {
     )
 })
 
+# anon_dob <- as.POSIXct(0, origin = "1901-01-01", tz = "UTC")  # FAILS
+# anon_dob <- original_vol$header$dob                           # WORKS
+# anon_dob <- as.POSIXct(0, origin = "2003-01-02", tz = "UTC")  # WORKS
+anon_dob <- as.POSIXct(0, origin = "1955-01-01", tz = "UTC")    # WORKS
+anon_dob <- as.POSIXct(0, origin = "1952-01-01", tz = "UTC")    # FAILS
+anon_dob <- as.POSIXct(0, origin = "1954-01-01", tz = "UTC")    # FAILS
+anon_dob <- as.POSIXct(0, origin = "1954-12-31", tz = "UTC")    # WORKS
+anon_dob <- as.POSIXct(0, origin = "1954-06-01", tz = "UTC")    # FAILS
+anon_dob <- as.POSIXct(0, origin = "1954-09-01", tz = "UTC")    # FAILS
+anon_dob <- as.POSIXct(0, origin = "1954-11-01", tz = "UTC")    # WORKS
+anon_dob <- as.POSIXct(0, origin = "1954-10-01", tz = "UTC")    # WORKS
+anon_dob <- as.POSIXct(0, origin = "1954-09-30", tz = "UTC")    # WORKS
+anon_dob <- as.POSIXct(0, origin = "1954-09-15", tz = "UTC")    # FAILS
+anon_dob <- as.POSIXct(0, origin = "1954-09-23", tz = "UTC")    # FAILS
+anon_dob <- as.POSIXct(0, origin = "1954-09-26", tz = "UTC")    # FAILS
+anon_dob <- as.POSIXct(0, origin = "1954-09-29", tz = "UTC")    # WORKS
+anon_dob <- as.POSIXct(0, origin = "1954-09-28", tz = "UTC")    # FAILS
+
+
+
+
+
+
 vol_anon <-
     anonymize_volume(
         volume = original_vol,
         pid = 123L,
         patient_id = "ABC456",
-        anon_dob = as.POSIXct(0, origin = "1899-12-30", tz = "UTC")
+        #anon_dob = as.POSIXct(0, origin = "1901-01-01", tz = "UTC")
+        anon_dob = anon_dob
         )
 
 test_that("identifying information is changed in the volume object", {
     expect_false(original_vol$header$exam_time == vol_anon$header$exam_time)
+    expect_false(original_vol$header$visit_date == vol_anon$header$visit_date)
     expect_false(original_vol$header$dob == vol_anon$header$dob)
     expect_false(original_vol$header$pid == vol_anon$header$pid)
     expect_false(original_vol$header$patient_id == vol_anon$header$patient_id)
@@ -83,12 +108,21 @@ write_vol(vol_anon, anon_file, TRUE)
 
 vol_anon_in <- read_vol(anon_file)
 
+test_that("anonymized information remains the same before and after writing to a file", {
+    expect_equal(vol_anon$header$exam_time, vol_anon_in$header$exam_time)
+    expect_equal(vol_anon$header$visit_date, vol_anon_in$header$visit_date)
+})
+
 test_that("identifying information is changed once written to a VOL file", {
-    expect_identical(vol_anon_in$header$dob, as.POSIXct(0, origin = "1899-12-30", tz = "UTC"))
-    expect_identical(
+    expect_identical(vol_anon_in$header$dob, anon_dob)
+    expect_equal(
+        vol_anon_in$header$visit_date - vol_anon_in$header$dob,
+        original_vol$header$visit_date - original_vol$header$dob
+        )
+    expect_equal(
         vol_anon_in$header$exam_time - vol_anon_in$header$dob,
         original_vol$header$exam_time - original_vol$header$dob
-        )
+    )
     expect_identical(vol_anon_in$header$pid, 123L)
     expect_identical(vol_anon_in$header$patient_id, "ABC456")
 })

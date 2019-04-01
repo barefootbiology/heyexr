@@ -41,8 +41,7 @@ read_vol_header <- function(vol_con, tz = "UTC") {
     header$scan_focus       <- readBin(vol_con, double(), endian = "little")
     header$scan_position    <- readBin(vol_con, character(), size = 1, n = 2, endian = "little")[1]
 
-    # TASK: Convert to date/time
-    # Convert exam time following "Open_Heyex_Info.java"
+    # By default, the 'exam_time' is set of the local system timezone.
     header$exam_time        <- readBin(vol_con, "raw", endian = "little",  n = 8,
                                        signed = FALSE) %>%
         raw_to_datetime()
