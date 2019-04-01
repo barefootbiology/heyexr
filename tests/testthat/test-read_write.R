@@ -1,12 +1,19 @@
 context("test-read_write")
 
-extdata_path <- "inst/extdata"
-
-if(!dir.exists(file.path(here::here(), extdata_path))) {
-    extdata_path <- "extdata"
-}
+extdata_path <- "extdata"
 
 original_file <- file.path(path.package("heyexr"), extdata_path, "TEST_T_566581.vol")
+
+# if(!dir.exists(file.path(here::here(), extdata_path))) {
+#     extdata_path <- "extdata"
+# }
+
+if(!file.exists(original_file)) {
+    extdata_path <- "inst/extdata"
+    original_file <- file.path(here::here(), extdata_path, "TEST_T_566581.vol")
+}
+
+
 original_vol <- read_vol(original_file)
 
 out_file <- tempfile(pattern = "volume")
@@ -55,6 +62,37 @@ test_that("partial file reading works", {
     )
 })
 
+vol_anon <-
+    anonymize_volume(
+        volume = original_vol,
+        pid = 123L,
+        patient_id = "ABC456",
+        anon_dob = as.POSIXct(0, origin = "1899-12-30", tz = "UTC")
+        )
+
+test_that("identifying information is changed in the volume object", {
+    expect_false(original_vol$header$exam_time == vol_anon$header$exam_time)
+    expect_false(original_vol$header$dob == vol_anon$header$dob)
+    expect_false(original_vol$header$pid == vol_anon$header$pid)
+    expect_false(original_vol$header$patient_id == vol_anon$header$patient_id)
+})
+
+anon_file <- tempfile(pattern = "volume_anon")
+
+write_vol(vol_anon, anon_file, TRUE)
+
+vol_anon_in <- read_vol(anon_file)
+
+test_that("identifying information is changed once written to a VOL file", {
+    expect_identical(vol_anon_in$header$dob, as.POSIXct(0, origin = "1899-12-30", tz = "UTC"))
+    expect_identical(
+        vol_anon_in$header$exam_time - vol_anon_in$header$dob,
+        original_vol$header$exam_time - original_vol$header$dob
+        )
+    expect_identical(vol_anon_in$header$pid, 123L)
+    expect_identical(vol_anon_in$header$patient_id, "ABC456")
+})
+
 file.remove(out_file)
-close(empty_file)
 file.remove(empty_file)
+file.remove(anon_file)

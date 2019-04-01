@@ -4,10 +4,12 @@
 \alias{read_vol_header}
 \title{Read the VOL header}
 \usage{
-read_vol_header(vol_con)
+read_vol_header(vol_con, tz = "UTC")
 }
 \arguments{
 \item{vol_con}{a connection to the VOL file}
+
+\item{tz}{Timezone for dates in header.}
 }
 \value{
 a list containing the header from the VOL file

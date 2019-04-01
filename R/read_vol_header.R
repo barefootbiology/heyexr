@@ -5,12 +5,13 @@
 #' this function does not currently parse date and time information correctly.
 #'
 #' @param vol_con a connection to the VOL file
+#' @param tz Timezone for dates in header.
 #'
 #' @return a list containing the header from the VOL file
 #'
 #' @importFrom magrittr %>%
-#' @importFrom lubridate ymd
-read_vol_header <- function(vol_con) {
+#' @importFrom lubridate ymd tz
+read_vol_header <- function(vol_con, tz = "UTC") {
     # Code based on these two projects:
     #
     # https://github.com/halirutan/HeyexImport
@@ -45,6 +46,9 @@ read_vol_header <- function(vol_con) {
     header$exam_time        <- readBin(vol_con, "raw", endian = "little",  n = 8,
                                        signed = FALSE) %>%
         raw_to_datetime()
+
+    lubridate::tz(header$exam_time) <- tz
+
     # From: https://stat.ethz.ch/R-manual/R-devel/library/base/html/DateTimeClasses.html
     # "Class "POSIXct" represents the (signed) number of seconds
     # since the beginning of 1970 (in the UTC time zone) as a numeric vector."
@@ -72,14 +76,14 @@ read_vol_header <- function(vol_con) {
 
     # day_offset       <- 25569
     dob              <- readBin(vol_con, double(), endian = "little", size = 8)
-    header$dob <- as.POSIXct(dob * (60 * 60 * 24), origin = "1899-12-30", tz = "UTC")
+    header$dob <- as.POSIXct(dob * (60 * 60 * 24), origin = "1899-12-30", tz = tz)
 
     header$vid      <- readBin(vol_con, integer(), endian = "little")
     header$visit_id     <- readBin(vol_con, "raw", endian = "little", size = 1, n = 24) %>%
         rawToChar()
 
     visit_date      <- readBin(vol_con, double(), endian = "little")
-    header$visit_date <- as.POSIXct(visit_date * (60 * 60 * 24), origin = "1899-12-30", tz = "UTC")
+    header$visit_date <- as.POSIXct(visit_date * (60 * 60 * 24), origin = "1899-12-30", tz = tz)
 
     # NOTE: We're discarding this data, as Heidelberg isn't storing anything of
     #       interest in this.
