@@ -19,7 +19,15 @@ empty_file <- tempfile(pattern = "empty_volume")
 file.create(empty_file)
 
 test_that("writing to VOL works", {
-  expect_identical(original_vol$header, written_vol$header)
+  # Skip the version.
+  expect_identical(
+      original_vol$header[2:length(original_vol$header)],
+      written_vol$header[2:length(original_vol$header)]
+      )
+  expect_identical(
+      paste0(original_vol$header$version, "R"),
+      written_vol$header$version
+  )
   expect_identical(original_vol$slo, written_vol$slo)
   expect_identical(original_vol$seg_array, written_vol$seg_array)
   expect_identical(original_vol$bscan_headers, written_vol$bscan_headers)
@@ -48,4 +56,5 @@ test_that("partial file reading works", {
 })
 
 file.remove(out_file)
+close(empty_file)
 file.remove(empty_file)
