@@ -80,7 +80,6 @@ anon_dob <- as.POSIXct(0, origin = "1954-09-26", tz = "UTC")    # FAILS
 anon_dob <- as.POSIXct(0, origin = "1954-09-29", tz = "UTC")    # WORKS
 anon_dob <- as.POSIXct(0, origin = "1954-09-28", tz = "UTC")    # FAILS
 
-
 vol_anon <-
     anonymize_volume(
         volume = original_vol,
