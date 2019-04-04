@@ -237,3 +237,4 @@ knitr::kable(exam_times_info_combined)
 ## Solution
 
 For the time being, I've added a restriction to `anonymize_dates` to enforce a new DOB at or after the UNIX date-time origin of 1970-01-01 UTC. (Technically, DOBs before that time will work. It's the exam time that won't work. However, it's easier to restrict the DOB that the anonymized exam time.) In the future, I would like to fix this bug to allow for more flexible values. But as a consequence of adding the restriction, this vignette no longer works!
+
