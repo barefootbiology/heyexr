@@ -4,15 +4,14 @@
 \alias{anonymize_dates}
 \title{Anonymize dates in a volume object.}
 \usage{
-anonymize_dates(header, anon_dob = as.POSIXct(0, origin = "1899-12-30",
+anonymize_dates(header, anon_dob = as.POSIXct(0, origin = "1970-01-01",
   tz = "UTC"))
 }
 \arguments{
 \item{header}{The header list from a volume object.}
 
-\item{anon_dob}{The new date of birth. Defaults to the origin in Microsoft's
-DATE specification as used by the 'dob' and 'visit_date' values in the
-Heidelberg VOL file specification (HSF-OCT-101).}
+\item{anon_dob}{The new date of birth. Must be at or after the UNIX date-time
+origin of 1970-01-01 UTC (the default value).}
 }
 \value{
 A new header list with the dates adjusted.

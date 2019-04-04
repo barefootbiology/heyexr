@@ -29,7 +29,7 @@ test_that("writing to VOL works", {
   # Skip the version.
   expect_identical(
       original_vol$header[2:length(original_vol$header)],
-      written_vol$header[2:length(original_vol$header)]
+      written_vol$header[2:length(written_vol$header)]
       )
   expect_identical(
       paste0(original_vol$header$version, "R"),
@@ -65,27 +65,28 @@ test_that("partial file reading works", {
 # anon_dob <- as.POSIXct(0, origin = "1901-01-01", tz = "UTC")  # FAILS
 # anon_dob <- original_vol$header$dob                           # WORKS
 # anon_dob <- as.POSIXct(0, origin = "2003-01-02", tz = "UTC")  # WORKS
-anon_dob <- as.POSIXct(0, origin = "1955-01-01", tz = "UTC")    # WORKS
-anon_dob <- as.POSIXct(0, origin = "1952-01-01", tz = "UTC")    # FAILS
-anon_dob <- as.POSIXct(0, origin = "1954-01-01", tz = "UTC")    # FAILS
-anon_dob <- as.POSIXct(0, origin = "1954-12-31", tz = "UTC")    # WORKS
-anon_dob <- as.POSIXct(0, origin = "1954-06-01", tz = "UTC")    # FAILS
-anon_dob <- as.POSIXct(0, origin = "1954-09-01", tz = "UTC")    # FAILS
-anon_dob <- as.POSIXct(0, origin = "1954-11-01", tz = "UTC")    # WORKS
-anon_dob <- as.POSIXct(0, origin = "1954-10-01", tz = "UTC")    # WORKS
-anon_dob <- as.POSIXct(0, origin = "1954-09-30", tz = "UTC")    # WORKS
-anon_dob <- as.POSIXct(0, origin = "1954-09-15", tz = "UTC")    # FAILS
-anon_dob <- as.POSIXct(0, origin = "1954-09-23", tz = "UTC")    # FAILS
-anon_dob <- as.POSIXct(0, origin = "1954-09-26", tz = "UTC")    # FAILS
-anon_dob <- as.POSIXct(0, origin = "1954-09-29", tz = "UTC")    # WORKS
-anon_dob <- as.POSIXct(0, origin = "1954-09-28", tz = "UTC")    # FAILS
+# anon_dob <- as.POSIXct(0, origin = "1955-01-01", tz = "UTC")    # WORKS
+# anon_dob <- as.POSIXct(0, origin = "1952-01-01", tz = "UTC")    # FAILS
+# anon_dob <- as.POSIXct(0, origin = "1954-01-01", tz = "UTC")    # FAILS
+# anon_dob <- as.POSIXct(0, origin = "1954-12-31", tz = "UTC")    # WORKS
+# anon_dob <- as.POSIXct(0, origin = "1954-06-01", tz = "UTC")    # FAILS
+# anon_dob <- as.POSIXct(0, origin = "1954-09-01", tz = "UTC")    # FAILS
+# anon_dob <- as.POSIXct(0, origin = "1954-11-01", tz = "UTC")    # WORKS
+# anon_dob <- as.POSIXct(0, origin = "1954-10-01", tz = "UTC")    # WORKS
+# anon_dob <- as.POSIXct(0, origin = "1954-09-30", tz = "UTC")    # WORKS
+# anon_dob <- as.POSIXct(0, origin = "1954-09-15", tz = "UTC")    # FAILS
+# anon_dob <- as.POSIXct(0, origin = "1954-09-23", tz = "UTC")    # FAILS
+# anon_dob <- as.POSIXct(0, origin = "1954-09-26", tz = "UTC")    # FAILS
+# anon_dob <- as.POSIXct(0, origin = "1954-09-29", tz = "UTC")    # WORKS
+# anon_dob <- as.POSIXct(0, origin = "1954-09-28", tz = "UTC")    # FAILS
+
+anon_dob <- as.POSIXct(0, origin = "1970-01-01", tz = "UTC")
 
 vol_anon <-
     anonymize_volume(
         volume = original_vol,
         pid = 123L,
         patient_id = "ABC456",
-        #anon_dob = as.POSIXct(0, origin = "1901-01-01", tz = "UTC")
         anon_dob = anon_dob
         )
 
