@@ -34,11 +34,14 @@ Datetime raw_to_datetime (RawVector src) {
 
     std::memcpy(&nsec, &tmp, sizeof nsec);
 
-    // Offset in 100 nanosecond intervals between 1970-01-01 and 1601-01-01
+    // Offset in 100 nanosecond intervals between 1970-01-01 and 1601-01-01.
+    // (days * hours * minutes * seconds * milliseconds * microseconds *
+    //  100-nanosecond intervals)
     uint64_t nsec_offset = ((uint64_t)134774) * 24 * 60 * 60 * 1000 * 1000 * 10;
 
     uint64_t nsec_epoch = nsec - nsec_offset;
 
+    // Convert from 100-nanosecond intervals from epoch to seconds from epoch
     time_t sec_epoch;
     sec_epoch = (time_t) (nsec_epoch * 100 / 1000000000);
 
