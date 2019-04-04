@@ -185,10 +185,11 @@ make_table <- function(x) {
     tibble(
         source = names(x),
         exam_times = x,
+        numeric = as.numeric(x),
         # class = paste_class(x),
         datetime_to_raw = paste_datetime_to_raw(x),
         raw_to_datetime = vector_raw_to_datetime(vector_datetime_to_raw(x)),
-        exam_time_2 = as.POSIXct(x, origin = lubridate::origin)
+        exam_time_2 = as.POSIXct(raw_to_datetime, origin = lubridate::origin)
     )
 }
 
@@ -232,3 +233,7 @@ exam_times_info_combined <- make_table(exam_times_combined)
 
 knitr::kable(exam_times_info_combined)
 ```
+
+## Solution
+
+For the time being, I've added a restriction to `anonymize_dates` to enforce a new DOB at or before the UNIX date-time origin of 1970-01-01 UTC. In the future, I would like to fix this bug to allow for more flexible values. As a consequence, this vignette will not longer work!
