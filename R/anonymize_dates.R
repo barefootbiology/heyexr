@@ -11,17 +11,18 @@
 #'
 #' @return A new header list with the dates adjusted.
 #'
+#' @importFrom lubridate as.duration
 #' @keywords internal
 anonymize_dates <- function(header, anon_dob = as.POSIXct(0, origin = "1899-12-30", tz = "UTC")) {
   # The time encoded in 'exam_time' and 'visit_date' may be a few minutes off.
-  age_at_exam <- header$exam_time - header$dob
-  age_at_visit <- header$visit_date - header$dob
+  age_at_exam <- as.duration(header$exam_time - header$dob)
+  age_at_visit <- as.duration(header$visit_date - header$dob)
 
   header$dob <- anon_dob
 
-  header$exam_time <- anon_dob + age_at_exam
+  header$exam_time <- as.POSIXct(anon_dob + age_at_exam)
 
-  header$visit_date <- anon_dob + age_at_visit
+  header$visit_date <- as.POSIXct(anon_dob + age_at_visit)
 
   header
 }
