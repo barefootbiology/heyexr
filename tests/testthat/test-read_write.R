@@ -4,10 +4,6 @@ extdata_path <- "extdata"
 
 original_file <- file.path(path.package("heyexr"), extdata_path, "TEST_T_566581.vol")
 
-# if(!dir.exists(file.path(here::here(), extdata_path))) {
-#     extdata_path <- "extdata"
-# }
-
 if(!file.exists(original_file)) {
     extdata_path <- "inst/extdata"
     original_file <- file.path(here::here(), extdata_path, "TEST_T_566581.vol")
@@ -62,21 +58,6 @@ test_that("partial file reading works", {
     )
 })
 
-# anon_dob <- as.POSIXct(0, origin = "1901-01-01", tz = "UTC")  # FAILS
-# anon_dob <- original_vol$header$dob                           # WORKS
-# anon_dob <- as.POSIXct(0, origin = "2003-01-02", tz = "UTC")  # WORKS
-# anon_dob <- as.POSIXct(0, origin = "1955-01-01", tz = "UTC")    # WORKS
-# anon_dob <- as.POSIXct(0, origin = "1952-01-01", tz = "UTC")    # FAILS
-# anon_dob <- as.POSIXct(0, origin = "1954-01-01", tz = "UTC")    # FAILS
-# anon_dob <- as.POSIXct(0, origin = "1954-12-31", tz = "UTC")    # WORKS
-# anon_dob <- as.POSIXct(0, origin = "1954-06-01", tz = "UTC")    # FAILS
-# anon_dob <- as.POSIXct(0, origin = "1954-09-01", tz = "UTC")    # FAILS
-# anon_dob <- as.POSIXct(0, origin = "1954-11-01", tz = "UTC")    # WORKS
-# anon_dob <- as.POSIXct(0, origin = "1954-10-01", tz = "UTC")    # WORKS
-# anon_dob <- as.POSIXct(0, origin = "1954-09-30", tz = "UTC")    # WORKS
-# anon_dob <- as.POSIXct(0, origin = "1954-09-15", tz = "UTC")    # FAILS
-# anon_dob <- as.POSIXct(0, origin = "1954-09-23", tz = "UTC")    # FAILS
-# anon_dob <- as.POSIXct(0, origin = "1954-09-26", tz = "UTC")    # FAILS
 # anon_dob <- as.POSIXct(0, origin = "1954-09-29", tz = "UTC")    # WORKS
 # anon_dob <- as.POSIXct(0, origin = "1954-09-28", tz = "UTC")    # FAILS
 
