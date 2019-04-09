@@ -2,15 +2,16 @@
 % Please edit documentation in R/read_segmentation_xml.R
 \name{read_segmentation_xml}
 \alias{read_segmentation_xml}
-\title{Read layer segmentation output from Iowa Reference Algorithms}
+\title{Read layer segmentation output from Iowa Reference Algorithms.}
 \usage{
 read_segmentation_xml(xml_file)
 }
 \arguments{
-\item{xml_file}{path to the segmentation XML file}
+\item{xml_file}{path to the segmentation XML file.}
 }
 \value{
-a list containing the header information and the layer segmentation
+A list containing the header information, layer segmentation, and undefined
+    regions.
 }
 \description{
 Reads the layer segmentation as output by the Iowa Reference Algorithms (XML format).
