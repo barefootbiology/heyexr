@@ -6,6 +6,7 @@
 #' @param read_what Character string indicating what parts of the file to read.
 #'     If "all", then all data is read. If "slo", then only the header and SLO
 #'     are read. Any other value will only return the header.
+#' @param tz Timezone for dates in header.
 #'
 #' @return a list containing the data from the VOL file
 #'
@@ -14,7 +15,7 @@
 #' @importFrom dplyr bind_rows mutate n
 #' @importFrom purrr map_dfr
 #' @importFrom tibble as_tibble
-read_vol <- function(vol_file, read_what = "all") {
+read_vol <- function(vol_file, read_what = "all", tz = "UTC") {
     # Code based on these two projects:
     #
     # https://github.com/halirutan/HeyexImport
@@ -28,7 +29,7 @@ read_vol <- function(vol_file, read_what = "all") {
 
     output <- list()
 
-    header <- read_vol_header(vol_con)
+    header <- read_vol_header(vol_con, tz = tz)
 
     output$header <- header
 

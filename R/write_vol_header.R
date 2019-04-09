@@ -6,9 +6,18 @@
 #' @param header Header (list) from a VOL object.
 #'
 #' @importFrom magrittr %>%
+#' @importFrom lubridate tz
 write_vol_header <- function(vol_con, header) {
 
-    writeBin(header$version, vol_con, character(), endian = "little")
+    # Tag the output as coming from this package by appending an "R" to the
+    # end of the version.
+    version <- header$version
+
+    if(!grepl(version, pattern = "R$", perl = TRUE)) {
+        version <- paste0(version, "R")
+    }
+
+    writeBin(version, vol_con, character(), endian = "little")
 
     writeBin(header$size_x, vol_con, integer(), endian = "little")
 
@@ -38,7 +47,11 @@ write_vol_header <- function(vol_con, header) {
         pad_raw(size = 1, n = 4) %>%
         writeBin(vol_con, "raw", endian = "little")
 
-    datetime_to_raw(header$exam_time) %>%
+    # Read and write in local time.
+    exam_time <- header$exam_time
+    lubridate::tz(exam_time) <- Sys.timezone()
+
+    datetime_to_raw(exam_time) %>%
         writeBin(vol_con, "raw", endian = "little")
 
     # From: https://stat.ethz.ch/R-manual/R-devel/library/base/html/DateTimeClasses.html

@@ -4,7 +4,7 @@
 \alias{read_vol}
 \title{Read a Heidelberg Spectralis VOL file}
 \usage{
-read_vol(vol_file, read_what = "all")
+read_vol(vol_file, read_what = "all", tz = "UTC")
 }
 \arguments{
 \item{vol_file}{Path to VOL file.}
@@ -12,6 +12,8 @@ read_vol(vol_file, read_what = "all")
 \item{read_what}{Character string indicating what parts of the file to read.
 If "all", then all data is read. If "slo", then only the header and SLO
 are read. Any other value will only return the header.}
+
+\item{tz}{Timezone for dates in header.}
 }
 \value{
 a list containing the data from the VOL file
