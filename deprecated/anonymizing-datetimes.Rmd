@@ -1,0 +1,240 @@
+---
+title: "Date-time madness"
+author: "S. Scott Whitmore"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+I ran into a major issue when trying to anonymize dates and date-times. Here's what I tried, and where it fails.
+
+First, we read in an example VOL file.
+
+```{r }
+library(heyexr)
+library(tidyverse)
+library(lubridate)
+
+extdata_path <- "extdata"
+
+original_file <- file.path(path.package("heyexr"), extdata_path, "TEST_T_566581.vol")
+
+if(!file.exists(original_file)) {
+    extdata_path <- "inst/extdata"
+    original_file <- file.path(here::here(), extdata_path, "TEST_T_566581.vol")
+}
+
+original_vol <- read_vol(original_file)
+```
+
+The `header` contains some interesting stuff:
+
+```{r }
+phi <- c("exam_time", "patient_id", "dob", "visit_date")
+
+original_vol$header[phi]
+```
+
+This file contains identifying information. (Or it would it it wasn't a test file that we captured in the clinic for research purposes.) We want to scrub that information from the volume object, then write it back out as a new VOL file. We do that using `anonymize_volume`. 
+
+
+```{r }
+anon_dob <- as.POSIXct(0, origin = "1954-09-28", tz = "UTC")    # FAILS
+
+vol_anon <-
+    anonymize_volume(
+        volume = original_vol,
+        pid = 123L,
+        patient_id = "ABC456",
+        anon_dob = anon_dob
+        )
+
+map2(original_vol$header[phi], vol_anon$header[phi], ~c(.x, .y))
+```
+
+Under the hood, this is what `anonymize_volume` does:
+
+```{r }
+anonymize_volume
+```
+
+As you can see it calls two function. The first anonymizes the name and medical record number:
+
+```{r }
+heyexr:::anonymize_identity
+```
+
+and the second takes care of the dates. It does this by resetting the date of birth while maintaining the interval between date of birth and the exam time (or visit date). 
+
+```{r }
+heyexr:::anonymize_dates
+```
+
+We can verify that the time intervals remain the same between the birth dates and the exame times as follows:
+
+```{r }
+# Exam times
+as.duration(original_vol$header$exam_time - original_vol$header$dob)
+as.duration(vol_anon$header$exam_time - vol_anon$header$dob)
+
+# Visit date
+as.duration(original_vol$header$visit_date - original_vol$header$dob)
+as.duration(vol_anon$header$visit_date - vol_anon$header$dob)
+```
+
+So far, so good. Things get dicey when we try to write out the anonymized volume object, then read that anonymized VOL file back into R.
+
+```{r warning=FALSE}
+anon_file <- tempfile(pattern = "volume_anon")
+
+write_vol(vol_anon, anon_file, TRUE)
+
+vol_anon_in <- read_vol(anon_file)
+
+file.remove(anon_file)
+```
+
+Let's run some tests to make sure that everything works:
+
+```{r error=TRUE}
+library(testthat)
+
+test_that("anonymized information remains the same before and after writing to a file", {
+    expect_equal(vol_anon$header$exam_time, vol_anon_in$header$exam_time)
+    expect_equal(vol_anon$header$visit_date, vol_anon_in$header$visit_date)
+})
+
+test_that("identifying information is changed once written to a VOL file", {
+    expect_identical(vol_anon_in$header$dob, anon_dob)
+    expect_equal(
+        vol_anon_in$header$visit_date - vol_anon_in$header$dob,
+        original_vol$header$visit_date - original_vol$header$dob
+        )
+    expect_equal(
+        vol_anon_in$header$exam_time - vol_anon_in$header$dob,
+        original_vol$header$exam_time - original_vol$header$dob
+    )
+    expect_identical(vol_anon_in$header$pid, 123L)
+    expect_identical(vol_anon_in$header$patient_id, "ABC456")
+})
+```
+
+Well, it doesn't work. As you can see, the problem arises from the `exam_time` value. What we're writing out to the file isn't being read properly by `exam_time`. Through further testing, I uncovered that if I set the birthday to be the next day (`as.POSIXct(0, origin = "1954-09-29", tz = "UTC")`), everything works fine:
+
+TASK: SHOW CODE HERE.
+
+We should as, does that only work for this particular VOL file, or does it work for other VOL files?
+
+TASK: Try writing a VOL file with a different dob and see what happens.
+
+## How dates and date-times are stored in VOL file format
+
+In the VOL file format, visit date and dob are stored in Microsoft's date format:
+
+> This date type is implemented using an 64-bit floating-point number according to Microsoft's DATE specification. Days are represented by whole number increments starting with 30 December 1899, midnight as time zero. Hour values are expressed as the absolute value of the fractional part of the number.[^spectralis1]
+
+However, `exam_time` is a bit wilder:
+
+> The structure holds an unsigned 64-bit date and time value and represents the number of 100-nanosecond units since the beginning of January 1, 1601.[^spectralis2]
+
+[^spectralis1]: p 6, "Spectralis Viewing Module: Software Version 4.0: Special Function: Exporting Raw Data", November 2008, Heidelberg Engineering, Art. No. 97 175-002.
+
+[^spectralis2]:, p 7, ibid.
+
+This poses a particular problem: R doesn't natively support 64-bit integers. After exploring two other work-arounds, I eventually wrote two functions using `Rcpp`. `raw_to_datetime` takes raw bytes and returns a `POSIXct` object, and `datetime_to_raw` takes the number of seconds since the epoch (a signed integer) and returns a raw vector.
+
+```{r }
+exam_times <- 
+    c(
+        original_vol = original_vol$header$exam_time, 
+        vol_anon = vol_anon$header$exam_time,
+        vol_anon_in = vol_anon_in$header$exam_time
+    )
+
+# Show exam time, class, numeric representation, raw, and reversed datetime
+paste_class <- function(x) {
+    map_chr(x, ~paste(class(.x), collapse = ","))
+}
+
+vector_datetime_to_raw <- function(x) {
+    map(x, datetime_to_raw)
+}
+
+paste_datetime_to_raw <- function(x) {
+    vector_datetime_to_raw(x) %>%
+    map_chr(~.x %>%
+        paste(collapse = " ")) 
+}
+
+vector_raw_to_datetime <- function(x) {
+    map(x, raw_to_datetime) %>%
+        unlist()
+}
+
+make_table <- function(x) {
+    tibble(
+        source = names(x),
+        exam_times = x,
+        numeric = as.numeric(x),
+        # class = paste_class(x),
+        datetime_to_raw = paste_datetime_to_raw(x),
+        raw_to_datetime = vector_raw_to_datetime(vector_datetime_to_raw(x)),
+        exam_time_2 = as.POSIXct(raw_to_datetime, origin = lubridate::origin)
+    )
+}
+
+exam_time_info <- make_table(exam_times)
+
+
+knitr::kable(exam_time_info)
+```
+
+Maybe you can see the problem already. I think it will be clearer when we compare the results to the table below, where the anonymous dob works:
+
+```{r warning=FALSE}
+anon_dob_good <- as.POSIXct(0, origin = "1954-09-29", tz = "UTC")    # FAILS
+
+vol_anon_good <-
+    anonymize_volume(
+        volume = original_vol,
+        pid = 123L,
+        patient_id = "ABC456",
+        anon_dob = anon_dob_good
+        )
+
+anon_file_good <- tempfile(pattern = "volume_anon")
+
+write_vol(vol_anon_good, anon_file_good, TRUE)
+
+vol_anon_in_good <- read_vol(anon_file_good)
+
+file.remove(anon_file_good)
+
+exam_times_combined <- 
+    c(
+        original_vol = original_vol$header$exam_time, 
+        vol_anon = vol_anon$header$exam_time,
+        vol_anon_in = vol_anon_in$header$exam_time,
+        vol_anon_good = vol_anon_good$header$exam_time,
+        vol_anon_in_good = vol_anon_in_good$header$exam_time
+    )
+
+exam_times_info_combined <- make_table(exam_times_combined)
+
+knitr::kable(exam_times_info_combined)
+```
+
+## Solution
+
+For the time being, I've added a restriction to `anonymize_dates` to enforce a new DOB at or after the UNIX date-time origin of 1970-01-01 UTC. (Technically, DOBs before that time will work. It's the exam time that won't work. However, it's easier to restrict the DOB that the anonymized exam time.) In the future, I would like to fix this bug to allow for more flexible values. But as a consequence of adding the restriction, this vignette no longer works!
+
