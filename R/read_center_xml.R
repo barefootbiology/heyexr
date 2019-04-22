@@ -10,7 +10,9 @@
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom xml2 read_xml as_list
-#' @importFrom purrr modify_depth
+#' @importFrom purrr modify_depth map
+#' @importFrom tibble as_tibble tibble
+#' @importFrom readr type_convert col_date col_integer col_double col_time
 read_center_xml <- function(center_file) {
     # TASK: Add documentation above
 
@@ -18,6 +20,37 @@ read_center_xml <- function(center_file) {
     oct_center_xml <- read_xml(center_file)
 
     parsed_center <-  as_list(oct_center_xml)[[1L]]
+
+    #-------------------------------------------------------------------------------
+    update_cols <-
+        cols("executable_date" = col_date(format = "%m/%d/%Y"),
+             "modification_date" = col_date(format = "%m/%d/%Y"),
+             "modification_time" = col_time(format = "%H:%M:%S"),
+             "scan_characteristics_size_x" = col_integer(),
+             "scan_characteristics_size_y" = col_integer(),
+             "scan_characteristics_size_z" = col_integer(),
+             "scan_characteristics_voxel_size_x" = col_double(),
+             "scan_characteristics_voxel_size_y" = col_double(),
+             "scan_characteristics_voxel_size_z" = col_double(),
+             "center_x" = col_integer(),
+             "center_z" = col_integer()
+        )
+
+    header <-
+        parsed_center %>%
+        delist_singletons() %>%
+        list_to_onerow() %>%
+        map(as_vector) %>%
+        as_tibble() %>%
+        type_convert(update_cols) %>%
+        mutate(center_x = center_x + 1) %>% # To handle R's 1-based vectors.
+        # Rescale the center B-scan coordinate to align with Heidelberg coordinates.
+        # (Using the subtracting from size$x automatically adjusts for 1-based coordinates)
+        mutate(center_z = scan_characteristics_voxel_size_z - center_z)
+
+    header$center_file <- center_file
+
+    #--------------------------------------------------------------------------------
 
     # Convert from characters to appropriate data types
     parsed_center$center <- parsed_center$center %>%
@@ -45,8 +78,11 @@ read_center_xml <- function(center_file) {
     parsed_center$center$z <- parsed_center$scan_characteristics$size$z[[1]] - parsed_center$center$z[[1]]
     #parsed_center$center$z <-  parsed_center$center$z[[1]] + 1
 
-
-
+    # NOTE: For the time being, I'm simply adding in the cleanly parsed header tibble to
+    # the original output. However, I need to revisit this code in the future and ONLY
+    # return the parsed output. That will entail revising a LOT of code that needs the
+    # fovea center information.
+    parsed_center$header <- header
 
     return(parsed_center)
 }
