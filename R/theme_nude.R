@@ -1,7 +1,7 @@
 #' Render a ggplot2 plot with only the data.
 #'
 #' \code{theme_nude} themes a ggplot2 plot with only the data. Remember to remove any padding by
-#' also adding `+ scale_x_continous(expand = c(0, 0)) + scale_y_continous(expand = c(0, 0))`.
+#' also adding `+ scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0))`.
 #' This function is useful when overlaying raster data on en face and B-scan
 #' images.
 #'
