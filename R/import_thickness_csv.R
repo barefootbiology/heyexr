@@ -64,7 +64,7 @@ import_thickness_csv <- function(csv_file,
                grid = Grid,
                grid_center = GridCenter,
                grid_center_x_pixel = GridCenterX_pixel,
-               grid_center_y_pixel = GridCenterY_pixel,
+               grid_center_z_pixel = GridCenterZ_pixel,
                undefined_region_percent = UndefinedRegion_percent) %>%
         mutate(sample_id = as.character(surfaces)) %>%
         #rowwise() %>%

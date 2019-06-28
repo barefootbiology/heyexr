@@ -18,7 +18,7 @@ downsample_vol <- function(vol, new_n) {
 
   vol_down$header$distance <- vol_down$header$distance * down_mapping$factor
 
-  vol_down$header$num_bscans <- new_n
+  vol_down$header$num_bscans <- as.integer(new_n)
 
   vol_down$bscan_headers <-
     vol_down$bscan_headers %>%

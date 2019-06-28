@@ -28,7 +28,7 @@ test_that("writing to VOL works", {
       written_vol$header[2:length(written_vol$header)]
       )
   expect_identical(
-      paste0(original_vol$header$version, "R"),
+      original_vol$header$version,
       written_vol$header$version
   )
   expect_identical(original_vol$slo, written_vol$slo)

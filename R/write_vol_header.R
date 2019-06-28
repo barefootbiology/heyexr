@@ -13,9 +13,9 @@ write_vol_header <- function(vol_con, header) {
     # end of the version.
     version <- header$version
 
-    if(!grepl(version, pattern = "R$", perl = TRUE)) {
-        version <- paste0(version, "R")
-    }
+    # if(!grepl(version, pattern = "R$", perl = TRUE)) {
+    #     version <- paste0(version, "R")
+    # }
 
     writeBin(version, vol_con, character(), endian = "little")
 

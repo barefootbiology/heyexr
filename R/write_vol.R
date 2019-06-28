@@ -45,8 +45,13 @@ write_vol <- function(volume, vol_file, overwrite = FALSE) {
             header$bscan_hdr_size - 256 -
             bscan_header_list$num_seg * header$size_x * 4
 
-        rep(max_float, times = n_bytes / 4) %>%
+        n_bytes_adjusted = n_bytes - 1792
+
+        rep(max_float, times = n_bytes_adjusted / 4) %>%
             writeBin(vol_con, size = 4, endian = "little")
+
+        raw(1792) %>%
+            writeBin(vol_con, endian = "little")
 
         # Write bscan image
         # (remembering to replace NAs with the max_float value)
