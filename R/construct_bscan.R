@@ -20,6 +20,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate
 #' @importFrom ggplot2 ggplot geom_raster aes theme_bw element_blank scale_y_reverse scale_x_continuous theme labs element_rect geom_path annotate
+#' @importFrom rlang .data
 construct_bscan <- function(oct,
                             bscan_id,
                             layer_y_max = oct$header$size_z,
@@ -48,13 +49,13 @@ construct_bscan <- function(oct,
     # Construct the b-scan plot
     p_1 <- get_bscan(oct, bscan_id) %>%
         # Replace any missing values
-        mutate(intensity = ifelse(is.na(intensity),
+        mutate(intensity = ifelse(is.na(.data$intensity),
                                   na_intensity,
-                                  intensity)) %>%
+                                  .data$intensity)) %>%
         # # Apply contrast correction
-        mutate(intensity = contrast_correction(intensity)) %>%
-        ggplot(aes(x = x, y = z)) +
-        geom_raster(aes(fill = intensity)) +
+        mutate(intensity = contrast_correction(.data$intensity)) %>%
+        ggplot(aes(x = .data$x, y = .data$z)) +
+        geom_raster(aes(fill = .data$intensity)) +
         scale_fill_continuous(guide = "none",
                               low = low_color,
                               high = high_color) +
@@ -73,7 +74,7 @@ construct_bscan <- function(oct,
     if(scale_bars) {
         p_1 <- p_1 +
             geom_path(data = bscan_scale_bars,
-                                  mapping = aes(x=x, y=y),
+                                  mapping = aes(x=.data$x, y=.data$y),
                                   color = scale_color, size = 0.5) +
             annotate("text",
                      x = bscan_x_0+4,

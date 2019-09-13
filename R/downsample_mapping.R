@@ -20,9 +20,9 @@ downsample_mapping <- function(original_n, down_n) {
 
   # Center downsampling on the middle b-scan
   # TASK: Consider what to do in the rare case of a non-odd number.
-  original_center <-  median(1:original_n)
+  original_center <-  stats::median(1:original_n)
 
-  down_center <- median(1:down_n)
+  down_center <- stats::median(1:down_n)
 
   down_factor <- floor(original_n / down_n)
 

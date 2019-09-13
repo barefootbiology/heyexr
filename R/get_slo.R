@@ -12,14 +12,13 @@
 #' @importFrom tidyr gather
 #' @importFrom stringr str_replace
 #' @importFrom tibble rownames_to_column
+#' @importFrom rlang .data
 get_slo <- function(oct) {
     oct$slo_image %>%
         as.data.frame %>%
-        # cbind_rownames("x") %>%
         rownames_to_column("x") %>%
         tbl_df %>%
-        gather(y, z, -x) %>%
-        mutate(y = stringr::str_replace(y, pattern="V", replacement = "")) %>%
-        mutate(y = as.numeric(y), x = as.numeric(as.character(x))) %>%
-        return()
+        gather(.data$y, .data$z, -.data$x) %>%
+        mutate(y = stringr::str_replace(.data$y, pattern="V", replacement = "")) %>%
+        mutate(y = as.numeric(.data$y), x = as.numeric(as.character(.data$x)))
 }

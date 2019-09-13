@@ -11,6 +11,7 @@
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom dplyr filter distinct group_by mutate ungroup
+#' @importFrom rlang .data
 get_central_segmentation <- function(vol_file = NULL,
                                      xml_file = NULL,
                                      center_file = NULL,
@@ -47,13 +48,13 @@ get_central_segmentation <- function(vol_file = NULL,
     # Adjust vertical scale to be 0 at RPE-level.
     # Convert the voxel numbers to be microns.
     result <- oct_segmentation$layers %>%
-        filter(bscan_id == center_z_voxel) %>%
-        group_by(ascan_id) %>%
-        mutate(lowest_layer = surface_id == max(surface_id)) %>%
-        mutate(base_value = max(value)) %>%
-        mutate(value_adjusted = (-1 * (value - base_value)) *
+        filter(.data$bscan_id == center_z_voxel) %>%
+        group_by(.data$ascan_id) %>%
+        mutate(lowest_layer = .data$surface_id == max(.data$surface_id)) %>%
+        mutate(base_value = max(.data$value)) %>%
+        mutate(value_adjusted = (-1 * (.data$value - .data$base_value)) *
                    oct_segmentation$info$'voxel_size_y') %>%
-        mutate(x_adjusted = (ascan_id - center_x_voxel) *
+        mutate(x_adjusted = (.data$ascan_id - .data$center_x_voxel) *
                    oct_segmentation$info$'voxel_size_x') %>%
         ungroup() %>%
         mutate(sample_id = sample_id) # %>%

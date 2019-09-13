@@ -15,71 +15,82 @@
 #'
 #' @export
 #' @importFrom magrittr %>%
-#' @importFrom dplyr mutate filter select rowwise rename ungroup
+#' @importFrom dplyr mutate filter select rowwise rename ungroup matches
 #' @importFrom tidyr gather separate spread
 #' @importFrom stringr str_replace_all
 #' @importFrom readr read_csv
+#' @importFrom rlang .data set_names
 import_thickness_csv <- function(csv_file,
                                  split="\\\\",
                                  n="last",
                                  pattern="_Surfaces_Iowa.xml") {
-    result <- read_csv(csv_file) %>%
+
+    result <-
+        read_csv(csv_file) %>%
         (function(x) x %>% select(-ncol(x))) %>%
-        gather(key=key, value=um, matches("Thickness")) %>%
-        mutate(key_stat=ifelse(grepl(key, pattern="Mean"), "mean","sd"),
-                      key=gsub(key,
-                               pattern="^MeanThickness_|^SDThickness_",
-                               replacement="", perl = TRUE))
+        gather(key=.data$key, value=.data$um, matches("Thickness")) %>%
+        mutate(
+            key_stat = ifelse(grepl(.data$key, pattern="Mean"), "mean","sd"),
+            key = gsub(.data$key,
+                       pattern="^MeanThickness_|^SDThickness_",
+                       replacement="", perl = TRUE)
+            )
 
     # Remove the "%" symbol from any of the column names!
-    result <- setNames(result, gsub(names(result), pattern="\\%",
+    result <- set_names(result, gsub(names(result), pattern="\\%",
                                     replacement = "percent", perl=TRUE))
 
     # Get the means
-    result_mean <- result %>%
-        filter(key_stat == "mean") %>%
-        spread(key_stat, um)
+    result_mean <-
+        result %>%
+        filter(.data$key_stat == "mean") %>%
+        spread(.data$key_stat, .data$um)
 
     # Get the standard deviations
-    result_sd <- result %>%
-        filter(key_stat == "sd") %>%
-        spread(key_stat, um)
+    result_sd <-
+        result %>%
+        filter(.data$key_stat == "sd") %>%
+        spread(.data$key_stat, .data$um)
 
     # 1. Combine the means and standard deviations.
     # 2. Rename the columns
     # 3. Add a sample ID by cleaning up the surfaces values
-    result <- inner_join(result_mean, result_sd) %>%
-        rename(surfaces = Surfaces,
-               laterality = Laterality,
-               oct_center_type = OCTCenterType,
-               oct_size_x_voxel = OCTSizeX_voxel,
-               oct_size_y_voxel = OCTSizeY_voxel,
-               oct_size_z_voxel = OCTSizeZ_voxel,
-               physical_size_x_mm = PhysicalSizeX_mm,
-               physical_size_y_mm = PhysicalSizeY_mm,
-               physical_size_z_mm = PhysicalSizeZ_mm,
-               voxel_size_x_um = VoxelSizeX_um,
-               voxel_size_y_um = VoxelSizeY_um,
-               voxel_size_z_um = VoxelSizeZ_um,
-               grid = Grid,
-               grid_center = GridCenter,
-               grid_center_x_pixel = GridCenterX_pixel,
-               grid_center_z_pixel = GridCenterZ_pixel,
-               undefined_region_percent = UndefinedRegion_percent) %>%
-        mutate(sample_id = as.character(surfaces)) %>%
-        #rowwise() %>%
-        mutate(sample_id = strsplit_nth(sample_id,
+    result <-
+        result_mean %>%
+        inner_join(result_sd) %>%
+        rename(
+            surfaces = .data$Surfaces,
+            laterality = .data$Laterality,
+            oct_center_type = .data$OCTCenterType,
+            oct_size_x_voxel = .data$OCTSizeX_voxel,
+            oct_size_y_voxel = .data$OCTSizeY_voxel,
+            oct_size_z_voxel = .data$OCTSizeZ_voxel,
+            physical_size_x_mm = .data$PhysicalSizeX_mm,
+            physical_size_y_mm = .data$PhysicalSizeY_mm,
+            physical_size_z_mm = .data$PhysicalSizeZ_mm,
+            voxel_size_x_um = .data$VoxelSizeX_um,
+            voxel_size_y_um = .data$VoxelSizeY_um,
+            voxel_size_z_um = .data$VoxelSizeZ_um,
+            grid = .data$Grid,
+            grid_center = .data$GridCenter,
+            grid_center_x_pixel = .data$GridCenterX_pixel,
+            grid_center_z_pixel = .data$GridCenterZ_pixel,
+            undefined_region_percent = .data$UndefinedRegion_percent
+            ) %>%
+        mutate(sample_id = as.character(.data$surfaces)) %>%
+        mutate(sample_id = strsplit_nth(.data$sample_id,
                                        split = split,
                                        n = n,
-                                       perl=TRUE)) %>%
-        #ungroup %>%
-        mutate(sample_id = gsub(sample_id, pattern = pattern, replacement = ""))
+                                       perl=TRUE)
+               ) %>%
+        mutate(sample_id = gsub(.data$sample_id, pattern = pattern, replacement = ""))
 
-    result <- result %>%
-        mutate(key = gsub(key, pattern="_um$", replacement="", perl = TRUE)) %>%
-        separate(key, c("span","region"), sep="_Region", remove=TRUE) %>%
-        rename(octexplorer_span = span) %>%
-        mutate(region = as.character(region))
+    result <-
+        result %>%
+        mutate(key = gsub(.data$key, pattern="_um$", replacement="", perl = TRUE)) %>%
+        separate(.data$key, c("span","region"), sep="_Region", remove=TRUE) %>%
+        rename(octexplorer_span = .data$span) %>%
+        mutate(region = as.character(.data$region))
 
     return(result)
 }

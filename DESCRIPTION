@@ -21,6 +21,7 @@ Imports:
     Rcpp (>= 1.0.0),
     RNifti (>= 0.10.0),
     reshape2 (>= 1.4.3),
+    rlang (>= 0.3.4),
     stringr (>= 1.4.0),
     tibble (>= 2.0.1),
     tidyr (>= 0.8.2),

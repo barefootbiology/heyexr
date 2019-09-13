@@ -10,15 +10,18 @@
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom dplyr inner_join filter
+#' @importFrom rlang .data
 flip_region <- function(x, flip_to="OD") {
     # flip_to must either by "OD" or "OS".
     # Make sure to ignore the case
 
-    invisible(grid_regions)
+    # NOTE: This line added to address CRAN check NOTE:
+    #       "no visible binding for global variable ‘grid_regions’"
+    grid_regions <- get("grid_regions")
 
     result <- x %>%
         inner_join(filter(grid_regions,
-                          flipped_laterality == toupper(flip_to)))
+                          .data$flipped_laterality == toupper(flip_to)))
 
     # TASK: Make this error check better.
     if(nrow(result) == nrow(x)) {

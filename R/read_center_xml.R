@@ -10,9 +10,10 @@
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom xml2 read_xml as_list
-#' @importFrom purrr modify_depth map
+#' @importFrom purrr modify_depth map as_vector
 #' @importFrom tibble as_tibble tibble
-#' @importFrom readr type_convert col_date col_integer col_double col_time
+#' @importFrom readr type_convert col_date col_integer col_double col_time cols
+#' @importFrom rlang .data
 read_center_xml <- function(center_file) {
     # TASK: Add documentation above
 
@@ -43,10 +44,10 @@ read_center_xml <- function(center_file) {
         map(as_vector) %>%
         as_tibble() %>%
         type_convert(update_cols) %>%
-        mutate(center_x = center_x + 1) %>% # To handle R's 1-based vectors.
+        mutate(center_x = .data$center_x + 1) %>% # To handle R's 1-based vectors.
         # Rescale the center B-scan coordinate to align with Heidelberg coordinates.
         # (Using the subtracting from size$x automatically adjusts for 1-based coordinates)
-        mutate(center_z = scan_characteristics_voxel_size_z - center_z)
+        mutate(center_z = .data$scan_characteristics_voxel_size_z - .data$center_z)
 
     header$center_file <- center_file
 

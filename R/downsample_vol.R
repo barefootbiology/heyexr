@@ -10,6 +10,7 @@
 #' @return A volume object.
 #' @export
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 downsample_vol <- function(vol, new_n) {
 
   vol_down <- vol
@@ -22,7 +23,7 @@ downsample_vol <- function(vol, new_n) {
 
   vol_down$bscan_headers <-
     vol_down$bscan_headers %>%
-    filter(bscan_id %in% down_mapping$bscan_id) %>%
+    filter(.data$bscan_id %in% down_mapping$bscan_id) %>%
     mutate(bscan_id = 1:n())
 
   vol_down$seg_array <- vol_down$seg_array[,down_mapping$bscan_id,]

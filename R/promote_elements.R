@@ -20,6 +20,7 @@
 #' promote_elements(promote_elements(mylist))
 #' promote_elements(mylist, recursive = TRUE)
 #' @importFrom purrr map
+#' @importFrom rlang set_names
 #' @export
 promote_elements <- function(x, combine_names = TRUE, recursive = FALSE) {
     x_names <- names(x)
@@ -41,7 +42,7 @@ promote_elements <- function(x, combine_names = TRUE, recursive = FALSE) {
                     new_element_names <- if_else(element_names == "", as.character(1:length(new_element)), element_names)
                 }
 
-            new_element <- setNames(x[[name]], paste(name, new_element_names, sep = "_")) %>%
+            new_element <- set_names(x[[name]], paste(name, new_element_names, sep = "_")) %>%
                 as.list()
 
             result <- append(result, new_element)

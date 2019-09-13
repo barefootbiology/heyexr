@@ -8,6 +8,7 @@
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom dplyr full_join mutate if_else
+#' @importFrom rlang .data
 add_undefined <- function(data, undefined) {
   na_value <- as.numeric(NA)
 
@@ -17,11 +18,11 @@ add_undefined <- function(data, undefined) {
 
   data %>%
     full_join(undefined) %>%
-    mutate(is_defined = if_else(is.na(is_defined),
-                                TRUE, is_defined)) %>%
+    mutate(is_defined = if_else(is.na(.data$is_defined),
+                                TRUE, .data$is_defined)) %>%
     mutate(value_defined =
-             if_else(is_defined,
-                     value,
+             if_else(.data$is_defined,
+                     .data$value,
                      na_value))
 }
 

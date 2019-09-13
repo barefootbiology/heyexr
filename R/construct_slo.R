@@ -18,6 +18,7 @@
 #' @importFrom grid unit
 #' @importFrom dplyr mutate
 #' @importFrom ggplot2 ggplot geom_raster element_blank theme_bw theme scale_fill_continuous coord_fixed scale_x_continuous scale_y_continuous labs geom_path annotate
+#' @importFrom rlang .data
 construct_slo <- function(oct,
                           low_color = "black",
                           high_color = "white",
@@ -40,8 +41,8 @@ construct_slo <- function(oct,
 
     # Construct the SLO plot
     p_slo <- get_slo(oct) %>%
-        ggplot(aes(x=x, y=y)) +
-        geom_raster(aes(fill = z)) +
+        ggplot(aes(x=.data$x, y=.data$y)) +
+        geom_raster(aes(fill = .data$z)) +
         # TASK: Consider mapping the high and low value to the min and max
         #       values on the underlying data, not just the values that might
         #       be present in a given scan.
@@ -75,7 +76,7 @@ construct_slo <- function(oct,
     if (scale_bar) {
         p_slo <- p_slo +
             geom_path(data = slo_scale_bars,
-                         mapping = aes(x=x, y=y),
+                         mapping = aes(x=.data$x, y=.data$y),
                          color = scale_color, size = 0.5) +
             annotate("text",
                      x = x_0 + 10,
