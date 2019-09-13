@@ -66,17 +66,40 @@ read_vol <- function(vol_file, read_what = "all", tz = "UTC") {
 
         # Read in the segmentation arrays
 
-        pb <- txtProgressBar(min = 0,
-                             max = header$num_bscans,
-                             style = 1,
-                             file = stderr())
+        # pb <- txtProgressBar(min = 0,
+        #                      max = header$num_bscans,
+        #                      style = 1,
+        #                      file = stderr())
 
         for (bscan_id in c(1:(header$num_bscans))) {
-            setTxtProgressBar(pb, bscan_id, title = "Reading B-scans")
+            # TESTING ************************************************
+            cat("Value of bscan_id:\t", bscan_id, "\n")
+
+            # setTxtProgressBar(pb, bscan_id, title = "Reading B-scans")
 
             bscan_header_all[[bscan_id]] <- read_bscan_header(vol_con)
 
             num_seg <- bscan_header_all[[bscan_id]]$num_seg
+
+            if(num_seg > 3) {
+                warning("WARNING: The header for B-scan ", bscan_id, " reports ", num_seg, " segmentations. To prevent problems in file reading, the number of segmentations is set to 3.")
+                num_seg <- 3
+            }
+
+            # cat("\tbscan_header_all[[bscan_id]]:\n")
+            # cat("\t", dput(as_tibble(bscan_header_all[[bscan_id]][1:9])), "\n")
+
+            cat("\tValue of version:\t", bscan_header_all[[bscan_id]][["version"]], "\n")
+            cat("\tValue of bscan_hdr_size:\t", bscan_header_all[[bscan_id]][["bscan_hdr_size"]], "\n")
+            cat("\tValue of start_x:\t", bscan_header_all[[bscan_id]][["start_x"]], "\n")
+            cat("\tValue of start_y:\t", bscan_header_all[[bscan_id]][["start_y"]], "\n")
+            cat("\tValue of end_x:\t", bscan_header_all[[bscan_id]][["end_x"]], "\n")
+            cat("\tValue of end_y:\t", bscan_header_all[[bscan_id]][["end_y"]], "\n")
+            cat("\tValue of off_seg:\t", bscan_header_all[[bscan_id]][["off_seg"]], "\n")
+            cat("\tValue of quality:\t", bscan_header_all[[bscan_id]][["quality"]], "\n")
+
+            cat("\tValue of num_seg:\t", num_seg, "\n")
+
 
             seg_data <-
                 read_float_vector(vol_con,
@@ -90,6 +113,17 @@ read_vol <- function(vol_file, read_what = "all", tz = "UTC") {
                 seg_data <- c(seg_data, rep(as.numeric(NA),
                                             header$size_x * (3 - num_seg)))
             }
+
+
+
+            cat("\tLength of seg_data:\t", length(seg_data), "\n")
+
+
+            cat("\tDim of seg_array:\t", dim(seg_array), "\n")
+
+            cat("\tDim of seg_array[ , bscan_id, ]:\t", dim(seg_array[ , bscan_id, ]), "\n")
+
+            # TESTING ************************************************
 
             seg_array[ , bscan_id, ] <- seg_data
 
