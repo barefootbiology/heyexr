@@ -18,7 +18,7 @@ get_slo <- function(oct) {
         as.data.frame %>%
         rownames_to_column("x") %>%
         tbl_df %>%
-        gather(.data$y, .data$z, -.data$x) %>%
+        gather("y", "z", -.data$x) %>%
         mutate(y = stringr::str_replace(.data$y, pattern="V", replacement = "")) %>%
         mutate(y = as.numeric(.data$y), x = as.numeric(as.character(.data$x)))
 }
