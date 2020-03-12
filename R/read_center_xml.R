@@ -47,7 +47,7 @@ read_center_xml <- function(center_file) {
         mutate(center_x = .data$center_x + 1) %>% # To handle R's 1-based vectors.
         # Rescale the center B-scan coordinate to align with Heidelberg coordinates.
         # (Using the subtracting from size$x automatically adjusts for 1-based coordinates)
-        mutate(center_z = .data$scan_characteristics_voxel_size_z - .data$center_z)
+        mutate(center_z = .data$scan_characteristics_size_z - .data$center_z)
 
     header$center_file <- center_file
 
