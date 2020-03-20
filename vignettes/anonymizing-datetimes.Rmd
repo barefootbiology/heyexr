@@ -49,7 +49,8 @@ This file contains identifying information. (Or it would it it wasn't a test fil
 
 
 ```{r }
-anon_dob <- as.POSIXct(0, origin = "1954-09-28", tz = "UTC")    # FAILS
+# anon_dob <- as.POSIXct(0, origin = "1954-09-28", tz = "UTC")    # FAILS
+anon_dob <- as.POSIXct(0, origin = "1970-01-01", tz = "UTC")    # FAILS
 
 vol_anon <-
     anonymize_volume(
@@ -202,7 +203,8 @@ knitr::kable(exam_time_info)
 Maybe you can see the problem already. I think it will be clearer when we compare the results to the table below, where the anonymous dob works:
 
 ```{r warning=FALSE}
-anon_dob_good <- as.POSIXct(0, origin = "1954-09-29", tz = "UTC")    # FAILS
+# anon_dob_good <- as.POSIXct(0, origin = "1954-09-29", tz = "UTC")    # FAILS
+anon_dob_good <- as.POSIXct(0, origin = "1970-01-01", tz = "UTC")
 
 vol_anon_good <-
     anonymize_volume(
