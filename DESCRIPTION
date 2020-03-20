@@ -28,7 +28,10 @@ Imports:
     xml2 (>= 1.2.0),
 LinkingTo:
     Rcpp (>= 1.0.0)
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 Suggests: 
     testthat (>= 2.0.1),
-    here (>= 0.1)
+    here (>= 0.1),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
