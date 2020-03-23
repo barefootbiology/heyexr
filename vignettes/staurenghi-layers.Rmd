@@ -1,0 +1,40 @@
+---
+title: "IN OCT Consensus Layers for Spectral Domain OCT and Iowa Reference Algorithms"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{IN OCT Consensus Layers for Spectral Domain OCT and Iowa Reference Algorithms}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(heyexr)
+library(tidyverse)
+
+# Read in central B-scan and segmentation for example OCT.
+extdata_path <- "extdata"
+
+original_file <- file.path(path.package("heyexr"), extdata_path, "TEST_T_566581.vol")
+
+if(!file.exists(original_file)) {
+    extdata_path <- "inst/extdata"
+    original_file <- file.path(here::here(), extdata_path, "TEST_T_566581.vol")
+}
+
+original_vol <- read_vol(original_file)
+
+# TASK: Update this to use TSV instead of Excel.
+# Read in consensus layers from Excel file.
+consensus_layers <-
+  readxl::read_excel(file.path(here::here(), "data-raw/staurenghi_definitions.xlsx"))
+
+```
+
+
