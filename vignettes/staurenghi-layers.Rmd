@@ -22,6 +22,7 @@ library(heyexr)
 library(octdata)
 library(octgridtools)
 library(tidyverse)
+library(colorspace)
 
 example_data <- get_sdoct_example()
 example <- example_data$oct
@@ -54,13 +55,18 @@ bscan_segmentation <-
 
 seg_volume <- 
   expand_surfaces_to_volume(
-    surface_array = iowa_segmentation_to_array(example$OS$segmentation),
+    surface_array = 
+      iowa_segmentation_to_array(
+        example$OS$segmentation, 
+        mask_undefined = TRUE),
     vol_dim = dim(example$OS$volume$bscan_images)
   )
 
 seg_bscan_layers <- 
   seg_volume[ , bscan_id_fovea, ] %>%
-  melt_array(c("x", "z", "layer"))
+  melt_array(c("x", "z", "surface_id")) #%>%
+  # Add layer definitions based on consensus of Mullins and Abramoff
+  # left_join(heyexr::layer_info)
 ```
 
 
@@ -115,7 +121,6 @@ p_bscan +
 
 ```{r figLayerFull, fig.width=10, fig.height=6}
 # TASK: Show layer name consensus from Mullins and Abramoff.
-library(colorspace)
 
 color_palette <- c(NA, RColorBrewer::brewer.pal(10, "Paired"), NA)
 
@@ -127,11 +132,12 @@ bscan_colors <-
   get_bscan(example$OS$volume, bscan_id_fovea) %>%
   mutate(
     intensity = 
-      ifelse(is.na(.data$intensity), na_intensity, .data$intensity)) %>% 
+      ifelse(is.na(.data$intensity), na_intensity, .data$intensity)
+    ) %>% 
   mutate(intensity = contrast_correction(.data$intensity)) %>%
   left_join(seg_bscan_layers) %>% 
   # Match up a color from ColorBrewer
-  mutate(layer_color = color_palette[layer + 1])
+  mutate(layer_color = color_palette[surface_id + 1])
 
 # Like col2rgb, but uses the colorspace::RGB representation.
 col2RGB <- function(col) {
@@ -164,13 +170,51 @@ intensity_layer_color <-
   map_dfc(toupper) %>%
   transmute(intensity_layer_color = paste0("#", R, G, B))
 
-bscan_colors %>%
-  bind_cols(intensity_layer_color) %>%
-  ggplot(aes(x = x, y = z, fill = intensity_layer_color)) +
-  geom_tile() +
+bscan_colors_blended <-
+  bscan_colors %>%
+  bind_cols(intensity_layer_color) %>% 
+  mutate(surface_id = as.integer(surface_id)) %>% 
+  left_join(heyexr::layer_info) %>%
+  mutate(
+    octexplorer_span = 
+      factor(
+        octexplorer_span, 
+        levels = unique(heyexr::layer_info$octexplorer_span)
+        )
+    )
+
+bscan_colors_blended %>%
+  ggplot() +
+  geom_tile(    
+    aes(
+      x = x, 
+      y = z, 
+      fill = intensity_layer_color
+      )
+    ) +
   scale_fill_identity() +
-  scale_y_reverse() +
-  scale_color_brewer(palette = "Paired")
+  # TASK: Make this a theme that I can pull straight from the package.
+  theme_bw() +
+  scale_y_reverse(expand = c(0,0)) +
+  scale_x_continuous(expand = c(0,0)) +
+  theme(
+    panel.grid=element_blank(),
+    panel.background=element_rect(fill = "black"),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank()
+    ) +
+  labs(x="x", y="z") +
+  geom_line(
+    data = 
+      bscan_segmentation %>%
+      inner_join(heyexr::layer_info),
+    mapping = aes(x = ascan_id, y = value, color = layer),
+    alpha = 0
+  ) +
+  scale_color_brewer(palette = "Paired") +
+  guides(color = guide_legend(override.aes = list(alpha = 1, shape = 22)))
 ```
 
 
