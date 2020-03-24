@@ -10,31 +10,180 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
 )
 ```
 
 ```{r setup}
 library(heyexr)
+library(octdata)
+library(octgridtools)
 library(tidyverse)
 
+example_data <- get_sdoct_example()
+example <- example_data$oct
+example_info <- example_data$info
+
 # Read in central B-scan and segmentation for example OCT.
-extdata_path <- "extdata"
-
-original_file <- file.path(path.package("heyexr"), extdata_path, "TEST_T_566581.vol")
-
-if(!file.exists(original_file)) {
-    extdata_path <- "inst/extdata"
-    original_file <- file.path(here::here(), extdata_path, "TEST_T_566581.vol")
-}
-
-original_vol <- read_vol(original_file)
+# oct <- octdata::get_sdoct_example(.num_bscans = 61)$oct[["OD"]]
 
 # TASK: Update this to use TSV instead of Excel.
 # Read in consensus layers from Excel file.
 consensus_layers <-
   readxl::read_excel(file.path(here::here(), "data-raw/staurenghi_definitions.xlsx"))
 
+bscan_id_fovea <- example$OS$grid_center$center$z
+
+layer_order <-
+  example$OS$segmentation$layers %>% 
+  select(surface_id, name) %>% 
+  distinct() %>% 
+  arrange(surface_id) %>% 
+  pluck("name")
+
+bscan_segmentation <-
+  example$OS$segmentation$layers %>% 
+  filter(bscan_id == bscan_id_fovea) %>%
+  anti_join(example$OS$segmentation$undefined_region) %>%
+  mutate(name = factor(name, levels = layer_order)) %>%
+  # Add layer definitions based on consensus of Mullins and Abramoff
+  inner_join(heyexr::layer_info)
+
+seg_volume <- 
+  expand_surfaces_to_volume(
+    surface_array = iowa_segmentation_to_array(example$OS$segmentation),
+    vol_dim = dim(example$OS$volume$bscan_images)
+  )
+
+seg_bscan_layers <- 
+  seg_volume[ , bscan_id_fovea, ] %>%
+  melt_array(c("x", "z", "layer"))
 ```
 
+
+```{r figSegmentationFull, fig.width=10, fig.height=6}
+# Plot the central B-scan.
+p_bscan <-
+  construct_bscan(example$OS$volume, bscan_id = bscan_id_fovea)
+
+# Overlay the segmentation
+p_bscan +
+  geom_line(
+    data = bscan_segmentation,
+    mapping = aes(x = ascan_id, y = value, color = name)
+  ) +
+  scale_color_brewer(palette = "Paired")
+```
+
+**Figure 1. Central B-scan from normal subject with Iowa Reference Algorithms segmentation.** Segmentation marked as "undefined" by the algorithm is not shown.
+
+***
+
+The following table reproduces Table 2 from Staurenghi et al. 2014:
+
+```{r tabConsensusLayers}
+consensus_layers %>%
+  set_names(c("Layer No.", "OCT Description", "Consensus Nomenclature")) %>%
+  knitr::kable()
+```
+
+***
+
+```{r figSegmentationCrop, fig.width=10, fig.height=6}
+# Plot the central B-scan.
+p_bscan <-
+  construct_bscan(example$OS$volume, bscan_id = bscan_id_fovea)
+
+# Overlay the segmentation
+p_bscan +
+  geom_line(
+    data = 
+      bscan_segmentation %>%
+      filter(ascan_id < 470),
+    mapping = aes(x = ascan_id, y = value, color = name)
+  ) +
+  scale_color_brewer(palette = "Paired") +
+  scale_x_continuous(limits = c(200, NA))
+```
+
+**Figure 2. Crop of central B-scan from normal subject with Iowa Reference Algorithms segmentation.** 
+
+***
+
+```{r figLayerFull, fig.width=10, fig.height=6}
+# TASK: Show layer name consensus from Mullins and Abramoff.
+library(colorspace)
+
+color_palette <- c(NA, RColorBrewer::brewer.pal(10, "Paired"), NA)
+
+na_intensity <- 0
+contrast_correction <- spline_correction
+
+
+bscan_colors <-
+  get_bscan(example$OS$volume, bscan_id_fovea) %>%
+  mutate(
+    intensity = 
+      ifelse(is.na(.data$intensity), na_intensity, .data$intensity)) %>% 
+  mutate(intensity = contrast_correction(.data$intensity)) %>%
+  left_join(seg_bscan_layers) %>% 
+  # Match up a color from ColorBrewer
+  mutate(layer_color = color_palette[layer + 1])
+
+# Like col2rgb, but uses the colorspace::RGB representation.
+col2RGB <- function(col) {
+  col2rgb(col = col) %>% 
+    t() %>% 
+    colorspace::RGB()
+}
+
+RGB_to_tibble <- function(x) {
+  x@coords %>% 
+    as.data.frame() %>% 
+    as_tibble()
+}
+
+intensity_layer_color <-
+  bscan_colors %>% 
+  mutate(layer_color = if_else(is.na(layer_color), "black", layer_color)) %>%
+  group_modify(
+    ~mixcolor(
+      1-.x$intensity, 
+      RGB(255,255,255), 
+      col2RGB(.x$layer_color)
+      ) %>% 
+      RGB_to_tibble()
+    ) %>%
+  map_dfc(round) %>%
+  map_dfc(as.integer) %>%
+  map_dfc(as.hexmode) %>% 
+  map_dfc(as.character) %>%
+  map_dfc(toupper) %>%
+  transmute(intensity_layer_color = paste0("#", R, G, B))
+
+bscan_colors %>%
+  bind_cols(intensity_layer_color) %>%
+  ggplot(aes(x = x, y = z, fill = intensity_layer_color)) +
+  geom_tile() +
+  scale_fill_identity() +
+  scale_y_reverse() +
+  scale_color_brewer(palette = "Paired")
+```
+
+
+```{r eval=FALSE}
+p_bscan +
+  geom_line(
+    data = 
+      bscan_segmentation %>%
+      filter(ascan_id < 470) %>% 
+      inner_join(heyexr::layer_info),
+    mapping = aes(x = ascan_id, y = value, color = layer)
+  ) +
+  scale_color_brewer(palette = "Paired") +
+  scale_x_continuous(limits = c(200, NA))
+```
 
