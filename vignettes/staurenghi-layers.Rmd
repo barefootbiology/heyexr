@@ -210,8 +210,7 @@ bscan_colors_blended %>%
     data = 
       bscan_segmentation %>%
       inner_join(heyexr::layer_info),
-    mapping = aes(x = ascan_id, y = value, color = layer),
-    alpha = 0
+    mapping = aes(x = ascan_id, y = value, color = layer)
   ) +
   scale_color_brewer(palette = "Paired") +
   guides(color = guide_legend(override.aes = list(alpha = 1, shape = 22)))
