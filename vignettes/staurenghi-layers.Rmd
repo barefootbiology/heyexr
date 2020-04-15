@@ -24,6 +24,8 @@ library(octgridtools)
 library(tidyverse)
 library(colorspace)
 
+line_size <- 0.25
+
 example_data <- get_sdoct_example()
 example <- example_data$oct
 example_info <- example_data$info
@@ -70,6 +72,14 @@ seg_bscan_layers <-
 ```
 
 
+```{r figBscan, fig.width=10, fig.height=6}
+p_bscan <-
+  construct_bscan(example$OS$volume, bscan_id = bscan_id_fovea)
+
+p_bscan
+```
+
+
 ```{r figSegmentationFull, fig.width=10, fig.height=6}
 # Plot the central B-scan.
 p_bscan <-
@@ -79,7 +89,8 @@ p_bscan <-
 p_bscan +
   geom_line(
     data = bscan_segmentation,
-    mapping = aes(x = ascan_id, y = value, color = name)
+    mapping = aes(x = ascan_id, y = value, color = name),
+    size = line_size
   ) +
   scale_color_brewer(palette = "Paired")
 ```
@@ -92,6 +103,7 @@ The following table reproduces Table 2 from Staurenghi et al. 2014:
 
 ```{r tabConsensusLayers}
 consensus_layers %>%
+  select(1:3) %>%
   set_names(c("Layer No.", "OCT Description", "Consensus Nomenclature")) %>%
   knitr::kable()
 ```
@@ -99,6 +111,7 @@ consensus_layers %>%
 ***
 
 ```{r figSegmentationCrop, fig.width=10, fig.height=6}
+
 # Plot the central B-scan.
 p_bscan <-
   construct_bscan(example$OS$volume, bscan_id = bscan_id_fovea)
@@ -109,7 +122,8 @@ p_bscan +
     data = 
       bscan_segmentation %>%
       filter(ascan_id < 470),
-    mapping = aes(x = ascan_id, y = value, color = name)
+    mapping = aes(x = ascan_id, y = value, color = name),
+    size = line_size
   ) +
   scale_color_brewer(palette = "Paired") +
   scale_x_continuous(limits = c(200, NA))
@@ -210,7 +224,8 @@ bscan_colors_blended %>%
     data = 
       bscan_segmentation %>%
       inner_join(heyexr::layer_info),
-    mapping = aes(x = ascan_id, y = value, color = layer)
+    mapping = aes(x = ascan_id, y = value, color = layer),
+    size = line_size
   ) +
   scale_color_brewer(palette = "Paired") +
   guides(color = guide_legend(override.aes = list(alpha = 1, shape = 22)))
