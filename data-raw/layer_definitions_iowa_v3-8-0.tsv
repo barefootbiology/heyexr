@@ -1,4 +1,5 @@
 surface_id	layer	layer_description	executable_surface_name	octexplorer_span	executable_name	executable_version
+0	VIT	vitreous	"NA"	"NA"	"NA"	"NA"
 1	NFL	nerve fiber layer	ILM (ILM)	10.ILM_To_20.RNFL-GCL	OCTLayerSeg	3.8.0
 2	GCL	ganglion cell layer	RNFL-GCL (RNFL-GCL)	20.RNFL-GCL_To_30.GCL-IPL	OCTLayerSeg	3.8.0
 3	IPL	inner plexiform layer	GCL-IPL (GCL-IPL)	30.GCL-IPL_To_40.IPL-INL	OCTLayerSeg	3.8.0
@@ -8,5 +9,5 @@ surface_id	layer	layer_description	executable_surface_name	octexplorer_span	exec
 7	EZ	ellipsoid zone	Boundary of myoid and ellipsoid of inner segments (BMEIS)	100.BMEIS_To_110.IS/OSJ	OCTLayerSeg	3.8.0
 8	OS	outer segments	IS/OS junction (IS/OSJ)	110.IS/OSJ_To_120.IB_OPR	OCTLayerSeg	3.8.0
 9	IZ	interdigitation zone	Inner boundary of OPR (IB_OPR)	120.IB_OPR_To_140.IB_RPE	OCTLayerSeg	3.8.0
-11	RPE	RPE/Bruch's complex	Inner boundary of RPE (IB_RPE)	140.IB_RPE_To_150.OB_RPE	OCTLayerSeg	3.8.0
-12	CHOR-SCL	choroid-sclera	Outer boundary of RPE (OB_RPE)	"NA"	OCTLayerSeg	3.8.0
+10	RPE	RPE/Bruch's complex	Inner boundary of RPE (IB_RPE)	140.IB_RPE_To_150.OB_RPE	OCTLayerSeg	3.8.0
+11	CHOR-SCL	choroid-sclera	Outer boundary of RPE (OB_RPE)	"NA"	OCTLayerSeg	3.8.0
