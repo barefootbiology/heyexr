@@ -4,8 +4,14 @@
 \alias{read_ssoct_files}
 \title{Read OCT volume, angiography, segmentation, and grid center.}
 \usage{
-read_ssoct_files(volume = NA, angio = NA, segmentation = NA,
-  grid_center = NA, disk_center = NA, laterality = NA)
+read_ssoct_files(
+  volume = NA,
+  angio = NA,
+  segmentation = NA,
+  grid_center = NA,
+  disk_center = NA,
+  laterality = NA
+)
 }
 \value{
 A list of objects.

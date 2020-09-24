@@ -4,8 +4,12 @@
 \alias{anonymize_volume}
 \title{Anonymize volume objects.}
 \usage{
-anonymize_volume(volume, pid, patient_id = pid,
-  anon_dob = as.POSIXct(0, origin = "1899-12-30", tz = "UTC"))
+anonymize_volume(
+  volume,
+  pid,
+  patient_id = pid,
+  anon_dob = as.POSIXct(0, origin = "1899-12-30", tz = "UTC")
+)
 }
 \arguments{
 \item{volume}{A volume object}

@@ -4,7 +4,9 @@
 \name{max_float}
 \alias{max_float}
 \title{Value used to indicate missing data (NA).}
-\format{A scalar double.}
+\format{
+A scalar double.
+}
 \usage{
 max_float
 }

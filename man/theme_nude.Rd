@@ -4,8 +4,12 @@
 \alias{theme_nude}
 \title{Render a ggplot2 plot with only the data.}
 \usage{
-theme_nude(base_size = 11, base_family = "",
-  base_line_size = base_size/22, base_rect_size = base_size/22)
+theme_nude(
+  base_size = 11,
+  base_family = "",
+  base_line_size = base_size/22,
+  base_rect_size = base_size/22
+)
 }
 \description{
 \code{theme_nude} themes a ggplot2 plot with only the data. Remember to remove any padding by

@@ -4,11 +4,20 @@
 \alias{construct_bscan}
 \title{Construct a ggplot2 object containing the data for a given b-scan.}
 \usage{
-construct_bscan(oct, bscan_id, layer_y_max = oct$header$size_z,
-  layer_y_min = 0, low_color = "black", high_color = "white",
-  contrast_correction = spline_correction, na_intensity = 0,
-  scale_bars = TRUE, scale_length = 200, scale_color = "white",
-  inset_percentage = c(x = 0.025, y = 0.05))
+construct_bscan(
+  oct,
+  bscan_id,
+  layer_y_max = oct$header$size_z,
+  layer_y_min = 0,
+  low_color = "black",
+  high_color = "white",
+  contrast_correction = spline_correction,
+  na_intensity = 0,
+  scale_bars = TRUE,
+  scale_length = 200,
+  scale_color = "white",
+  inset_percentage = c(x = 0.025, y = 0.05)
+)
 }
 \arguments{
 \item{oct}{A list containing the OCT data.}

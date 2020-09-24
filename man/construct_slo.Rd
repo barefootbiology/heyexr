@@ -4,9 +4,16 @@
 \alias{construct_slo}
 \title{Construct a ggplot2 object containing the data for an SLO}
 \usage{
-construct_slo(oct, low_color = "black", high_color = "white",
-  scale_bar = TRUE, scale_length = 200, scale_color = "white",
-  inset_percentage = 0.05, draw_margins = TRUE)
+construct_slo(
+  oct,
+  low_color = "black",
+  high_color = "white",
+  scale_bar = TRUE,
+  scale_length = 200,
+  scale_color = "white",
+  inset_percentage = 0.05,
+  draw_margins = TRUE
+)
 }
 \arguments{
 \item{oct}{a list containing the OCT data}
