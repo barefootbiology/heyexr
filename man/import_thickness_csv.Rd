@@ -4,8 +4,12 @@
 \alias{import_thickness_csv}
 \title{Import the CSV produced by "Thickness Analysis" in OCT Explorer}
 \usage{
-import_thickness_csv(csv_file,
-  split = "\\\\\\\\", n = "last", pattern = "_Surfaces_Iowa.xml")
+import_thickness_csv(
+  csv_file,
+  split = "\\\\\\\\",
+  n = "last",
+  pattern = "_Surfaces_Iowa.xml"
+)
 }
 \arguments{
 \item{csv_file}{the CSV file to import}

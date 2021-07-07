@@ -4,8 +4,12 @@
 \alias{get_central_segmentation}
 \title{Get the segmentation data from the central scan}
 \usage{
-get_central_segmentation(vol_file = NULL, xml_file = NULL,
-  center_file = NULL, sample_id = NA)
+get_central_segmentation(
+  vol_file = NULL,
+  xml_file = NULL,
+  center_file = NULL,
+  sample_id = NA
+)
 }
 \arguments{
 \item{xml_file}{path to XML file containing Iowa Reference Algorithms segmentation}

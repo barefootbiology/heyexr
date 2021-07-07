@@ -4,7 +4,9 @@
 \name{vol_fit_spline}
 \alias{vol_fit_spline}
 \title{A spline fit to the PNG exported from Heidelberg Explorer.}
-\format{A smooth.spline object.}
+\format{
+A smooth.spline object.
+}
 \usage{
 vol_fit_spline
 }

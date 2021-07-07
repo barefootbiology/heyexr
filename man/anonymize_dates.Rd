@@ -4,8 +4,10 @@
 \alias{anonymize_dates}
 \title{Anonymize dates in a volume object.}
 \usage{
-anonymize_dates(header, anon_dob = as.POSIXct(0, origin = "1970-01-01",
-  tz = "UTC"))
+anonymize_dates(
+  header,
+  anon_dob = as.POSIXct(0, origin = "1970-01-01", tz = "UTC")
+)
 }
 \arguments{
 \item{header}{The header list from a volume object.}

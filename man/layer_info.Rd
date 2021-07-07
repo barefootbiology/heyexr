@@ -4,7 +4,9 @@
 \name{layer_info}
 \alias{layer_info}
 \title{Metadata on retinal layers identified by the Iowa Reference Algorithms}
-\format{A tibble}
+\format{
+A tibble
+}
 \usage{
 layer_info
 }

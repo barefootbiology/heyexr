@@ -28,7 +28,7 @@ Imports:
     xml2 (>= 1.2.0),
 LinkingTo:
     Rcpp (>= 1.0.0)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Suggests: 
     testthat (>= 2.0.1),
     here (>= 0.1),

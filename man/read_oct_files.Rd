@@ -4,8 +4,12 @@
 \alias{read_oct_files}
 \title{Read files related to one OCT image}
 \usage{
-read_oct_files(volume = NA, segmentation = NA, grid_center = NA,
-  disk_center = NA)
+read_oct_files(
+  volume = NA,
+  segmentation = NA,
+  grid_center = NA,
+  disk_center = NA
+)
 }
 \description{
 Reads a set of files produced by OCTExplorer related to a single OCT image.
