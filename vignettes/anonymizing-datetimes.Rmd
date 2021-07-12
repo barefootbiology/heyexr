@@ -81,7 +81,7 @@ and the second takes care of the dates. It does this by resetting the date of bi
 heyexr:::anonymize_dates
 ```
 
-We can verify that the time intervals remain the same between the birth dates and the exame times as follows:
+We can verify that the time intervals remain the same between the birth dates and the exam times as follows:
 
 ```{r }
 # Exam times
