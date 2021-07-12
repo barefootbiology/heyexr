@@ -4,3 +4,4 @@ data-raw
 deprecated
 ^doc$
 ^Meta$
+^LICENSE\.md$
