@@ -196,7 +196,6 @@ make_table <- function(x) {
 
 exam_time_info <- make_table(exam_times)
 
-
 knitr::kable(exam_time_info)
 ```
 
