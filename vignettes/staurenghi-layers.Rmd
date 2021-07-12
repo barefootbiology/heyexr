@@ -58,9 +58,7 @@ bscan_segmentation <-
 seg_volume <- 
   expand_surfaces_to_volume(
     surface_array = 
-      iowa_segmentation_to_array(
-        example$OS$segmentation, 
-        mask_undefined = TRUE),
+      iowa_segmentation_to_array(example$OS$segmentation),
     vol_dim = dim(example$OS$volume$bscan_images)
   )
 
