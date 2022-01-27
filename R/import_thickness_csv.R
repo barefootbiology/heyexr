@@ -28,7 +28,11 @@ import_thickness_csv <- function(csv_file,
     result <-
         read_csv(csv_file) %>%
         (function(x) x %>% select(-ncol(x))) %>%
-        gather(key=.data$key, value=.data$um, matches("Thickness")) %>%
+        pivot_longer(
+            names_to = "key",
+            values_to = "um",
+            cols = matches("Thickness")
+            ) %>%
         mutate(
             key_stat = ifelse(grepl(.data$key, pattern="Mean"), "mean","sd"),
             key = gsub(.data$key,
@@ -74,7 +78,7 @@ import_thickness_csv <- function(csv_file,
             grid = .data$Grid,
             grid_center = .data$GridCenter,
             grid_center_x_pixel = .data$GridCenterX_pixel,
-            grid_center_z_pixel = .data$GridCenterZ_pixel,
+            grid_center_y_pixel = .data$GridCenterY_pixel,
             undefined_region_percent = .data$UndefinedRegion_percent
             ) %>%
         mutate(sample_id = as.character(.data$surfaces)) %>%
