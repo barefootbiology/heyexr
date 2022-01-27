@@ -54,15 +54,21 @@ read_vol <- function(vol_file, read_what = "all", tz = "UTC") {
         # Create empty containers
         bscan_header_all <- list()
 
-        bscan_images <- array(rep(as.double(NA), header$size_x * header$num_bscans * header$size_z),
-                             dim = c(header$size_x, header$num_bscans, header$size_z))
+        bscan_images <-
+            array(
+                rep(as.double(NA), header$size_x * header$num_bscans * header$size_z),
+                dim = c(header$size_x, header$num_bscans, header$size_z)
+                )
 
         # TASK: Update this comment
         # Up to 3 surfaces may be present. However, we won't know until we start
         # to read the b-scan headers below. Later we'll decrement the 3rd
         # dimension if there are only 2 segmentations present.
-        seg_array <- array(rep(as.double(NA), header$num_bscans * 3 * header$size_x),
-                           dim = c(header$size_x, header$num_bscans, 3))
+        seg_array <-
+            array(
+                rep(as.double(NA), header$num_bscans * 3 * header$size_x),
+                dim = c(header$size_x, header$num_bscans, 3)
+                )
 
         # Read in the segmentation arrays
 
@@ -79,7 +85,11 @@ read_vol <- function(vol_file, read_what = "all", tz = "UTC") {
             num_seg <- bscan_header_all[[bscan_id]]$num_seg
 
             if(num_seg > 3) {
-                warning("WARNING: The header for B-scan ", bscan_id, " reports ", num_seg, " segmentations. To prevent problems in file reading, the number of segmentations is set to 3.")
+                warning(
+                    "WARNING: The header for B-scan ", bscan_id, " reports ",
+                    num_seg, " segmentations. To prevent problems in file",
+                    " reading, the number of segmentations is set to 3."
+                    )
                 num_seg <- 3
             }
 
