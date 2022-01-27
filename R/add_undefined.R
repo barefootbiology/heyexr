@@ -1,7 +1,8 @@
 #' Add a column specifying if the values in the segmentation are undefined
 #'
 #' Adds a column `is_defined` which indicates if a particular A-scan could be
-#' reliably segmented. NOTE: This function assumes there is a column named
+#' reliably segmented by the Iowa Reference Algorithms. NOTE: This function
+#' assumes there is a column named
 #' "value", but this column  name is likely to change in future iterations of
 #' the software.
 #'
