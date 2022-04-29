@@ -21,6 +21,7 @@ anonymize_volume <- function(volume, pid, patient_id = pid,
                                anon_dob = as.POSIXct(0, origin = "1899-12-30", tz = "UTC")) {
   volume$header <- anonymize_identity(header = volume$header, pid = pid, patient_id = patient_id)
   volume$header <- anonymize_dates(header = volume$header, anon_dob = anon_dob)
+  volume$header <- anonymize_image_id(header = volume$header)
 
   volume
 }
