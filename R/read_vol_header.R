@@ -12,10 +12,12 @@
 #' @importFrom magrittr %>%
 #' @importFrom lubridate ymd tz
 read_vol_header <- function(vol_con, tz = "UTC") {
-    # Code based on these two projects:
-    #
-    # https://github.com/halirutan/HeyexImport
-    # http://rsb.info.nih.gov/ij/plugins/heyex/index.html
+
+    # Originally, I built this function on the code from Open_Heyex_Raw.java
+    # which was bundled with the heyex plugin for ImageJ. I have since verified
+    # the code using the documentation for the Spectralis Special Function:
+    # Exporting Raw Data document (revision 4.0-1E, Noveber 2008, Art. No.
+    # 97 175-002).
 
     # Create a container for the header information
     header <- list()

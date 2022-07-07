@@ -13,9 +13,6 @@ write_vol_header <- function(vol_con, header) {
     # end of the version.
     version <- header$version
 
-    # if(!grepl(version, pattern = "R$", perl = TRUE)) {
-    #     version <- paste0(version, "R")
-    # }
 
     writeBin(version, vol_con, character(), endian = "little")
 
@@ -54,10 +51,6 @@ write_vol_header <- function(vol_con, header) {
     datetime_to_raw(exam_time) %>%
         writeBin(vol_con, "raw", endian = "little")
 
-    # From: https://stat.ethz.ch/R-manual/R-devel/library/base/html/DateTimeClasses.html
-    # "Class "POSIXct" represents the (signed) number of seconds
-    # since the beginning of 1970 (in the UTC time zone) as a numeric vector."
-    # That means that R's reference is the same as Java's.
 
     writeBin(header$scan_pattern, vol_con, integer(), endian = "little")
 

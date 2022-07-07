@@ -16,10 +16,11 @@
 #' @importFrom purrr map_dfr
 #' @importFrom tibble as_tibble
 read_vol <- function(vol_file, read_what = "all", tz = "UTC") {
-    # Code based on these two projects:
-    #
-    # https://github.com/halirutan/HeyexImport
-    # http://rsb.info.nih.gov/ij/plugins/heyex/index.html
+    # Originally, I built this function on the code from Open_Heyex_Raw.java
+    # which was bundled with the heyex plugin for ImageJ. I have since verified
+    # the code using the documentation for the Spectralis Special Function:
+    # Exporting Raw Data document (revision 4.0-1E, Noveber 2008, Art. No.
+    # 97 175-002).
 
     if(!file.exists(vol_file)) {
         stop("File ", vol_file, " does not exist!")
@@ -38,20 +39,13 @@ read_vol <- function(vol_file, read_what = "all", tz = "UTC") {
     }
 
     if(read_what == "all") {
-        # Calculated offsets
-        file_header_size = 2048; # integer, size in bytes of file header, equal to
-                                 # offset to reach SLO image;
-        slo_image_size = header$size_x_slo * header$size_y_slo; # integer, size in
-                                        # bytes of the SLO image data;
-        oct_image_size = header$size_x * header$size_z * 4; # integer, size in
-                                        # bytes of each B-Scan OCT image;
-        first_bscan_header = file_header_size + slo_image_size;
-        bscan_block_size = header$bscan_hdr_size + oct_image_size;
-        # integer, calculates size in bytes of the b-scan block which includes the
-        # b-scan header and the b-scan;
+        # # Offsets
+        # file_header_size <- 2048
+        # slo_image_size <- header$size_x_slo * header$size_y_slo
+        # oct_image_size <- header$size_x * header$size_z * 4
+        # bscan_header_offset <- file_header_size + slo_image_size
+        # bscan_block_size <- header$bscan_hdr_size + oct_image_size
 
-
-        # Create empty containers
         bscan_header_all <- list()
 
         bscan_images <-
@@ -116,17 +110,19 @@ read_vol <- function(vol_file, read_what = "all", tz = "UTC") {
             #       as they are simply for future file expansion in version
             #       HSF-OCT-101. However, I'm not sure if later versions do use
             #       these bytes.
-            temp <- readBin(vol_con, "raw",
-                            n = n_bytes)
+            temp <- readBin(vol_con, "raw", n = n_bytes)
 
-            bscan_images[, bscan_id, ] <- readBin(vol_con,
-                                              "numeric",
-                                              n = header$size_x * header$size_z,
-                                              size = 4) %>%
+            bscan_images[, bscan_id, ] <-
+                readBin(
+                    vol_con,
+                    "numeric",
+                    n = header$size_x * header$size_z,
+                    size = 4
+                    ) %>%
                 matrix(nrow = header$size_z, ncol = header$size_x, byrow=FALSE)
         }
 
-        # The text progressbar doesn't print a newline when complete.
+        # The text progress bar doesn't print a newline when complete.
         message("")
 
         # Make sure that NA values are properly represented in the seg_array

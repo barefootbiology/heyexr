@@ -12,8 +12,11 @@ read_bscan_header <- function(vol_con) {
     # For each B-Scan, read header and data
     bscan_header_list <- list()
 
-    # IMPLEMENT HEADER READING HERE.
-    # CODE DIRECTLY FROM Open_Heyex_Raw.java
+    # Originally, I built this function on the code from Open_Heyex_Raw.java
+    # which was bundled with the heyex plugin for ImageJ. I have since verified
+    # the code using the documentation for the Spectralis Special Function:
+    # Exporting Raw Data document (revision 4.0-1E, Noveber 2008, Art. No.
+    # 97 175-002).
     # Read the first header.
     bscan_header_list$version <-
         readBin(vol_con, "raw", size = 1, n = 12) %>%

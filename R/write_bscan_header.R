@@ -7,12 +7,6 @@
 #'
 #' @importFrom magrittr %>%
 write_bscan_header <- function(vol_con, bscan_header_list) {
-    # For each B-Scan, read header and data
-    # bscan_header_list <- list()
-
-    # IMPLEMENT HEADER READING HERE.
-    # CODE DIRECTLY FROM Open_Heyex_Raw.java
-    # Read the first header.
     bscan_header_list$version %>%
         charToRaw() %>%
         pad_raw(n = 12) %>%
