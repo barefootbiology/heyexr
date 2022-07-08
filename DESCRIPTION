@@ -1,11 +1,14 @@
 Package: heyexr
 Type: Package
-Title: Import Heidelberg Spectralis OCT VOL Files
+Title: Import, Transform and Visualize Optical Coherence Tomography Volumes in R
 Version: 0.0.0.9000
-Date: 2021-07-12
-Authors@R: person("S. Scott", "Whitmore", email = "steven-whitmore@uiowa.edu",
-                  role = c("aut", "cre"))
-Description: Import and export Heidelberg Spectralis optical coherence tomography (OCT) data in R.
+Date: 2022-07-08
+Authors@R: 
+    person("S. Scott", "Whitmore", email = "steven-whitmore@uiowa.edu",
+        role = c("aut", "cre"), comment = c(ORCID = "0000-0003-0161-9625"))
+Description: Tools to import, export, transform and visualize optical coherence tomography (OCT) data captured on the Heidelberg Spectralis system.
+URL: https://github.com/barefootbiology/heyexr
+BugReports: https://github.com/barefootbiology/heyexr/issues
 Encoding: UTF-8
 License: MIT + file LICENSE
 LazyData: TRUE
